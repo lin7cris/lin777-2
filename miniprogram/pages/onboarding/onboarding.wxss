@@ -1,0 +1,19 @@
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18rpx;
+  margin-top: 28rpx;
+}
+
+.metric-label {
+  display: block;
+  color: #6d7a72;
+  font-size: 22rpx;
+}
+
+.metric-value {
+  display: block;
+  margin-top: 8rpx;
+  font-size: 34rpx;
+  font-weight: 800;
+}

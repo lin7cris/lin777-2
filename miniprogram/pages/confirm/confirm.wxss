@@ -1,0 +1,26 @@
+.parse-item {
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #edf2ee;
+}
+
+.parse-item:last-child {
+  border-bottom: 0;
+}
+
+.item-title {
+  font-weight: 700;
+}
+
+.small {
+  margin-top: 6rpx;
+  font-size: 24rpx;
+}
+
+.strong {
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.blue-text {
+  color: #356be6;
+}

@@ -1,0 +1,38 @@
+{
+  "pages": [
+    "pages/onboarding/onboarding",
+    "pages/today/today",
+    "pages/entry/entry",
+    "pages/confirm/confirm",
+    "pages/record/record",
+    "pages/profile/profile"
+  ],
+  "window": {
+    "navigationBarTitleText": "AI热量记录助手",
+    "navigationBarBackgroundColor": "#F3F7F1",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#F3F7F1",
+    "backgroundTextStyle": "dark"
+  },
+  "tabBar": {
+    "color": "#6D7A72",
+    "selectedColor": "#13905A",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/today/today",
+        "text": "今日"
+      },
+      {
+        "pagePath": "pages/record/record",
+        "text": "记录"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的"
+      }
+    ]
+  },
+  "usingComponents": {}
+}

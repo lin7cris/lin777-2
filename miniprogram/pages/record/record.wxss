@@ -1,0 +1,54 @@
+.bars {
+  height: 320rpx;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding-top: 24rpx;
+}
+
+.bar-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12rpx;
+  color: #6d7a72;
+  font-size: 22rpx;
+  font-weight: 700;
+}
+
+.bar {
+  width: 36rpx;
+  border-radius: 999rpx;
+  background: #e5ece6;
+}
+
+.bar.active {
+  background: #13905a;
+}
+
+.record {
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #edf2ee;
+}
+
+.record:last-child {
+  border-bottom: 0;
+}
+
+.record-title,
+.strong {
+  font-weight: 800;
+}
+
+.small {
+  margin-top: 6rpx;
+  font-size: 24rpx;
+}
+
+.green-text {
+  color: #13905a;
+}
+
+.red-text {
+  color: #df554d;
+}

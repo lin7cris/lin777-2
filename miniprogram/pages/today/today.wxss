@@ -1,0 +1,97 @@
+.summary {
+  display: grid;
+  grid-template-columns: 252rpx 1fr;
+  gap: 32rpx;
+  align-items: center;
+  margin-top: 32rpx;
+}
+
+.ring {
+  width: 252rpx;
+  height: 252rpx;
+  border-radius: 50%;
+  background: #e2f7ec;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.ring-number {
+  color: #13905a;
+  font-size: 56rpx;
+  font-weight: 800;
+}
+
+.ring-label {
+  color: #13905a;
+  font-size: 24rpx;
+  font-weight: 700;
+}
+
+.stat-list {
+  display: flex;
+  flex-direction: column;
+  gap: 22rpx;
+}
+
+.strong {
+  font-weight: 800;
+}
+
+.blue-text {
+  color: #356be6;
+}
+
+.macro {
+  margin-top: 24rpx;
+}
+
+.track {
+  height: 16rpx;
+  margin-top: 12rpx;
+  border-radius: 999rpx;
+  background: #edf2ee;
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  border-radius: 999rpx;
+}
+
+.fill.green {
+  background: #13905a;
+}
+
+.fill.amber {
+  background: #f4a629;
+}
+
+.fill.red {
+  background: #df554d;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20rpx;
+}
+
+.record {
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #edf2ee;
+}
+
+.record:last-child {
+  border-bottom: 0;
+}
+
+.record-title {
+  font-weight: 700;
+}
+
+.small {
+  margin-top: 6rpx;
+  font-size: 24rpx;
+}

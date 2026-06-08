@@ -1,0 +1,93 @@
+page {
+  background: #f3f7f1;
+  color: #142018;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+.page {
+  min-height: 100vh;
+  padding: 32rpx;
+  box-sizing: border-box;
+}
+
+.hero-title {
+  margin: 0;
+  font-size: 52rpx;
+  line-height: 1.2;
+  font-weight: 800;
+}
+
+.copy {
+  margin-top: 16rpx;
+  color: #6d7a72;
+  font-size: 28rpx;
+  line-height: 1.55;
+}
+
+.card {
+  margin-top: 28rpx;
+  padding: 32rpx;
+  border-radius: 16rpx;
+  background: #fff;
+  box-shadow: 0 16rpx 44rpx rgba(31, 73, 42, 0.08);
+  box-sizing: border-box;
+}
+
+.card-title {
+  font-size: 32rpx;
+  font-weight: 700;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24rpx;
+}
+
+.field {
+  padding: 18rpx 0;
+  border-bottom: 1rpx solid #edf2ee;
+  font-size: 28rpx;
+}
+
+.field:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.value,
+.muted {
+  color: #6d7a72;
+}
+
+.pill {
+  display: inline-flex;
+  padding: 10rpx 18rpx;
+  border-radius: 999rpx;
+  background: #e2f7ec;
+  color: #13905a;
+  font-size: 24rpx;
+  font-weight: 700;
+}
+
+.pill.blue {
+  background: #eaf0ff;
+  color: #356be6;
+}
+
+.button {
+  margin-top: 28rpx;
+  height: 92rpx;
+  line-height: 92rpx;
+  border-radius: 16rpx;
+  background: #13905a;
+  color: #fff;
+  font-size: 30rpx;
+  font-weight: 700;
+}
+
+.button.secondary {
+  background: #e5ece6;
+  color: #142018;
+}

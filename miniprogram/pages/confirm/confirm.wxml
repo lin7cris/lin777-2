@@ -1,0 +1,34 @@
+<view class="page">
+  <view class="card">
+    <view class="row">
+      <text class="card-title">AI 已识别 {{foods.length}} 个饮食条目</text>
+      <text class="pill">置信度 {{confidenceText}}</text>
+    </view>
+    <view class="copy">请确认份量，系统会按你的身体信息估算运动消耗。</view>
+  </view>
+
+  <view class="card">
+    <text class="card-title">饮食摄入</text>
+    <view class="parse-item row" wx:for="{{foods}}" wx:key="name">
+      <view>
+        <view class="item-title">{{item.name}}</view>
+        <view class="muted small">{{item.amount}} · P {{item.protein}}g · C {{item.carbs}}g · F {{item.fat}}g</view>
+      </view>
+      <text class="strong">{{item.calories}} kcal</text>
+    </view>
+  </view>
+
+  <view class="card">
+    <text class="card-title">运动消耗</text>
+    <view class="parse-item row" wx:for="{{exercises}}" wx:key="name">
+      <view>
+        <view class="item-title">{{item.name}}</view>
+        <view class="muted small">{{item.duration}} 分钟 · {{item.intensity}}</view>
+      </view>
+      <text class="strong blue-text">-{{item.calories}} kcal</text>
+    </view>
+  </view>
+
+  <button class="button" bindtap="confirmRecord">确认并写入今日记录</button>
+  <button class="button secondary" bindtap="adjustRecord">调整份量</button>
+</view>

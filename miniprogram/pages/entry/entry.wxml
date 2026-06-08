@@ -1,0 +1,23 @@
+<view class="page">
+  <text class="hero-title">一句话交给 AI 拆分</text>
+  <view class="copy">支持混合输入饮食和运动，确认前不会直接入账。</view>
+
+  <view class="card">
+    <textarea class="textarea" value="{{text}}" bindinput="onInput" maxlength="-1" />
+    <view class="chips">
+      <text class="pill">饮食</text>
+      <text class="pill blue">运动</text>
+      <text class="pill amber">待 AI 估算</text>
+    </view>
+  </view>
+
+  <view class="card">
+    <text class="card-title">常用模板</text>
+    <view class="sample">早餐：燕麦一碗、鸡蛋两个、黑咖啡一杯</view>
+    <view class="sample">力量训练 45 分钟，主要练胸和背</view>
+    <view class="sample">晚餐火锅，牛肉约 200g，青菜很多</view>
+  </view>
+
+  <button class="button" loading="{{loading}}" bindtap="parseText">让 AI 解析</button>
+  <button class="button secondary" bindtap="backToday">手动添加条目</button>
+</view>

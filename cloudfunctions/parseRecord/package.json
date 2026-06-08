@@ -1,0 +1,9 @@
+{
+  "name": "parse-record",
+  "version": "1.0.0",
+  "description": "Parse natural language food and exercise records for AI热量记录助手",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "latest"
+  }
+}

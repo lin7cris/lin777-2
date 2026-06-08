@@ -1,0 +1,43 @@
+<view class="page">
+  <view class="card">
+    <view class="row">
+      <text class="card-title">6 月 8 日</text>
+      <text class="pill blue">减脂日</text>
+    </view>
+    <view class="summary">
+      <view class="ring">
+        <text class="ring-number">1280</text>
+        <text class="ring-label">kcal 净摄入</text>
+      </view>
+      <view class="stat-list">
+        <view class="row"><text class="muted">摄入</text><text class="strong">1680 kcal</text></view>
+        <view class="row"><text class="muted">运动</text><text class="strong blue-text">-400 kcal</text></view>
+        <view class="row"><text class="muted">剩余预算</text><text class="strong">260 kcal</text></view>
+      </view>
+    </view>
+  </view>
+
+  <view class="card">
+    <text class="card-title">营养素进度</text>
+    <view class="macro" wx:for="{{macros}}" wx:key="name">
+      <view class="row"><text>{{item.name}}</text><text class="value">{{item.value}}</text></view>
+      <view class="track"><view class="fill {{item.color}}" style="width: {{item.percent}}%;"></view></view>
+    </view>
+  </view>
+
+  <view class="actions">
+    <button class="button" bindtap="goEntry">记录饮食</button>
+    <button class="button secondary" bindtap="goEntry">记录运动</button>
+  </view>
+
+  <view class="card">
+    <text class="card-title">今日记录</text>
+    <view class="record row" wx:for="{{records}}" wx:key="title">
+      <view>
+        <view class="record-title">{{item.title}}</view>
+        <view class="muted small">{{item.desc}}</view>
+      </view>
+      <text class="strong {{item.type === 'exercise' ? 'blue-text' : ''}}">{{item.calories}}</text>
+    </view>
+  </view>
+</view>

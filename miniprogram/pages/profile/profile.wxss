@@ -1,0 +1,18 @@
+.profile-card {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+}
+
+.avatar {
+  width: 104rpx;
+  height: 104rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #13905a, #78d49b);
+  color: #fff;
+  font-size: 38rpx;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
