@@ -15,7 +15,7 @@
 1. 打开微信开发者工具。
 2. 选择「导入项目」。
 3. 项目目录选择本目录。
-4. 将 `project.config.json` 中的 `appid` 从 `touristappid` 替换为你的真实 AppID。
+4. `project.config.json` 已配置当前 AppID，如需切换账号或小程序，请替换其中的 `appid`。
 5. 在 `miniprogram/utils/config.js` 中填写云环境 ID。
 6. 上传并部署 `cloudfunctions/parseRecord` 云函数。
 
