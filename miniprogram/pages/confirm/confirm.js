@@ -12,12 +12,14 @@ const fallback = {
     { name: '跑步', duration: 30, intensity: '中等强度', calories: 310 }
   ]
 }
+const { STORAGE_KEYS, buildRecord } = require('../../utils/records')
 
 Page({
   data: {
     confidenceText: '86%',
     foods: [],
-    exercises: []
+    exercises: [],
+    payload: fallback
   },
 
   onLoad(options) {
@@ -33,11 +35,21 @@ Page({
     this.setData({
       confidenceText: `${Math.round((payload.confidence || 0.86) * 100)}%`,
       foods: payload.foods || fallback.foods,
-      exercises: payload.exercises || fallback.exercises
+      exercises: payload.exercises || fallback.exercises,
+      payload
     })
   },
 
   confirmRecord() {
+    const records = wx.getStorageSync(STORAGE_KEYS.records) || []
+    const record = buildRecord({
+      ...this.data.payload,
+      foods: this.data.foods,
+      exercises: this.data.exercises
+    })
+
+    wx.setStorageSync(STORAGE_KEYS.records, [record, ...records])
+
     wx.showToast({
       title: '已写入今日记录',
       icon: 'success'

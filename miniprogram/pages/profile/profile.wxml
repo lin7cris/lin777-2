@@ -3,17 +3,17 @@
     <view class="avatar">热</view>
     <view>
       <view class="card-title">AI热量记录助手用户</view>
-      <view class="copy">女 · 28 岁 · 165cm · 62kg</view>
+      <view class="copy">{{genderText}} · {{profile.age}} 岁 · {{profile.height}}cm · {{profile.weight}}kg</view>
     </view>
   </view>
 
   <view class="card">
     <text class="card-title">目标与推荐</text>
-    <view class="row field"><text>当前目标</text><text class="value">减脂</text></view>
-    <view class="row field"><text>目标体重</text><text class="value">56 kg</text></view>
-    <view class="row field"><text>活动强度</text><text class="value">轻度活动</text></view>
-    <view class="row field"><text>推荐摄入</text><text class="value">1540 kcal</text></view>
-    <view class="row field"><text>蛋白质范围</text><text class="value">90-110 g</text></view>
+    <view class="row field"><text>当前目标</text><text class="value">{{goalText}}</text></view>
+    <view class="row field"><text>目标体重</text><text class="value">{{profile.targetWeight}} kg</text></view>
+    <view class="row field"><text>活动强度</text><text class="value">{{activityText}}</text></view>
+    <view class="row field"><text>推荐摄入</text><text class="value">{{profile.targetCalories}} kcal</text></view>
+    <view class="row field"><text>蛋白质范围</text><text class="value">{{profile.macros.protein}}</text></view>
   </view>
 
   <view class="card">

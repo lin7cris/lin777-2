@@ -2,7 +2,7 @@
   <view class="card">
     <view class="row">
       <text class="card-title">近 7 天净摄入</text>
-      <text class="pill blue">平均 1460 kcal</text>
+      <text class="pill blue">{{averageText}}</text>
     </view>
     <view class="bars">
       <view class="bar-col" wx:for="{{bars}}" wx:key="day">

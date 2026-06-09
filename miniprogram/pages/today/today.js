@@ -1,15 +1,52 @@
+const {
+  STORAGE_KEYS,
+  DEFAULT_PROFILE,
+  formatDateKey,
+  summarizeDay
+} = require('../../utils/records')
+
 Page({
   data: {
-    macros: [
-      { name: '蛋白质', value: '72 / 100g', percent: 72, color: 'green' },
-      { name: '碳水', value: '146 / 180g', percent: 81, color: 'amber' },
-      { name: '脂肪', value: '38 / 50g', percent: 76, color: 'red' }
-    ],
-    records: [
-      { title: '早餐', desc: '鸡蛋、牛奶、包子', calories: '520 kcal' },
-      { title: '午餐', desc: '米饭、宫保鸡丁、青菜', calories: '960 kcal' },
-      { title: '运动', desc: '跑步 30 分钟', calories: '-400 kcal', type: 'exercise' }
-    ]
+    dateTitle: '',
+    goalLabel: '减脂日',
+    foodCalories: 0,
+    exerciseCalories: 0,
+    netCalories: 0,
+    remainingCalories: 0,
+    macros: [],
+    records: []
+  },
+
+  onShow() {
+    const records = wx.getStorageSync(STORAGE_KEYS.records) || []
+    const profile = wx.getStorageSync(STORAGE_KEYS.profile) || DEFAULT_PROFILE
+    const todayKey = formatDateKey(new Date())
+    const summary = summarizeDay(records, todayKey, {
+      targetCalories: profile.targetCalories,
+      macroTargets: profile.macros
+    })
+
+    this.setData({
+      dateTitle: this.formatDateTitle(todayKey),
+      goalLabel: this.goalLabel(profile.goal),
+      foodCalories: summary.foodCalories,
+      exerciseCalories: summary.exerciseCalories,
+      netCalories: summary.netCalories,
+      remainingCalories: summary.remainingCalories,
+      macros: summary.macros,
+      records: summary.records
+    })
+  },
+
+  formatDateTitle(dateKey) {
+    const parts = dateKey.split('-')
+    return `${Number(parts[1])} 月 ${Number(parts[2])} 日`
+  },
+
+  goalLabel(goal) {
+    if (goal === 'muscle_gain') return '增肌日'
+    if (goal === 'maintain') return '维持日'
+    return '减脂日'
   },
 
   goEntry() {

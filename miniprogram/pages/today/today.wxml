@@ -1,18 +1,18 @@
 <view class="page">
   <view class="card">
     <view class="row">
-      <text class="card-title">6 月 8 日</text>
-      <text class="pill blue">减脂日</text>
+      <text class="card-title">{{dateTitle}}</text>
+      <text class="pill blue">{{goalLabel}}</text>
     </view>
     <view class="summary">
       <view class="ring">
-        <text class="ring-number">1280</text>
+        <text class="ring-number">{{netCalories}}</text>
         <text class="ring-label">kcal 净摄入</text>
       </view>
       <view class="stat-list">
-        <view class="row"><text class="muted">摄入</text><text class="strong">1680 kcal</text></view>
-        <view class="row"><text class="muted">运动</text><text class="strong blue-text">-400 kcal</text></view>
-        <view class="row"><text class="muted">剩余预算</text><text class="strong">260 kcal</text></view>
+        <view class="row"><text class="muted">摄入</text><text class="strong">{{foodCalories}} kcal</text></view>
+        <view class="row"><text class="muted">运动</text><text class="strong blue-text">-{{exerciseCalories}} kcal</text></view>
+        <view class="row"><text class="muted">剩余预算</text><text class="strong">{{remainingCalories}} kcal</text></view>
       </view>
     </view>
   </view>
@@ -32,7 +32,8 @@
 
   <view class="card">
     <text class="card-title">今日记录</text>
-    <view class="record row" wx:for="{{records}}" wx:key="title">
+    <view wx:if="{{!records.length}}" class="muted small">还没有记录，去写下今天吃了什么或做了什么运动。</view>
+    <view class="record row" wx:for="{{records}}" wx:key="desc">
       <view>
         <view class="record-title">{{item.title}}</view>
         <view class="muted small">{{item.desc}}</view>

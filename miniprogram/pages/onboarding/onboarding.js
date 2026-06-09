@@ -4,6 +4,7 @@ const {
   calculateTargetCalories,
   calculateMacroRange
 } = require('../../utils/calorie')
+const { STORAGE_KEYS } = require('../../utils/records')
 
 Page({
   data: {
@@ -40,6 +41,11 @@ Page({
   },
 
   startRecord() {
+    wx.setStorageSync(STORAGE_KEYS.profile, {
+      ...this.data.profile,
+      ...this.data.result
+    })
+
     wx.switchTab({
       url: '/pages/today/today'
     })
