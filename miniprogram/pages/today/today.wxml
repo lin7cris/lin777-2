@@ -10,6 +10,8 @@
         <text class="ring-label">kcal 净摄入</text>
       </view>
       <view class="stat-list">
+        <!-- 推荐摄入来自用户信息模块计算结果。 -->
+        <view class="row"><text class="muted">推荐摄入</text><text class="strong">{{targetCalories}} kcal</text></view>
         <view class="row"><text class="muted">摄入</text><text class="strong">{{foodCalories}} kcal</text></view>
         <view class="row"><text class="muted">运动</text><text class="strong blue-text">-{{exerciseCalories}} kcal</text></view>
         <view class="row"><text class="muted">剩余预算</text><text class="strong">{{remainingCalories}} kcal</text></view>

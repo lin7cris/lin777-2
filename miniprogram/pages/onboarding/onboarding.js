@@ -1,9 +1,4 @@
-const {
-  calculateBmr,
-  calculateTdee,
-  calculateTargetCalories,
-  calculateMacroRange
-} = require('../../utils/calorie')
+const { buildNutritionPlan } = require('../../utils/calorie')
 const { STORAGE_KEYS } = require('../../utils/records')
 
 Page({
@@ -30,17 +25,15 @@ Page({
   },
 
   onLoad() {
-    const bmr = calculateBmr(this.data.profile)
-    const tdee = calculateTdee(bmr, this.data.profile.activityLevel)
-    const targetCalories = calculateTargetCalories(tdee, this.data.profile.goal)
-    const macros = calculateMacroRange(this.data.profile.weight, targetCalories)
-
+    // 首次建档使用同一套推荐计算，保证和“我的”页保存结果一致。
+    const result = buildNutritionPlan(this.data.profile)
     this.setData({
-      result: { bmr, tdee, targetCalories, macros }
+      result
     })
   },
 
   startRecord() {
+    // 保存首屏默认资料，用户之后可在“我的”页编辑并同步云端。
     wx.setStorageSync(STORAGE_KEYS.profile, {
       ...this.data.profile,
       ...this.data.result

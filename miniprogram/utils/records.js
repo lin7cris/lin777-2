@@ -11,11 +11,13 @@ const DEFAULT_PROFILE = {
   targetWeight: 56,
   activityLevel: 'light',
   goal: 'fat_loss',
-  targetCalories: 1540,
+  bmr: 1350,
+  tdee: 1856,
+  targetCalories: 1506,
   macros: {
-    protein: '90-110g',
-    carbs: '154-193g',
-    fat: '38-55g'
+    protein: '93-112g',
+    carbs: '151-188g',
+    fat: '37-54g'
   }
 }
 

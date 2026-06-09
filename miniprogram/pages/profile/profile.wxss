@@ -16,3 +16,19 @@
   align-items: center;
   justify-content: center;
 }
+
+/* 表单输入统一右对齐，和普通 value 文本保持同一视觉节奏。 */
+.input-value,
+.picker-value {
+  min-width: 220rpx;
+  color: #13905a;
+  font-size: 28rpx;
+  font-weight: 700;
+  text-align: right;
+}
+
+/* 微信 input 默认高度偏紧，这里固定高度避免字段编辑时行高跳动。 */
+.input-value {
+  height: 48rpx;
+  line-height: 48rpx;
+}
