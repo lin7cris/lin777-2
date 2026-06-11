@@ -1,8 +1,8 @@
-const { AiProviderError } = require('../errors')
-const { createDeepSeekProvider } = require('./deepseek')
-const openai = require('./openai')
-const gemini = require('./gemini')
-const claude = require('./claude')
+const { AiProviderError } = require('./errors')
+const { createDeepSeekProvider } = require('./provider-deepseek')
+const openai = require('./provider-openai')
+const gemini = require('./provider-gemini')
+const claude = require('./provider-claude')
 
 function getProvider(name, overrides) {
   const providerName = String(name || 'deepseek').trim().toLowerCase()

@@ -1,12 +1,13 @@
 const assert = require('assert')
 
-const { createDeepSeekProvider } = require('../cloudfunctions/parseDailyInput/providers/deepseek')
+const { createDeepSeekProvider } = require('../cloudfunctions/parseDailyInput/provider-deepseek')
 
 async function run() {
   let capturedRequest
   const provider = createDeepSeekProvider({
     env: {
-      DEEPSEEK_API_KEY: 'test-key'
+      DEEPSEEK_API_KEY: 'test-key',
+      DEEPSEEK_MODEL: 'deepseek-v4-flash'
     },
     requestJson: async (request) => {
       capturedRequest = request
@@ -36,6 +37,19 @@ async function run() {
   assert.match(capturedRequest.body.messages[1].content, /中午吃了一碗牛肉面/)
   assert.match(capturedRequest.body.messages[1].content, /"weight":75/)
   assert.strictEqual(result.foods[0].name, '牛肉面')
+
+  const customModelProvider = createDeepSeekProvider({
+    env: {
+      DEEPSEEK_API_KEY: 'test-key',
+      DEEPSEEK_MODEL: 'custom-model'
+    },
+    requestJson: async (request) => {
+      assert.strictEqual(request.body.model, 'custom-model')
+      return { choices: [{ message: { content: '{"foods":[],"exercises":[]}' } }] }
+    }
+  })
+  assert.strictEqual(customModelProvider.model, 'custom-model')
+  await customModelProvider.parseDailyInput({ text: '测试', profile: {} })
 
   const missingKey = createDeepSeekProvider({ env: {}, requestJson: async () => ({}) })
   await assert.rejects(

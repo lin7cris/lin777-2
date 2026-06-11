@@ -1,9 +1,9 @@
-const { AiProviderError } = require('../errors')
-const { requestJson: defaultRequestJson } = require('../http')
-const { buildMessages } = require('../prompt')
+const { AiProviderError } = require('./errors')
+const { requestJson: defaultRequestJson } = require('./http')
+const { buildMessages } = require('./prompt')
 
 const PROVIDER_NAME = 'deepseek'
-const MODEL = 'deepseek-v4-flash'
+const DEFAULT_MODEL = 'deepseek-v4-flash'
 
 function parseModelContent(response) {
   const content = response &&
@@ -32,10 +32,11 @@ function createDeepSeekProvider(options) {
   const config = options || {}
   const env = config.env || process.env
   const requestJson = config.requestJson || defaultRequestJson
+  const model = String(env.DEEPSEEK_MODEL || DEFAULT_MODEL).trim() || DEFAULT_MODEL
 
   return {
     name: PROVIDER_NAME,
-    model: MODEL,
+    model,
 
     async parseDailyInput(input) {
       const apiKey = String(env.DEEPSEEK_API_KEY || '').trim()
@@ -51,7 +52,7 @@ function createDeepSeekProvider(options) {
           Authorization: `Bearer ${apiKey}`
         },
         body: {
-          model: MODEL,
+          model,
           messages: buildMessages(input.text, input.profile),
           response_format: { type: 'json_object' },
           temperature: 0.1,

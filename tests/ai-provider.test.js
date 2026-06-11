@@ -1,7 +1,7 @@
 const assert = require('assert')
 
 const { normalizeAiResult } = require('../cloudfunctions/parseDailyInput/schema')
-const { getProvider } = require('../cloudfunctions/parseDailyInput/providers')
+const { getProvider } = require('../cloudfunctions/parseDailyInput/provider-factory')
 
 const normalized = normalizeAiResult('早餐吃了鸡蛋，晚上跑步30分钟', {
   confidence: '0.82',

@@ -1,5 +1,5 @@
 const { friendlyError, AiProviderError } = require('./errors')
-const { getProvider: defaultGetProvider } = require('./providers')
+const { getProvider: defaultGetProvider } = require('./provider-factory')
 const { normalizeAiResult } = require('./schema')
 
 function emptySummary() {

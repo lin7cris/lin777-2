@@ -1,4 +1,4 @@
-const { AiProviderError } = require('../errors')
+const { AiProviderError } = require('./errors')
 
 function createReservedProvider(name) {
   return {
