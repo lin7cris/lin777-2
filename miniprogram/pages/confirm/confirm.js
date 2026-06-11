@@ -13,17 +13,19 @@ const fallback = {
   ]
 }
 const { STORAGE_KEYS, buildRecord } = require('../../utils/records')
+const { normalizeParsedDailyInput } = require('../../utils/dailyInput')
 
 Page({
   data: {
     confidenceText: '86%',
+    sourceText: '',
     foods: [],
     exercises: [],
     payload: fallback
   },
 
   onLoad(options) {
-    let payload = fallback
+    let payload = wx.getStorageSync(STORAGE_KEYS.pendingParse) || fallback
     if (options.payload) {
       try {
         payload = JSON.parse(decodeURIComponent(options.payload))
@@ -32,10 +34,13 @@ Page({
       }
     }
 
+    payload = normalizeParsedDailyInput(payload)
+
     this.setData({
       confidenceText: `${Math.round((payload.confidence || 0.86) * 100)}%`,
-      foods: payload.foods || fallback.foods,
-      exercises: payload.exercises || fallback.exercises,
+      sourceText: payload.sourceText,
+      foods: payload.foods,
+      exercises: payload.exercises,
       payload
     })
   },
@@ -63,5 +68,24 @@ Page({
 
   adjustRecord() {
     wx.navigateBack()
+  },
+
+  onFoodInput(event) {
+    this.updateParsedItem('foods', event)
+  },
+
+  onExerciseInput(event) {
+    this.updateParsedItem('exercises', event)
+  },
+
+  updateParsedItem(listName, event) {
+    const { index, field } = event.currentTarget.dataset
+    const numericFields = ['calories', 'protein', 'carbs', 'fat', 'duration']
+    const rawValue = event.detail.value
+    const value = numericFields.indexOf(field) >= 0 ? Number(rawValue) || 0 : rawValue
+
+    this.setData({
+      [`${listName}[${index}].${field}`]: value
+    })
   }
 })

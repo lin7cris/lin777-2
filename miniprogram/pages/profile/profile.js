@@ -1,5 +1,6 @@
 const { STORAGE_KEYS, DEFAULT_PROFILE } = require('../../utils/records')
 const { buildNutritionPlan } = require('../../utils/calorie')
+const { buildProfileForSave } = require('../../utils/profileForm')
 
 const genderOptions = [
   { label: '女', value: 'female' },
@@ -22,6 +23,7 @@ const goalOptions = [
 Page({
   data: {
     saving: false,
+    dirty: false,
     profile: DEFAULT_PROFILE,
     form: DEFAULT_PROFILE,
     genderOptions,
@@ -53,14 +55,15 @@ Page({
     if (!app.globalData.cloudReady) return
 
     try {
-      const result = await wx.cloud.database()
-        .collection('users')
-        .where({ _openid: '{openid}' })
-        .limit(1)
-        .get()
+      const result = await wx.cloud.callFunction({
+        name: 'userProfile',
+        data: { action: 'get' }
+      })
+      const profile = result.result && result.result.profile
 
-      if (result.data && result.data.length) {
-        this.applyProfile(result.data[0])
+      // 如果用户已经开始编辑，避免慢返回的云端旧数据覆盖输入框。
+      if (!this.data.dirty && profile) {
+        this.applyProfile(profile)
       }
     } catch (error) {
       console.warn('load cloud user profile failed', error)
@@ -97,7 +100,8 @@ Page({
   onNumberInput(event) {
     const field = event.currentTarget.dataset.field
     this.setData({
-      [`form.${field}`]: Number(event.detail.value)
+      dirty: true,
+      [`form.${field}`]: event.detail.value
     })
   },
 
@@ -114,6 +118,7 @@ Page({
     if (!config) return
 
     this.setData({
+      dirty: true,
       [`form.${field}`]: config.options[index].value,
       [config.indexKey]: index
     })
@@ -121,7 +126,7 @@ Page({
 
   // 保存用户信息：计算推荐结果，写入本地缓存，并同步到云数据库 users 集合。
   async saveProfile() {
-    const profile = this.buildProfileForSave()
+    const profile = buildProfileForSave(this.data.form)
     if (!this.validateProfile(profile)) return
 
     const plan = buildNutritionPlan(profile)
@@ -132,10 +137,11 @@ Page({
 
     this.setData({ saving: true })
     wx.setStorageSync(STORAGE_KEYS.profile, savedProfile)
+    this.applyProfile(savedProfile)
 
     try {
       await this.saveProfileToCloud(savedProfile)
-      this.applyProfile(savedProfile)
+      this.setData({ dirty: false })
       wx.showToast({
         title: '已保存',
         icon: 'success'
@@ -143,25 +149,11 @@ Page({
     } catch (error) {
       console.error('save cloud user profile failed', error)
       wx.showToast({
-        title: '云端保存失败',
+        title: '已本地保存',
         icon: 'none'
       })
     } finally {
       this.setData({ saving: false })
-    }
-  },
-
-  // 将表单里的字符串数字转为数值，避免计算和云端存储出现类型漂移。
-  buildProfileForSave() {
-    const form = this.data.form
-    return {
-      gender: form.gender,
-      age: Number(form.age),
-      height: Number(form.height),
-      weight: Number(form.weight),
-      targetWeight: Number(form.targetWeight),
-      activityLevel: form.activityLevel,
-      goal: form.goal
     }
   },
 
@@ -185,29 +177,18 @@ Page({
     return valid
   },
 
-  // 使用 _openid 查询当前用户记录：存在则更新，不存在则新增。
+  // 通过云函数按当前 openid 同步 users 记录，避免客户端权限差异影响保存。
   async saveProfileToCloud(profile) {
     const app = getApp()
     if (!app.globalData.cloudReady) {
       throw new Error('cloud is not initialized')
     }
 
-    const db = wx.cloud.database()
-    const users = db.collection('users')
-    const result = await users.where({ _openid: '{openid}' }).limit(1).get()
-    const data = {
-      ...profile,
-      updatedAt: db.serverDate()
-    }
-
-    if (result.data && result.data.length) {
-      return users.doc(result.data[0]._id).update({ data })
-    }
-
-    return users.add({
+    return wx.cloud.callFunction({
+      name: 'userProfile',
       data: {
-        ...data,
-        createdAt: db.serverDate()
+        action: 'save',
+        profile
       }
     })
   },

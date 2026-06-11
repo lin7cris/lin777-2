@@ -43,4 +43,16 @@
       <text class="strong {{item.type === 'exercise' ? 'blue-text' : ''}}">{{item.calories}}</text>
     </view>
   </view>
+
+  <view class="input-dock">
+    <textarea
+      class="daily-input"
+      value="{{dailyInput}}"
+      placeholder="例如：早上吃了一个鸡蛋和一杯牛奶，晚上跑步30分钟"
+      maxlength="500"
+      auto-height
+      bindinput="onDailyInput"
+    />
+    <button class="parse-button" loading="{{parsing}}" disabled="{{parsing}}" bindtap="parseDailyInput">AI解析</button>
+  </view>
 </view>

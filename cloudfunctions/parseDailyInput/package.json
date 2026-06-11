@@ -1,0 +1,9 @@
+{
+  "name": "parse-daily-input",
+  "version": "1.0.0",
+  "description": "Provider-based AI parser for daily food and exercise input",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "latest"
+  }
+}

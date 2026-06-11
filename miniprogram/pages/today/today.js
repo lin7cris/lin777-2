@@ -4,6 +4,7 @@ const {
   formatDateKey,
   summarizeDay
 } = require('../../utils/records')
+const { normalizeParsedDailyInput } = require('../../utils/dailyInput')
 
 Page({
   data: {
@@ -15,7 +16,9 @@ Page({
     netCalories: 0,
     remainingCalories: 0,
     macros: [],
-    records: []
+    records: [],
+    dailyInput: '',
+    parsing: false
   },
 
   onShow() {
@@ -55,6 +58,73 @@ Page({
   goEntry() {
     wx.navigateTo({
       url: '/pages/entry/entry'
+    })
+  },
+
+  onDailyInput(event) {
+    this.setData({
+      dailyInput: event.detail.value
+    })
+  },
+
+  parseDailyInput() {
+    const text = this.data.dailyInput.trim()
+    const profile = wx.getStorageSync(STORAGE_KEYS.profile) || DEFAULT_PROFILE
+    const app = getApp()
+
+    if (!text) {
+      wx.showToast({
+        title: '先写点内容',
+        icon: 'none'
+      })
+      return
+    }
+
+    if (!app.globalData.cloudReady) {
+      wx.showToast({
+        title: '云开发未初始化',
+        icon: 'none'
+      })
+      return
+    }
+
+    this.setData({ parsing: true })
+
+    wx.cloud.callFunction({
+      name: 'parseDailyInput',
+      data: { text, profile },
+      success: (res) => {
+        const result = res.result || {}
+        if (result.success === false) {
+          wx.showToast({
+            title: result.error && result.error.message
+              ? result.error.message
+              : 'AI解析失败',
+            icon: 'none'
+          })
+          return
+        }
+
+        // 统一清洗云函数返回结构，确认页只处理稳定字段。
+        const payload = normalizeParsedDailyInput(result)
+        wx.setStorageSync(STORAGE_KEYS.pendingParse, payload)
+        this.setData({
+          dailyInput: ''
+        })
+        wx.navigateTo({
+          url: '/pages/confirm/confirm'
+        })
+      },
+      fail: (error) => {
+        console.error('parse daily input failed', error)
+        wx.showToast({
+          title: 'AI解析失败',
+          icon: 'none'
+        })
+      },
+      complete: () => {
+        this.setData({ parsing: false })
+      }
     })
   }
 })

@@ -1,6 +1,7 @@
 const STORAGE_KEYS = {
   profile: 'calorieProfile',
-  records: 'calorieRecords'
+  records: 'calorieRecords',
+  pendingParse: 'pendingDailyParse'
 }
 
 const DEFAULT_PROFILE = {

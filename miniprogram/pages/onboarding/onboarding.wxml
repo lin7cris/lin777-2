@@ -2,14 +2,59 @@
   <text class="hero-title">先建立你的热量基准</text>
   <view class="copy">填写身体信息后，系统会计算 BMR、TDEE 以及三大营养素建议。</view>
 
-  <view class="card">
-    <view class="row field"><text>性别</text><text class="value">女</text></view>
-    <view class="row field"><text>年龄</text><text class="value">28 岁</text></view>
-    <view class="row field"><text>身高</text><text class="value">165 cm</text></view>
-    <view class="row field"><text>当前体重</text><text class="value">62 kg</text></view>
-    <view class="row field"><text>目标体重</text><text class="value">56 kg</text></view>
-    <view class="row field"><text>活动强度</text><text class="value">轻度活动</text></view>
-    <view class="row field"><text>目标</text><text class="value">减脂</text></view>
+  <view class="card form-card">
+    <view class="row field">
+      <text>性别</text>
+      <picker class="picker-value" range="{{genderOptions}}" range-key="label" value="{{genderIndex}}" data-field="gender" bindchange="onPickerChange">
+        <text>{{genderOptions[genderIndex].label}}</text>
+      </picker>
+    </view>
+
+    <view class="row field">
+      <text>年龄</text>
+      <view class="input-group">
+        <input class="input-value" type="number" value="{{form.age}}" data-field="age" bindinput="onNumberInput" />
+        <text class="unit">岁</text>
+      </view>
+    </view>
+
+    <view class="row field">
+      <text>身高</text>
+      <view class="input-group">
+        <input class="input-value" type="digit" value="{{form.height}}" data-field="height" bindinput="onNumberInput" />
+        <text class="unit">cm</text>
+      </view>
+    </view>
+
+    <view class="row field">
+      <text>当前体重</text>
+      <view class="input-group">
+        <input class="input-value" type="digit" value="{{form.weight}}" data-field="weight" bindinput="onNumberInput" />
+        <text class="unit">kg</text>
+      </view>
+    </view>
+
+    <view class="row field">
+      <text>目标体重</text>
+      <view class="input-group">
+        <input class="input-value" type="digit" value="{{form.targetWeight}}" data-field="targetWeight" bindinput="onNumberInput" />
+        <text class="unit">kg</text>
+      </view>
+    </view>
+
+    <view class="row field">
+      <text>活动强度</text>
+      <picker class="picker-value" range="{{activityOptions}}" range-key="label" value="{{activityIndex}}" data-field="activityLevel" bindchange="onPickerChange">
+        <text>{{activityOptions[activityIndex].label}}</text>
+      </picker>
+    </view>
+
+    <view class="row field">
+      <text>目标</text>
+      <picker class="picker-value" range="{{goalOptions}}" range-key="label" value="{{goalIndex}}" data-field="goal" bindchange="onPickerChange">
+        <text>{{goalOptions[goalIndex].label}}</text>
+      </picker>
+    </view>
   </view>
 
   <view class="card">
@@ -20,10 +65,10 @@
     <view class="metrics">
       <view><text class="metric-label">BMR</text><text class="metric-value">{{result.bmr}}</text></view>
       <view><text class="metric-label">TDEE</text><text class="metric-value">{{result.tdee}}</text></view>
-      <view><text class="metric-label">减脂摄入</text><text class="metric-value">{{result.targetCalories}}</text></view>
+      <view><text class="metric-label">推荐摄入</text><text class="metric-value">{{result.targetCalories}}</text></view>
     </view>
     <view class="copy">蛋白质 {{result.macros.protein}} · 碳水 {{result.macros.carbs}} · 脂肪 {{result.macros.fat}}</view>
   </view>
 
-  <button class="button" bindtap="startRecord">保存并开始记录</button>
+  <button class="button" loading="{{saving}}" disabled="{{saving}}" bindtap="startRecord">保存并开始记录</button>
 </view>

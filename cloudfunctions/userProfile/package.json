@@ -1,0 +1,9 @@
+{
+  "name": "user-profile",
+  "version": "1.0.0",
+  "description": "Read and save current user's profile",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "latest"
+  }
+}

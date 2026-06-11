@@ -5,6 +5,44 @@
   margin-top: 28rpx;
 }
 
+.form-card {
+  padding-top: 18rpx;
+  padding-bottom: 18rpx;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 220rpx;
+}
+
+.input-value {
+  width: 140rpx;
+  height: 48rpx;
+  color: #13905a;
+  font-size: 28rpx;
+  font-weight: 700;
+  line-height: 48rpx;
+  text-align: right;
+}
+
+.picker-value {
+  min-width: 220rpx;
+  color: #13905a;
+  font-size: 28rpx;
+  font-weight: 700;
+  text-align: right;
+}
+
+.unit {
+  width: 54rpx;
+  margin-left: 8rpx;
+  color: #6d7a72;
+  font-size: 26rpx;
+  text-align: left;
+}
+
 .metric-label {
   display: block;
   color: #6d7a72;
