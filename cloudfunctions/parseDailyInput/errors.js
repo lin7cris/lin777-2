@@ -1,8 +1,9 @@
 class AiProviderError extends Error {
-  constructor(code, message) {
+  constructor(code, message, details) {
     super(message)
     this.name = 'AiProviderError'
     this.code = code
+    this.statusCode = details && details.statusCode
   }
 }
 

@@ -9,7 +9,7 @@ async function run() {
     logger: { error() {} },
     getProvider: () => ({
       name: 'deepseek',
-      model: 'deepseek-v4-flash',
+      model: 'deepseek-chat',
       parseDailyInput: async (input) => {
         providerInput = input
         return {
@@ -26,16 +26,18 @@ async function run() {
   assert.deepStrictEqual(providerInput, { text: '吃了一个苹果', profile })
   assert.strictEqual(result.success, true)
   assert.strictEqual(result.provider, 'deepseek')
-  assert.strictEqual(result.model, 'deepseek-v4-flash')
+  assert.strictEqual(result.model, 'deepseek-chat')
   assert.strictEqual(result.foods[0].meal, '加餐')
   assert.strictEqual(result.summary.foodCalories, 95)
 
+  let loggedError
   const failedHandler = createParseDailyInputHandler({
-    logger: { error() {} },
+    logger: { error(message, details) { loggedError = { message, details } } },
     getProvider: () => ({
       parseDailyInput: async () => {
         const error = new Error('Authorization Bearer private-key')
         error.code = 'AI_HTTP_ERROR'
+        error.statusCode = 401
         throw error
       }
     })
@@ -45,6 +47,11 @@ async function run() {
   assert.strictEqual(failed.error.code, 'AI_HTTP_ERROR')
   assert.strictEqual(failed.error.message, 'AI 服务暂时不可用，请稍后重试')
   assert.ok(!JSON.stringify(failed).includes('private-key'))
+  assert.deepStrictEqual(loggedError, {
+    message: 'parseDailyInput failed',
+    details: { code: 'AI_HTTP_ERROR', statusCode: 401 }
+  })
+  assert.ok(!JSON.stringify(loggedError).includes('private-key'))
 
   const empty = await handler({ text: '  ', profile })
   assert.strictEqual(empty.success, false)

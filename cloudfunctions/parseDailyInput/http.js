@@ -27,7 +27,11 @@ function requestJson(options) {
       })
       response.on('end', () => {
         if (response.statusCode < 200 || response.statusCode >= 300) {
-          reject(new AiProviderError('AI_HTTP_ERROR', `DeepSeek HTTP ${response.statusCode}`))
+          reject(new AiProviderError(
+            'AI_HTTP_ERROR',
+            `DeepSeek HTTP ${response.statusCode}`,
+            { statusCode: response.statusCode }
+          ))
           return
         }
 

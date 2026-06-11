@@ -43,7 +43,8 @@ function createParseDailyInputHandler(options) {
       }
     } catch (error) {
       logger.error('parseDailyInput failed', {
-        code: error && error.code
+        code: error && error.code,
+        statusCode: error && error.statusCode
       })
 
       return {

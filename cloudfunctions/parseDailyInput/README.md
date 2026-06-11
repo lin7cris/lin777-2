@@ -6,9 +6,9 @@ The mini program calls this cloud function as its only AI parsing entry point.
 
 - `AI_PROVIDER`: provider name. Defaults to `deepseek`.
 - `DEEPSEEK_API_KEY`: required when `AI_PROVIDER=deepseek`.
-- `DEEPSEEK_MODEL`: optional. Defaults to `deepseek-v4-flash`.
+- `DEEPSEEK_MODEL`: optional. Defaults to `deepseek-chat`.
 - `DEEPSEEK_BASE_URL`: optional. Defaults to `https://api.deepseek.com`.
 
-The DeepSeek provider uses `deepseek-v4-flash`. API keys must be configured in the cloud-function environment and must never be added to mini-program code or committed files.
+The DeepSeek provider uses the official API model identifier `deepseek-chat`. API keys must be configured in the cloud-function environment and must never be added to mini-program code or committed files.
 
 Reserved provider names are `openai`, `gemini`, and `claude`. They currently return `PROVIDER_NOT_IMPLEMENTED` through the standard friendly error contract.

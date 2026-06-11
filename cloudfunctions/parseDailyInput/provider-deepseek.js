@@ -3,7 +3,7 @@ const { requestJson: defaultRequestJson } = require('./http')
 const { buildMessages } = require('./prompt')
 
 const PROVIDER_NAME = 'deepseek'
-const DEFAULT_MODEL = 'deepseek-v4-flash'
+const DEFAULT_MODEL = 'deepseek-chat'
 
 function parseModelContent(response) {
   const content = response &&
