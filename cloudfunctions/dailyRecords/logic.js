@@ -53,6 +53,7 @@ function normalizeItems(items, type, context) {
 function mergeDailyRecord(existing, input, context) {
   const current = existing || emptyDailyRecord(context.date)
   const sourceText = String(input && input.sourceText || '').trim()
+  const latestWeight = toNumber(input && input.weight) || toNumber(current.weight)
   const sourceTexts = Array.isArray(current.sourceTexts) ? current.sourceTexts.slice() : []
   if (sourceText) sourceTexts.push(sourceText)
 
@@ -66,6 +67,8 @@ function mergeDailyRecord(existing, input, context) {
     createdAt: current.createdAt || context.now,
     updatedAt: context.now
   }
+
+  if (latestWeight > 0) merged.weight = latestWeight
 
   return recalculateTotals(merged)
 }

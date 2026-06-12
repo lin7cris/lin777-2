@@ -1,25 +1,87 @@
-<view class="page">
-  <view class="card">
-    <view class="row">
-      <text class="card-title">近 7 天净摄入</text>
-      <text class="pill blue">{{averageText}}</text>
+<view class="page history-page">
+  <view class="history-header">
+    <view>
+      <view class="eyebrow">每日档案</view>
+      <view class="page-title">历史记录</view>
     </view>
-    <view class="bars">
-      <view class="bar-col" wx:for="{{bars}}" wx:key="day">
-        <view class="bar {{item.active ? 'active' : ''}}" style="height: {{item.height}}rpx;"></view>
-        <text>{{item.day}}</text>
-      </view>
-    </view>
+    <picker mode="date" value="{{selectedDate}}" bindchange="onDateChange">
+      <view class="date-picker">{{selectedDate}}</view>
+    </picker>
   </view>
 
-  <view class="card">
-    <text class="card-title">每日摘要</text>
-    <view class="record row" wx:for="{{days}}" wx:key="date">
-      <view>
-        <view class="record-title">{{item.date}}</view>
-        <view class="muted small">{{item.net}}</view>
-      </view>
-      <text class="strong {{item.warning ? 'red-text' : 'green-text'}}">{{item.delta}}</text>
-    </view>
+  <view class="loading-state" wx:if="{{loading}}">正在读取云端记录...</view>
+
+  <view class="empty-state" wx:elif="{{!hasData}}">
+    <view class="empty-mark">0</view>
+    <view class="empty-title">这一天还没有记录</view>
+    <view class="muted">选择其他日期，或回到今日页添加饮食和运动。</view>
   </view>
+
+  <block wx:else>
+    <view class="summary-band">
+      <view class="summary-item">
+        <text>摄入</text>
+        <text class="summary-number">{{record.totalCaloriesIn}}</text>
+        <text>kcal</text>
+      </view>
+      <view class="summary-item">
+        <text>运动</text>
+        <text class="summary-number">{{record.totalCaloriesOut}}</text>
+        <text>kcal</text>
+      </view>
+      <view class="summary-item">
+        <text>净摄入</text>
+        <text class="summary-number">{{record.netCalories}}</text>
+        <text>kcal</text>
+      </view>
+      <view class="summary-item">
+        <text>体重</text>
+        <text class="summary-number weight-value">{{record.weightText}}</text>
+      </view>
+    </view>
+
+    <view class="section-block">
+      <view class="section-title">饮食摄入</view>
+      <view class="item-row" wx:for="{{record.foods}}" wx:key="id">
+        <view class="item-copy">
+          <view class="item-name">{{item.name}}</view>
+          <view class="muted small">{{item.amountText}}</view>
+        </view>
+        <view class="item-actions">
+          <text class="calorie-in">{{item.caloriesText}}</text>
+          <button
+            class="delete-button {{deletingId ? 'delete-button-disabled' : ''}}"
+            disabled="{{deletingId}}"
+            data-item-type="food"
+            data-item-id="{{item.id}}"
+            data-title="{{item.name}}"
+            bindtap="deleteItem"
+          >删除</button>
+        </view>
+      </view>
+      <view class="inline-empty" wx:if="{{!record.foods.length}}">没有饮食记录</view>
+    </view>
+
+    <view class="section-block">
+      <view class="section-title">运动消耗</view>
+      <view class="item-row" wx:for="{{record.exercises}}" wx:key="id">
+        <view class="item-copy">
+          <view class="item-name">{{item.name}}</view>
+          <view class="muted small">{{item.durationText}}</view>
+        </view>
+        <view class="item-actions">
+          <text class="calorie-out">{{item.caloriesText}}</text>
+          <button
+            class="delete-button {{deletingId ? 'delete-button-disabled' : ''}}"
+            disabled="{{deletingId}}"
+            data-item-type="exercise"
+            data-item-id="{{item.id}}"
+            data-title="{{item.name}}"
+            bindtap="deleteItem"
+          >删除</button>
+        </view>
+      </view>
+      <view class="inline-empty" wx:if="{{!record.exercises.length}}">没有运动记录</view>
+    </view>
+  </block>
 </view>

@@ -200,6 +200,100 @@ function friendlyDate(dateKey, todayKey, yesterdayKey) {
   return `${Number(parts[1])} 月 ${Number(parts[2])} 日`
 }
 
+function displayDate(dateKey) {
+  const parts = String(dateKey || '').split('-')
+  if (parts.length !== 3) return dateKey || ''
+  return `${Number(parts[1])} 月 ${Number(parts[2])} 日`
+}
+
+function buildHistoryRecord(record) {
+  const data = record || {}
+  const foods = Array.isArray(data.foods) ? data.foods : []
+  const exercises = Array.isArray(data.exercises) ? data.exercises : []
+
+  return {
+    dateKey: data.date || '',
+    date: displayDate(data.date),
+    foods: foods.map((food) => ({
+      ...food,
+      amountText: food.amount || '适量',
+      caloriesText: `${toNumber(food.calories)} kcal`
+    })),
+    exercises: exercises.map((exercise) => ({
+      ...exercise,
+      durationText: `${toNumber(exercise.duration)} 分钟`,
+      caloriesText: `-${toNumber(exercise.calories)} kcal`
+    })),
+    totalCaloriesIn: toNumber(data.totalCaloriesIn),
+    totalCaloriesOut: toNumber(data.totalCaloriesOut),
+    netCalories: toNumber(data.netCalories),
+    weightText: toNumber(data.weight) > 0 ? `${toNumber(data.weight)} kg` : '--'
+  }
+}
+
+function dateRangeForDays(days, now) {
+  const count = days === 30 ? 30 : 7
+  const end = now || new Date()
+  return {
+    startDate: formatDateKey(addDays(end, -(count - 1))),
+    endDate: formatDateKey(end)
+  }
+}
+
+function chartMetric(recordsByDate, dayKeys, field, options) {
+  const config = options || {}
+  const values = dayKeys.map((dateKey) => {
+    const record = recordsByDate[dateKey]
+    const value = record ? toNumber(record[field]) : 0
+    return {
+      dateKey,
+      value,
+      hasValue: Boolean(record) && (field !== 'weight' || value > 0)
+    }
+  })
+  const usableValues = values.filter((item) => item.hasValue).map((item) => item.value)
+  const maxValue = Math.max(1, ...usableValues.map((value) => Math.abs(value)))
+  const labelStep = dayKeys.length === 30 ? 5 : 1
+
+  return {
+    hasData: usableValues.length > 0,
+    unit: config.unit || 'kcal',
+    points: values.map((item, index) => ({
+      ...item,
+      height: item.hasValue ? Math.max(12, Math.round(Math.abs(item.value) / maxValue * 180)) : 4,
+      label: displayDate(item.dateKey).replace(' 月 ', '/').replace(' 日', ''),
+      showLabel: index % labelStep === 0 || index === dayKeys.length - 1,
+      negative: item.value < 0,
+      valueText: item.hasValue ? `${item.value}${config.suffix || ''}` : '--'
+    }))
+  }
+}
+
+function buildTrendStats(records, days, now) {
+  const range = dateRangeForDays(days, now)
+  const dayKeys = []
+  const end = now || new Date()
+  const count = days === 30 ? 30 : 7
+  const recordsByDate = {}
+  ;(Array.isArray(records) ? records : []).forEach((record) => {
+    if (record && record.date) recordsByDate[record.date] = record
+  })
+
+  for (let offset = -(count - 1); offset <= 0; offset += 1) {
+    dayKeys.push(formatDateKey(addDays(end, offset)))
+  }
+
+  return {
+    ...range,
+    days: count,
+    hasData: Object.keys(recordsByDate).length > 0,
+    intake: chartMetric(recordsByDate, dayKeys, 'totalCaloriesIn'),
+    exercise: chartMetric(recordsByDate, dayKeys, 'totalCaloriesOut'),
+    net: chartMetric(recordsByDate, dayKeys, 'netCalories'),
+    weight: chartMetric(recordsByDate, dayKeys, 'weight', { unit: 'kg', suffix: ' kg' })
+  }
+}
+
 function buildSevenDayStats(entries, now, targetCalories) {
   const date = now || new Date()
   const todayKey = formatDateKey(date)
@@ -251,6 +345,9 @@ module.exports = {
   buildRecord,
   summarizeDay,
   summarizeDailyRecord,
+  buildHistoryRecord,
+  buildTrendStats,
+  dateRangeForDays,
   buildSevenDayStats,
   formatDateKey
 }

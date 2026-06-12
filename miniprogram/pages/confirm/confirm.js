@@ -36,6 +36,7 @@ Page({
     if (this.data.saving) return
 
     const app = getApp()
+    const profile = wx.getStorageSync(STORAGE_KEYS.profile) || {}
     if (!app.globalData.cloudReady) {
       wx.showToast({ title: '云开发未初始化', icon: 'none' })
       return
@@ -50,7 +51,8 @@ Page({
           date: formatDateKey(new Date()),
           sourceText: this.data.sourceText,
           foods: this.data.foods,
-          exercises: this.data.exercises
+          exercises: this.data.exercises,
+          weight: profile.weight
         }
       })
       const result = response.result || {}

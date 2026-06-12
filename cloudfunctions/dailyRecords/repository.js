@@ -2,6 +2,23 @@ function dailyRecordId(openid, date) {
   return `${openid}_${date}`
 }
 
+function dateKeysDescending(startDate, endDate) {
+  const keys = []
+  const start = new Date(`${startDate}T00:00:00.000Z`)
+  const cursor = new Date(`${endDate}T00:00:00.000Z`)
+  while (cursor >= start) {
+    keys.push(cursor.toISOString().slice(0, 10))
+    cursor.setUTCDate(cursor.getUTCDate() - 1)
+  }
+  return keys
+}
+
+function isMissingDocument(error) {
+  const code = String(error && (error.code || error.errCode) || '')
+  const message = String(error && error.message || '')
+  return code.includes('DOCUMENT_NOT_EXIST') || /document not found/i.test(message)
+}
+
 function createDailyRecordsRepository(db) {
   const collection = db.collection('daily_records')
 
@@ -19,6 +36,19 @@ function createDailyRecordsRepository(db) {
       delete data._id
       await collection.doc(dailyRecordId(openid, date)).set({ data })
       return { ...data, _id: dailyRecordId(openid, date) }
+    },
+
+    async range(openid, startDate, endDate) {
+      const records = await Promise.all(dateKeysDescending(startDate, endDate).map(async (date) => {
+        try {
+          const result = await collection.doc(dailyRecordId(openid, date)).get()
+          return result.data || null
+        } catch (error) {
+          if (isMissingDocument(error)) return null
+          throw error
+        }
+      }))
+      return records.filter(Boolean)
     }
   }
 }

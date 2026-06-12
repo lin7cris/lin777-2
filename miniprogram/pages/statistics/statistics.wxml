@@ -1,0 +1,63 @@
+<view class="page statistics-page">
+  <view class="statistics-header">
+    <view>
+      <view class="eyebrow">趋势洞察</view>
+      <view class="page-title">统计分析</view>
+    </view>
+    <view class="segmented-control">
+      <button class="segment {{rangeDays === 7 ? 'segment-active' : ''}}" data-days="7" bindtap="selectRange">7 天</button>
+      <button class="segment {{rangeDays === 30 ? 'segment-active' : ''}}" data-days="30" bindtap="selectRange">30 天</button>
+    </view>
+  </view>
+
+  <view class="loading-state" wx:if="{{loading}}">正在生成趋势...</view>
+
+  <view class="empty-state" wx:elif="{{!hasData}}">
+    <view class="empty-lines"><view></view><view></view><view></view></view>
+    <view class="empty-title">还没有足够的统计数据</view>
+    <view class="muted">记录饮食或运动后，这里会自动生成趋势。</view>
+  </view>
+
+  <block wx:else>
+    <view class="trend-section">
+      <view class="trend-heading"><text>摄入热量趋势</text><text class="unit">kcal</text></view>
+      <view class="chart">
+        <view class="chart-point" wx:for="{{intake.points}}" wx:key="dateKey">
+          <view class="bar-track"><view class="trend-bar intake-bar" style="height: {{item.height}}rpx;"></view></view>
+          <text class="axis-label">{{item.showLabel ? item.label : ''}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="trend-section">
+      <view class="trend-heading"><text>运动消耗趋势</text><text class="unit">kcal</text></view>
+      <view class="chart">
+        <view class="chart-point" wx:for="{{exercise.points}}" wx:key="dateKey">
+          <view class="bar-track"><view class="trend-bar exercise-bar" style="height: {{item.height}}rpx;"></view></view>
+          <text class="axis-label">{{item.showLabel ? item.label : ''}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="trend-section">
+      <view class="trend-heading"><text>净摄入趋势</text><text class="unit">kcal</text></view>
+      <view class="chart">
+        <view class="chart-point" wx:for="{{net.points}}" wx:key="dateKey">
+          <view class="bar-track"><view class="trend-bar {{item.negative ? 'net-negative' : 'net-positive'}}" style="height: {{item.height}}rpx;"></view></view>
+          <text class="axis-label">{{item.showLabel ? item.label : ''}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="trend-section">
+      <view class="trend-heading"><text>体重趋势</text><text class="unit">kg</text></view>
+      <view class="chart" wx:if="{{weight.hasData}}">
+        <view class="chart-point" wx:for="{{weight.points}}" wx:key="dateKey">
+          <view class="bar-track"><view class="trend-bar weight-bar {{item.hasValue ? '' : 'bar-empty'}}" style="height: {{item.height}}rpx;"></view></view>
+          <text class="axis-label">{{item.showLabel ? item.label : ''}}</text>
+        </view>
+      </view>
+      <view class="chart-empty" wx:else>历史记录中还没有体重快照</view>
+    </view>
+  </block>
+</view>

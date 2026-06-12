@@ -4,7 +4,10 @@ const {
   buildRecord,
   summarizeDay,
   buildSevenDayStats,
-  summarizeDailyRecord
+  summarizeDailyRecord,
+  buildHistoryRecord,
+  buildTrendStats,
+  dateRangeForDays
 } = require('../miniprogram/utils/records')
 
 const payload = {
@@ -86,5 +89,41 @@ assert.deepStrictEqual(cloudSummary.records[0], {
 })
 assert.strictEqual(cloudSummary.records[2].itemType, 'exercise')
 assert.strictEqual(cloudSummary.records[2].calories, '-310 kcal')
+
+const historyRecord = buildHistoryRecord({
+  date: '2026-06-09',
+  foods: [{ id: 'food-1', name: '鸡蛋', amount: '1个', calories: 70 }],
+  exercises: [{ id: 'exercise-1', name: '跑步', duration: 30, calories: 310 }],
+  totalCaloriesIn: 70,
+  totalCaloriesOut: 310,
+  netCalories: -240,
+  weight: 61.8
+})
+assert.strictEqual(historyRecord.date, '6 月 9 日')
+assert.strictEqual(historyRecord.foods[0].name, '鸡蛋')
+assert.strictEqual(historyRecord.exercises[0].caloriesText, '-310 kcal')
+assert.strictEqual(historyRecord.weightText, '61.8 kg')
+
+const cloudRecords = [
+  { date: '2026-06-08', totalCaloriesIn: 1200, totalCaloriesOut: 200, netCalories: 1000, weight: 62 },
+  { date: '2026-06-09', totalCaloriesIn: 1400, totalCaloriesOut: 300, netCalories: 1100, weight: 61.8 }
+]
+const trend7 = buildTrendStats(cloudRecords, 7, now)
+assert.strictEqual(trend7.intake.points.length, 7)
+assert.strictEqual(trend7.exercise.points.length, 7)
+assert.strictEqual(trend7.net.points.length, 7)
+assert.strictEqual(trend7.weight.points.length, 7)
+assert.strictEqual(trend7.hasData, true)
+assert.strictEqual(trend7.weight.hasData, true)
+assert.strictEqual(trend7.intake.points[6].value, 1400)
+
+const trend30 = buildTrendStats(cloudRecords, 30, now)
+assert.strictEqual(trend30.intake.points.length, 30)
+assert.strictEqual(trend30.intake.points.filter((point) => point.showLabel).length <= 7, true)
+
+assert.deepStrictEqual(dateRangeForDays(7, now), {
+  startDate: '2026-06-03',
+  endDate: '2026-06-09'
+})
 
 console.log('records utils tests passed')

@@ -12,6 +12,7 @@ const todayScript = read('miniprogram/pages/today/today.js')
 const todayWxml = read('miniprogram/pages/today/today.wxml')
 
 assert.match(confirmScript, /name:\s*'dailyRecords'/)
+assert.match(confirmScript, /weight:\s*profile\.weight/)
 assert.match(confirmScript, /action:\s*'save'/)
 assert.match(confirmScript, /formatDateKey\(new Date\(\)\)/)
 assert.match(confirmScript, /foods:\s*this\.data\.foods/)

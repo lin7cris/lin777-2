@@ -14,6 +14,12 @@ async function run() {
       calls.push(['save', openid, date])
       documents.set(`${openid}:${date}`, record)
       return record
+    },
+    async range(openid, startDate, endDate) {
+      calls.push(['range', openid, startDate, endDate])
+      return Array.from(documents.values())
+        .filter((record) => record._openid === openid && record.date >= startDate && record.date <= endDate)
+        .sort((left, right) => right.date.localeCompare(left.date))
     }
   }
 
@@ -30,12 +36,14 @@ async function run() {
     date: '2026-06-12',
     openid: 'forged-openid',
     sourceText: '吃了一个苹果',
+    weight: 62.5,
     foods: [{ name: '苹果', calories: 95 }],
     exercises: []
   })
   assert.strictEqual(saved.success, true)
   assert.strictEqual(saved.record._openid, 'trusted-openid')
   assert.strictEqual(saved.record.totalCaloriesIn, 95)
+  assert.strictEqual(saved.record.weight, 62.5)
 
   const appended = await handler({
     action: 'save',
@@ -50,6 +58,16 @@ async function run() {
   const fetched = await handler({ action: 'get', date: '2026-06-12' })
   assert.strictEqual(fetched.success, true)
   assert.strictEqual(fetched.record.foods[0].name, '苹果')
+
+  const ranged = await handler({
+    action: 'range',
+    startDate: '2026-06-06',
+    endDate: '2026-06-12',
+    openid: 'forged-openid'
+  })
+  assert.strictEqual(ranged.success, true)
+  assert.strictEqual(ranged.records.length, 1)
+  assert.strictEqual(ranged.records[0]._openid, 'trusted-openid')
 
   const removed = await handler({
     action: 'delete',
@@ -70,6 +88,22 @@ async function run() {
   const invalidDate = await handler({ action: 'get', date: 'June 12' })
   assert.strictEqual(invalidDate.success, false)
   assert.strictEqual(invalidDate.error.code, 'INVALID_INPUT')
+
+  const invalidRange = await handler({
+    action: 'range',
+    startDate: '2026-06-12',
+    endDate: '2026-06-01'
+  })
+  assert.strictEqual(invalidRange.success, false)
+  assert.strictEqual(invalidRange.error.code, 'INVALID_INPUT')
+
+  const oversizedRange = await handler({
+    action: 'range',
+    startDate: '2026-05-01',
+    endDate: '2026-06-12'
+  })
+  assert.strictEqual(oversizedRange.success, false)
+  assert.strictEqual(oversizedRange.error.code, 'INVALID_INPUT')
 
   const missingOpenIdHandler = createDailyRecordsHandler({
     repository,

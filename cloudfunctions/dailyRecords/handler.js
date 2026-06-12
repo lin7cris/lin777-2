@@ -8,6 +8,14 @@ function validDate(date) {
   return /^\d{4}-\d{2}-\d{2}$/.test(date)
 }
 
+function validRange(startDate, endDate) {
+  if (!validDate(startDate) || !validDate(endDate) || startDate > endDate) return false
+  const start = new Date(`${startDate}T00:00:00.000Z`)
+  const end = new Date(`${endDate}T00:00:00.000Z`)
+  const days = Math.floor((end.getTime() - start.getTime()) / 86400000) + 1
+  return days >= 1 && days <= 31
+}
+
 function createDailyRecordsHandler(options) {
   const config = options || {}
   const repository = config.repository
@@ -22,6 +30,8 @@ function createDailyRecordsHandler(options) {
     const input = event || {}
     const action = String(input.action || 'get')
     const date = String(input.date || '')
+    const startDate = String(input.startDate || '')
+    const endDate = String(input.endDate || '')
 
     try {
       const openid = String(getOpenId() || '')
@@ -30,6 +40,16 @@ function createDailyRecordsHandler(options) {
         error.code = 'UNAUTHORIZED'
         throw error
       }
+      if (action === 'range') {
+        if (!validRange(startDate, endDate)) {
+          const error = new Error('invalid date range')
+          error.code = 'INVALID_INPUT'
+          throw error
+        }
+        const records = await repository.range(openid, startDate, endDate)
+        return { success: true, records }
+      }
+
       if (!validDate(date)) {
         const error = new Error('date must use YYYY-MM-DD')
         error.code = 'INVALID_INPUT'

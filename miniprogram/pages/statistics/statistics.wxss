@@ -1,0 +1,157 @@
+.statistics-page {
+  padding-bottom: 56rpx;
+}
+
+.statistics-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 30rpx;
+}
+
+.eyebrow {
+  color: #13905a;
+  font-size: 22rpx;
+  font-weight: 700;
+}
+
+.page-title {
+  margin-top: 6rpx;
+  font-size: 44rpx;
+  font-weight: 800;
+}
+
+.segmented-control {
+  display: flex;
+  padding: 4rpx;
+  border: 1rpx solid #dbe5dd;
+  border-radius: 8rpx;
+  background: #ffffff;
+}
+
+.segment {
+  width: 92rpx;
+  height: 58rpx;
+  padding: 0;
+  border-radius: 6rpx;
+  background: transparent;
+  color: #6d7a72;
+  font-size: 24rpx;
+  line-height: 58rpx;
+}
+
+.segment::after {
+  border: 0;
+}
+
+.segment-active {
+  background: #163c2a;
+  color: #ffffff;
+}
+
+.loading-state,
+.empty-state {
+  padding: 100rpx 30rpx;
+  text-align: center;
+}
+
+.empty-lines {
+  display: flex;
+  height: 86rpx;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 14rpx;
+  margin-bottom: 24rpx;
+}
+
+.empty-lines view {
+  display: block;
+  width: 18rpx;
+  background: #b9c9bf;
+}
+
+.empty-lines view:nth-child(1) { height: 38rpx; }
+.empty-lines view:nth-child(2) { height: 72rpx; }
+.empty-lines view:nth-child(3) { height: 52rpx; }
+
+.empty-title {
+  margin-bottom: 12rpx;
+  font-size: 30rpx;
+  font-weight: 800;
+}
+
+.trend-section {
+  padding: 30rpx 0 24rpx;
+  border-top: 1rpx solid #dfe8e1;
+}
+
+.trend-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22rpx;
+  font-size: 29rpx;
+  font-weight: 800;
+}
+
+.unit {
+  color: #87968d;
+  font-size: 21rpx;
+  font-weight: 500;
+}
+
+.chart {
+  display: flex;
+  height: 238rpx;
+  align-items: stretch;
+  gap: 4rpx;
+}
+
+.chart-point {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+}
+
+.bar-track {
+  display: flex;
+  width: 100%;
+  height: 190rpx;
+  align-items: flex-end;
+  justify-content: center;
+  border-bottom: 1rpx solid #d9e3dc;
+}
+
+.trend-bar {
+  width: 64%;
+  max-width: 32rpx;
+  min-height: 4rpx;
+  border-radius: 4rpx 4rpx 0 0;
+}
+
+.intake-bar { background: #26352d; }
+.exercise-bar { background: #34a873; }
+.net-positive { background: #e0a33b; }
+.net-negative { background: #d75b53; }
+.weight-bar { background: #527da5; }
+.bar-empty { background: #e3e9e5; }
+
+.axis-label {
+  width: 100%;
+  height: 36rpx;
+  margin-top: 8rpx;
+  overflow: hidden;
+  color: #7d8a82;
+  font-size: 17rpx;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.chart-empty {
+  padding: 70rpx 0;
+  color: #87968d;
+  font-size: 24rpx;
+  text-align: center;
+}

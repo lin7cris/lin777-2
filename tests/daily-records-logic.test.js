@@ -17,6 +17,7 @@ const context = {
 
 const first = mergeDailyRecord(null, {
   sourceText: '早餐一个鸡蛋，跑步30分钟',
+  weight: 62.5,
   foods: [
     { name: '鸡蛋', amount: '1个', calories: 70, protein: 6, carbs: 1, fat: 5 }
   ],
@@ -32,9 +33,11 @@ assert.strictEqual(first.exercises[0].id, 'exercise-1')
 assert.strictEqual(first.totalCaloriesIn, 70)
 assert.strictEqual(first.totalCaloriesOut, 300)
 assert.strictEqual(first.netCalories, -230)
+assert.strictEqual(first.weight, 62.5)
 
 const second = mergeDailyRecord(first, {
   sourceText: '午餐一个苹果',
+  weight: 61.8,
   foods: [
     { name: '苹果', amount: '1个', calories: 95, protein: 0.5, carbs: 25, fat: 0.3 }
   ],
@@ -55,6 +58,7 @@ assert.strictEqual(second.totalCaloriesOut, 300)
 assert.strictEqual(second.netCalories, -135)
 assert.strictEqual(second.totalProtein, 6.5)
 assert.deepStrictEqual(second.sourceTexts, ['早餐一个鸡蛋，跑步30分钟', '午餐一个苹果'])
+assert.strictEqual(second.weight, 61.8)
 
 const afterFoodDelete = deleteDailyItem(second, 'food', 'food-1', {
   now: '2026-06-12T06:00:00.000Z'

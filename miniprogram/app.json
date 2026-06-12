@@ -5,6 +5,7 @@
     "pages/entry/entry",
     "pages/confirm/confirm",
     "pages/record/record",
+    "pages/statistics/statistics",
     "pages/profile/profile"
   ],
   "window": {
@@ -26,7 +27,11 @@
       },
       {
         "pagePath": "pages/record/record",
-        "text": "记录"
+        "text": "历史"
+      },
+      {
+        "pagePath": "pages/statistics/statistics",
+        "text": "统计"
       },
       {
         "pagePath": "pages/profile/profile",
