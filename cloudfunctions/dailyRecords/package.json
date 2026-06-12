@@ -1,0 +1,9 @@
+{
+  "name": "daily-records",
+  "version": "1.0.0",
+  "description": "Save, read, and delete the current user's daily calorie records",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "latest"
+  }
+}

@@ -2,7 +2,7 @@ const {
   STORAGE_KEYS,
   DEFAULT_PROFILE,
   formatDateKey,
-  summarizeDay
+  summarizeDailyRecord
 } = require('../../utils/records')
 const { normalizeParsedDailyInput } = require('../../utils/dailyInput')
 
@@ -17,30 +17,88 @@ Page({
     remainingCalories: 0,
     macros: [],
     records: [],
+    loadingRecords: false,
+    deletingId: '',
     dailyInput: '',
     parsing: false
   },
 
   onShow() {
-    // 每次回到首页都读取最新本地资料，确保“我的”页保存后能立即反映。
-    const records = wx.getStorageSync(STORAGE_KEYS.records) || []
     const profile = wx.getStorageSync(STORAGE_KEYS.profile) || DEFAULT_PROFILE
     const todayKey = formatDateKey(new Date())
-    const summary = summarizeDay(records, todayKey, {
-      targetCalories: profile.targetCalories,
-      macroTargets: profile.macros
-    })
 
     this.setData({
       dateTitle: this.formatDateTitle(todayKey),
       goalLabel: this.goalLabel(profile.goal),
+      targetCalories: profile.targetCalories
+    })
+    this.loadDailyRecord(todayKey, profile)
+  },
+
+  async loadDailyRecord(date, profile) {
+    const app = getApp()
+    if (!app.globalData.cloudReady) return
+
+    this.setData({ loadingRecords: true })
+    try {
+      const response = await wx.cloud.callFunction({
+        name: 'dailyRecords',
+        data: { action: 'get', date }
+      })
+      const result = response.result || {}
+      if (result.success === false) throw new Error(result.error && result.error.message)
+      this.applyDailyRecord(result.record, profile)
+    } catch (error) {
+      console.error('load daily record failed', error)
+      wx.showToast({ title: '读取今日记录失败', icon: 'none' })
+      this.applyDailyRecord(null, profile)
+    } finally {
+      this.setData({ loadingRecords: false })
+    }
+  },
+
+  applyDailyRecord(record, profile) {
+    const summary = summarizeDailyRecord(record, {
       targetCalories: profile.targetCalories,
+      macroTargets: profile.macros
+    })
+    this.setData({
       foodCalories: summary.foodCalories,
       exerciseCalories: summary.exerciseCalories,
       netCalories: summary.netCalories,
       remainingCalories: summary.remainingCalories,
       macros: summary.macros,
       records: summary.records
+    })
+  },
+
+  deleteDailyItem(event) {
+    const { itemType, itemId, title } = event.currentTarget.dataset
+    wx.showModal({
+      title: '删除记录',
+      content: `确定删除“${title}”吗？`,
+      confirmColor: '#d64545',
+      success: async (modal) => {
+        if (!modal.confirm) return
+        const profile = wx.getStorageSync(STORAGE_KEYS.profile) || DEFAULT_PROFILE
+        const date = formatDateKey(new Date())
+        this.setData({ deletingId: itemId })
+        try {
+          const response = await wx.cloud.callFunction({
+            name: 'dailyRecords',
+            data: { action: 'delete', date, itemType, itemId }
+          })
+          const result = response.result || {}
+          if (result.success === false) throw new Error(result.error && result.error.message)
+          this.applyDailyRecord(result.record, profile)
+          wx.showToast({ title: '已删除', icon: 'success' })
+        } catch (error) {
+          console.error('delete daily item failed', error)
+          wx.showToast({ title: '删除失败，请稍后重试', icon: 'none' })
+        } finally {
+          this.setData({ deletingId: '' })
+        }
+      }
     })
   },
 

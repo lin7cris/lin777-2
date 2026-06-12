@@ -34,13 +34,25 @@
 
   <view class="card">
     <text class="card-title">今日记录</text>
-    <view wx:if="{{!records.length}}" class="muted small">还没有记录，去写下今天吃了什么或做了什么运动。</view>
-    <view class="record row" wx:for="{{records}}" wx:key="desc">
-      <view>
+    <view wx:if="{{loadingRecords}}" class="muted small">正在读取今日记录...</view>
+    <view wx:elif="{{!records.length}}" class="muted small">还没有记录，去写下今天吃了什么或做了什么运动。</view>
+    <view class="record row" wx:for="{{records}}" wx:key="id">
+      <view class="record-content">
         <view class="record-title">{{item.title}}</view>
         <view class="muted small">{{item.desc}}</view>
       </view>
-      <text class="strong {{item.type === 'exercise' ? 'blue-text' : ''}}">{{item.calories}}</text>
+      <view class="record-actions">
+        <text class="strong {{item.type === 'exercise' ? 'blue-text' : ''}}">{{item.calories}}</text>
+        <button
+          class="delete-button {{deletingId ? 'delete-button-disabled' : ''}}"
+          loading="{{deletingId === item.id}}"
+          disabled="{{!!deletingId}}"
+          data-item-type="{{item.itemType}}"
+          data-item-id="{{item.id}}"
+          data-title="{{item.title}}"
+          bindtap="deleteDailyItem"
+        >删除</button>
+      </view>
     </view>
   </view>
 

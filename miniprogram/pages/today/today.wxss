@@ -91,6 +91,36 @@
   font-weight: 700;
 }
 
+.record-content {
+  min-width: 0;
+  flex: 1;
+}
+
+.record-actions {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.delete-button {
+  width: 96rpx;
+  height: 56rpx;
+  min-height: 56rpx;
+  margin: 0;
+  padding: 0;
+  border: 1rpx solid #e4aaa6;
+  border-radius: 12rpx;
+  background: #fff;
+  color: #b93630;
+  font-size: 24rpx;
+  line-height: 54rpx;
+}
+
+.delete-button-disabled {
+  color: #a8b0ab;
+  border-color: #d9dfdb;
+}
+
 .small {
   margin-top: 6rpx;
   font-size: 24rpx;

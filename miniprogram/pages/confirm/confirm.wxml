@@ -70,6 +70,6 @@
     </view>
   </view>
 
-  <button class="button" bindtap="confirmRecord">确认并写入今日记录</button>
+  <button class="button" loading="{{saving}}" disabled="{{saving}}" bindtap="confirmRecord">确认并写入今日记录</button>
   <button class="button secondary" bindtap="adjustRecord">调整份量</button>
 </view>

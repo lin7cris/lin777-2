@@ -143,6 +143,56 @@ function buildVisibleRecords(entries) {
   return visible
 }
 
+function buildDailyVisibleRecords(record) {
+  const foods = Array.isArray(record && record.foods) ? record.foods : []
+  const exercises = Array.isArray(record && record.exercises) ? record.exercises : []
+
+  return foods.map((food) => ({
+    id: food.id,
+    itemType: 'food',
+    title: food.name || '未命名食物',
+    desc: food.amount || '适量',
+    calories: `${toNumber(food.calories)} kcal`
+  })).concat(exercises.map((exercise) => ({
+    id: exercise.id,
+    itemType: 'exercise',
+    title: exercise.name || '未命名运动',
+    desc: `${toNumber(exercise.duration)} 分钟`,
+    calories: `-${toNumber(exercise.calories)} kcal`,
+    type: 'exercise'
+  })))
+}
+
+function summarizeDailyRecord(record, options) {
+  const data = record || {}
+  const foods = Array.isArray(data.foods) ? data.foods : []
+  const exercises = Array.isArray(data.exercises) ? data.exercises : []
+  const foodCalories = data.totalCaloriesIn === undefined ? sum(foods, 'calories') : toNumber(data.totalCaloriesIn)
+  const exerciseCalories = data.totalCaloriesOut === undefined ? sum(exercises, 'calories') : toNumber(data.totalCaloriesOut)
+  const netCalories = data.netCalories === undefined ? foodCalories - exerciseCalories : toNumber(data.netCalories)
+  const protein = data.totalProtein === undefined ? sum(foods, 'protein') : toNumber(data.totalProtein)
+  const carbs = data.totalCarbs === undefined ? sum(foods, 'carbs') : toNumber(data.totalCarbs)
+  const fat = data.totalFat === undefined ? sum(foods, 'fat') : toNumber(data.totalFat)
+  const targetCalories = toNumber(options && options.targetCalories) || DEFAULT_PROFILE.targetCalories
+  const macroTargets = (options && options.macroTargets) || {}
+  const proteinTarget = upperRangeValue(macroTargets.protein, 100)
+  const carbsTarget = upperRangeValue(macroTargets.carbs, 180)
+  const fatTarget = upperRangeValue(macroTargets.fat, 50)
+
+  return {
+    foodCalories,
+    exerciseCalories,
+    netCalories,
+    remainingCalories: targetCalories - netCalories,
+    macros: [
+      { name: '蛋白质', value: `${Math.round(protein)} / ${proteinTarget}g`, percent: percent(protein, proteinTarget), color: 'green' },
+      { name: '碳水', value: `${Math.round(carbs)} / ${carbsTarget}g`, percent: percent(carbs, carbsTarget), color: 'amber' },
+      { name: '脂肪', value: `${Math.round(fat)} / ${fatTarget}g`, percent: percent(fat, fatTarget), color: 'red' }
+    ],
+    records: buildDailyVisibleRecords(data)
+  }
+}
+
 function friendlyDate(dateKey, todayKey, yesterdayKey) {
   if (dateKey === todayKey) return '今天'
   if (dateKey === yesterdayKey) return '昨天'
@@ -200,6 +250,7 @@ module.exports = {
   DEFAULT_PROFILE,
   buildRecord,
   summarizeDay,
+  summarizeDailyRecord,
   buildSevenDayStats,
   formatDateKey
 }

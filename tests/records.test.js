@@ -3,7 +3,8 @@ const assert = require('assert')
 const {
   buildRecord,
   summarizeDay,
-  buildSevenDayStats
+  buildSevenDayStats,
+  summarizeDailyRecord
 } = require('../miniprogram/utils/records')
 
 const payload = {
@@ -51,5 +52,39 @@ assert.strictEqual(stats.days[0].net, '净摄入 -90 kcal')
 assert.strictEqual(stats.days[1].date, '昨天')
 assert.strictEqual(stats.bars.length, 7)
 assert.ok(stats.averageText.includes('平均'))
+
+const cloudSummary = summarizeDailyRecord({
+  date: '2026-06-09',
+  foods: [
+    { id: 'food-1', name: '鸡蛋', amount: '1个', calories: 70, protein: 6, carbs: 1, fat: 5 },
+    { id: 'food-2', name: '牛奶', amount: '250ml', calories: 150, protein: 8, carbs: 12, fat: 8 }
+  ],
+  exercises: [
+    { id: 'exercise-1', name: '跑步', duration: 30, calories: 310 }
+  ],
+  totalCaloriesIn: 220,
+  totalCaloriesOut: 310,
+  netCalories: -90,
+  totalProtein: 14,
+  totalCarbs: 13,
+  totalFat: 13
+}, {
+  targetCalories: 1540,
+  macroTargets: { protein: 100, carbs: 180, fat: 50 }
+})
+
+assert.strictEqual(cloudSummary.foodCalories, 220)
+assert.strictEqual(cloudSummary.exerciseCalories, 310)
+assert.strictEqual(cloudSummary.netCalories, -90)
+assert.strictEqual(cloudSummary.records.length, 3)
+assert.deepStrictEqual(cloudSummary.records[0], {
+  id: 'food-1',
+  itemType: 'food',
+  title: '鸡蛋',
+  desc: '1个',
+  calories: '70 kcal'
+})
+assert.strictEqual(cloudSummary.records[2].itemType, 'exercise')
+assert.strictEqual(cloudSummary.records[2].calories, '-310 kcal')
 
 console.log('records utils tests passed')
