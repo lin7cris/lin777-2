@@ -1,7 +1,10 @@
+const { STORAGE_KEYS, DEFAULT_PROFILE } = require('../../utils/records')
+const { normalizeParsedDailyInput } = require('../../utils/dailyInput')
+
 Page({
   data: {
     loading: false,
-    text: '今天早上吃了一个鸡蛋、一杯牛奶和两个包子，中午吃了一碗米饭、宫保鸡丁和青菜，晚上跑步30分钟。'
+    text: ''
   },
 
   onInput(event) {
@@ -11,22 +14,48 @@ Page({
   },
 
   async parseText() {
+    const text = this.data.text.trim()
+    const profile = wx.getStorageSync(STORAGE_KEYS.profile) || DEFAULT_PROFILE
+    const app = getApp()
+
+    if (!text) {
+      wx.showToast({ title: '先写点内容', icon: 'none' })
+      return
+    }
+
+    if (!app.globalData.cloudReady) {
+      wx.showToast({ title: '云开发未初始化', icon: 'none' })
+      return
+    }
+
     this.setData({ loading: true })
     try {
-      const result = await wx.cloud.callFunction({
-        name: 'parseRecord',
-        data: { text: this.data.text }
+      const response = await wx.cloud.callFunction({
+        name: 'parseDailyInput',
+        data: { text, profile }
       })
-      wx.navigateTo({
-        url: `/pages/confirm/confirm?payload=${encodeURIComponent(JSON.stringify(result.result))}`
-      })
-    } catch (error) {
-      wx.showToast({
-        title: '解析失败，已使用示例',
-        icon: 'none'
-      })
+
+      const result = response.result || {}
+      if (result.success === false) {
+        wx.showToast({
+          title: result.error && result.error.message
+            ? result.error.message
+            : 'AI解析失败',
+          icon: 'none'
+        })
+        return
+      }
+
+      const payload = normalizeParsedDailyInput(result)
+      wx.setStorageSync(STORAGE_KEYS.pendingParse, payload)
       wx.navigateTo({
         url: '/pages/confirm/confirm'
+      })
+    } catch (error) {
+      console.error('parse entry input failed', error)
+      wx.showToast({
+        title: 'AI解析失败',
+        icon: 'none'
       })
     } finally {
       this.setData({ loading: false })
