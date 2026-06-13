@@ -13,28 +13,19 @@ function dateKeysDescending(startDate, endDate) {
   return keys
 }
 
-function isMissingDocument(error) {
-  const rawCode = error && (error.code !== undefined ? error.code : error.errCode)
-  const code = String(rawCode === undefined ? '' : rawCode)
-  const message = [error && error.message, error && error.errMsg]
-    .filter(Boolean)
-    .join(' ')
-
-  return Number(rawCode) === -502005
-    || code.includes('DOCUMENT_NOT_EXIST')
-    || /document (?:not found|not exists?|does not exist)/i.test(message)
-}
-
 function createDailyRecordsRepository(db) {
   const collection = db.collection('daily_records')
+  async function findByDate(openid, date) {
+    const result = await collection
+      .where({ _openid: openid, date })
+      .limit(1)
+      .get()
+    return result.data && result.data[0] ? result.data[0] : null
+  }
 
   return {
     async get(openid, date) {
-      const result = await collection
-        .where({ _openid: openid, date })
-        .limit(1)
-        .get()
-      return result.data && result.data[0] ? result.data[0] : null
+      return findByDate(openid, date)
     },
 
     async save(openid, date, record) {
@@ -45,15 +36,9 @@ function createDailyRecordsRepository(db) {
     },
 
     async range(openid, startDate, endDate) {
-      const records = await Promise.all(dateKeysDescending(startDate, endDate).map(async (date) => {
-        try {
-          const result = await collection.doc(dailyRecordId(openid, date)).get()
-          return result.data || null
-        } catch (error) {
-          if (isMissingDocument(error)) return null
-          throw error
-        }
-      }))
+      const records = await Promise.all(
+        dateKeysDescending(startDate, endDate).map((date) => findByDate(openid, date))
+      )
       return records.filter(Boolean)
     }
   }
