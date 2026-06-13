@@ -94,7 +94,11 @@ function createDailyRecordsHandler(options) {
     } catch (error) {
       logger.error('dailyRecords failed', {
         action,
-        code: error && error.code
+        code: error && error.code,
+        errCode: error && error.errCode,
+        message: error && error.message,
+        errMsg: error && error.errMsg,
+        stack: error && error.stack
       })
       return {
         success: false,

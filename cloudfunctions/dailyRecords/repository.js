@@ -14,9 +14,15 @@ function dateKeysDescending(startDate, endDate) {
 }
 
 function isMissingDocument(error) {
-  const code = String(error && (error.code || error.errCode) || '')
-  const message = String(error && error.message || '')
-  return code.includes('DOCUMENT_NOT_EXIST') || /document not found/i.test(message)
+  const rawCode = error && (error.code !== undefined ? error.code : error.errCode)
+  const code = String(rawCode === undefined ? '' : rawCode)
+  const message = [error && error.message, error && error.errMsg]
+    .filter(Boolean)
+    .join(' ')
+
+  return Number(rawCode) === -502005
+    || code.includes('DOCUMENT_NOT_EXIST')
+    || /document (?:not found|not exists?|does not exist)/i.test(message)
 }
 
 function createDailyRecordsRepository(db) {

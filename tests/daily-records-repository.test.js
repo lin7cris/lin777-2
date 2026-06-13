@@ -21,8 +21,9 @@ async function run() {
             async get() {
               requestedIds.push(id)
               if (!documents.has(id)) {
-                const error = new Error('document not found')
-                error.code = 'DATABASE_DOCUMENT_NOT_EXIST'
+                const error = new Error('database request failed')
+                error.errCode = -502005
+                error.errMsg = 'document.get:fail document not exists'
                 throw error
               }
               return { data: documents.get(id) }
