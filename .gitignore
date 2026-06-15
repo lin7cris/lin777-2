@@ -4,3 +4,4 @@ cloudfunctions/**/node_modules/
 .DS_Store
 *.log
 project.private.config.json
+.worktrees/
