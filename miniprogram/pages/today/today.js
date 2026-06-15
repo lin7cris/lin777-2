@@ -18,9 +18,11 @@ Page({
     macros: [],
     records: [],
     loadingRecords: false,
+    recordError: '',
     deletingId: '',
     dailyInput: '',
-    parsing: false
+    parsing: false,
+    aiError: ''
   },
 
   onShow() {
@@ -37,9 +39,16 @@ Page({
 
   async loadDailyRecord(date, profile) {
     const app = getApp()
-    if (!app.globalData.cloudReady) return
+    if (!app.globalData.cloudReady) {
+      this.applyDailyRecord(null, profile)
+      this.setData({
+        loadingRecords: false,
+        recordError: '云开发尚未连接，请检查环境配置后重试。'
+      })
+      return
+    }
 
-    this.setData({ loadingRecords: true })
+    this.setData({ loadingRecords: true, recordError: '' })
     try {
       const response = await wx.cloud.callFunction({
         name: 'dailyRecords',
@@ -52,9 +61,17 @@ Page({
       console.error('load daily record failed', error)
       wx.showToast({ title: '读取今日记录失败', icon: 'none' })
       this.applyDailyRecord(null, profile)
+      this.setData({
+        recordError: '无法读取今日记录，请检查网络后重试。'
+      })
     } finally {
       this.setData({ loadingRecords: false })
     }
+  },
+
+  retryDailyRecord() {
+    const profile = wx.getStorageSync(STORAGE_KEYS.profile) || DEFAULT_PROFILE
+    this.loadDailyRecord(formatDateKey(new Date()), profile)
   },
 
   applyDailyRecord(record, profile) {
@@ -131,6 +148,7 @@ Page({
     const app = getApp()
 
     if (!text) {
+      this.setData({ aiError: '' })
       wx.showToast({
         title: '先写点内容',
         icon: 'none'
@@ -139,6 +157,9 @@ Page({
     }
 
     if (!app.globalData.cloudReady) {
+      this.setData({
+        aiError: 'AI 服务尚未连接，请检查云环境配置。'
+      })
       wx.showToast({
         title: '云开发未初始化',
         icon: 'none'
@@ -146,7 +167,7 @@ Page({
       return
     }
 
-    this.setData({ parsing: true })
+    this.setData({ parsing: true, aiError: '' })
 
     wx.cloud.callFunction({
       name: 'parseDailyInput',
@@ -154,10 +175,12 @@ Page({
       success: (res) => {
         const result = res.result || {}
         if (result.success === false) {
+          const message = result.error && result.error.message
+            ? result.error.message
+            : 'AI 解析失败，请稍后重试。'
+          this.setData({ aiError: message })
           wx.showToast({
-            title: result.error && result.error.message
-              ? result.error.message
-              : 'AI解析失败',
+            title: message,
             icon: 'none'
           })
           return
@@ -167,7 +190,8 @@ Page({
         const payload = normalizeParsedDailyInput(result)
         wx.setStorageSync(STORAGE_KEYS.pendingParse, payload)
         this.setData({
-          dailyInput: ''
+          dailyInput: '',
+          aiError: ''
         })
         wx.navigateTo({
           url: '/pages/confirm/confirm'
@@ -175,6 +199,9 @@ Page({
       },
       fail: (error) => {
         console.error('parse daily input failed', error)
+        this.setData({
+          aiError: 'AI 解析失败，请检查网络后重试。'
+        })
         wx.showToast({
           title: 'AI解析失败',
           icon: 'none'
