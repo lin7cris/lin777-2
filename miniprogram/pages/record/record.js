@@ -3,10 +3,13 @@ const {
   buildHistoryRecord
 } = require('../../utils/records')
 
+let recordRequestSequence = 0
+
 Page({
   data: {
     selectedDate: '',
     loading: false,
+    recordError: '',
     deletingId: '',
     hasData: false,
     record: null
@@ -28,10 +31,18 @@ Page({
   },
 
   async loadRecord(date) {
+    const requestId = ++recordRequestSequence
     const app = getApp()
-    if (!app.globalData.cloudReady) return
+    if (!app.globalData.cloudReady) {
+      this.applyRecord(null)
+      this.setData({
+        loading: false,
+        recordError: '云开发尚未连接，请检查环境配置后重试。'
+      })
+      return
+    }
 
-    this.setData({ loading: true })
+    this.setData({ loading: true, recordError: '' })
     try {
       const response = await wx.cloud.callFunction({
         name: 'dailyRecords',
@@ -43,14 +54,25 @@ Page({
       })
       const result = response.result || {}
       if (result.success === false) throw new Error(result.error && result.error.message)
+      if (requestId !== recordRequestSequence) return
       this.applyRecord(result.records && result.records[0])
     } catch (error) {
       console.error('load history record failed', error)
+      if (requestId !== recordRequestSequence) return
       this.applyRecord(null)
+      this.setData({ recordError: '无法读取这一天的记录，请检查网络后重试。' })
       wx.showToast({ title: '读取历史记录失败', icon: 'none' })
     } finally {
-      this.setData({ loading: false })
+      if (requestId === recordRequestSequence) this.setData({ loading: false })
     }
+  },
+
+  retryRecord() {
+    this.loadRecord(this.data.selectedDate || formatDateKey(new Date()))
+  },
+
+  onUnload() {
+    recordRequestSequence += 1
   },
 
   applyRecord(record) {

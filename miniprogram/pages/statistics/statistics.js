@@ -3,10 +3,13 @@ const {
   dateRangeForDays
 } = require('../../utils/records')
 
+let requestSequence = 0
+
 Page({
   data: {
     rangeDays: 7,
     loading: false,
+    statisticsError: '',
     hasData: false,
     intake: { points: [], hasData: false },
     exercise: { points: [], hasData: false },
@@ -26,8 +29,17 @@ Page({
   },
 
   async loadStatistics(rangeDays) {
+    const requestId = ++requestSequence
     const app = getApp()
-    if (!app.globalData.cloudReady) return
+    if (!app.globalData.cloudReady) {
+      const emptyStats = buildTrendStats([], rangeDays, new Date())
+      this.setData({
+        ...emptyStats,
+        loading: false,
+        statisticsError: '云开发尚未连接，请检查环境配置后重试。'
+      })
+      return
+    }
 
     const range = dateRangeForDays(rangeDays, new Date())
     const request = {
@@ -36,7 +48,7 @@ Page({
       endDate: range.endDate
     }
     let response
-    this.setData({ loading: true })
+    this.setData({ loading: true, statisticsError: '' })
     try {
       response = await wx.cloud.callFunction({
         name: 'dailyRecords',
@@ -54,6 +66,7 @@ Page({
         failure.details = result.error
         throw failure
       }
+      if (requestId !== requestSequence) return
       const stats = buildTrendStats(result.records, rangeDays, new Date())
       this.setData(stats)
     } catch (error) {
@@ -69,11 +82,23 @@ Page({
         errMsg: error && error.errMsg,
         details: error && error.details
       })
+      if (requestId !== requestSequence) return
       const emptyStats = buildTrendStats([], rangeDays, new Date())
-      this.setData(emptyStats)
+      this.setData({
+        ...emptyStats,
+        statisticsError: '无法读取统计数据，请检查网络后重试。'
+      })
       wx.showToast({ title: '读取统计数据失败', icon: 'none' })
     } finally {
-      this.setData({ loading: false })
+      if (requestId === requestSequence) this.setData({ loading: false })
     }
+  },
+
+  retryStatistics() {
+    this.loadStatistics(this.data.rangeDays)
+  },
+
+  onUnload() {
+    requestSequence += 1
   }
 })

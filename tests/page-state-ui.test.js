@@ -38,4 +38,17 @@ assert.match(confirmJs, /saveError/)
 assert.match(confirmJs, /hasParsedItems/)
 assert.match(confirmWxml, /disabled="{{saving \|\| !hasParsedItems}}"/)
 
+const recordJs = read('miniprogram/pages/record/record.js')
+const recordWxml = read('miniprogram/pages/record/record.wxml')
+const statisticsJs = read('miniprogram/pages/statistics/statistics.js')
+const statisticsWxml = read('miniprogram/pages/statistics/statistics.wxml')
+
+assert.match(recordJs, /recordError/)
+assert.match(recordJs, /retryRecord/)
+assert.match(recordWxml, /bindtap="retryRecord"/)
+assert.match(statisticsJs, /statisticsError/)
+assert.match(statisticsJs, /requestSequence/)
+assert.match(statisticsJs, /retryStatistics/)
+assert.match(statisticsWxml, /bindtap="retryStatistics"/)
+
 console.log('page state UI tests passed')
