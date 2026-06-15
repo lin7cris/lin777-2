@@ -1,73 +1,81 @@
-<view class="page">
-  <text class="hero-title">先建立你的热量基准</text>
-  <view class="copy">填写身体信息后，系统会计算 BMR、TDEE 以及三大营养素建议。</view>
+<view class="page onboarding-page">
+  <view class="onboarding-heading">
+    <text class="eyebrow">健康档案</text>
+    <text class="hero-title">建立你的热量基准</text>
+    <view class="copy">填写基础身体信息，我们会计算每日能量与营养目标。</view>
+  </view>
 
-  <view class="card form-card">
-    <view class="row field">
-      <text>性别</text>
+  <view class="section-label">身体信息</view>
+  <view class="settings-group form-card">
+    <view class="settings-row">
+      <text class="field-label">性别</text>
       <picker class="picker-value" range="{{genderOptions}}" range-key="label" value="{{genderIndex}}" data-field="gender" bindchange="onPickerChange">
         <text>{{genderOptions[genderIndex].label}}</text>
       </picker>
     </view>
 
-    <view class="row field">
-      <text>年龄</text>
+    <view class="settings-row">
+      <text class="field-label">年龄</text>
       <view class="input-group">
         <input class="input-value" type="number" value="{{form.age}}" data-field="age" bindinput="onNumberInput" />
         <text class="unit">岁</text>
       </view>
     </view>
 
-    <view class="row field">
-      <text>身高</text>
+    <view class="settings-row">
+      <text class="field-label">身高</text>
       <view class="input-group">
         <input class="input-value" type="digit" value="{{form.height}}" data-field="height" bindinput="onNumberInput" />
         <text class="unit">cm</text>
       </view>
     </view>
 
-    <view class="row field">
-      <text>当前体重</text>
+    <view class="settings-row">
+      <text class="field-label">当前体重</text>
       <view class="input-group">
         <input class="input-value" type="digit" value="{{form.weight}}" data-field="weight" bindinput="onNumberInput" />
         <text class="unit">kg</text>
       </view>
     </view>
 
-    <view class="row field">
-      <text>目标体重</text>
+    <view class="settings-row">
+      <text class="field-label">目标体重</text>
       <view class="input-group">
         <input class="input-value" type="digit" value="{{form.targetWeight}}" data-field="targetWeight" bindinput="onNumberInput" />
         <text class="unit">kg</text>
       </view>
     </view>
 
-    <view class="row field">
-      <text>活动强度</text>
+    <view class="settings-row">
+      <text class="field-label">活动强度</text>
       <picker class="picker-value" range="{{activityOptions}}" range-key="label" value="{{activityIndex}}" data-field="activityLevel" bindchange="onPickerChange">
         <text>{{activityOptions[activityIndex].label}}</text>
       </picker>
     </view>
 
-    <view class="row field">
-      <text>目标</text>
+    <view class="settings-row">
+      <text class="field-label">目标</text>
       <picker class="picker-value" range="{{goalOptions}}" range-key="label" value="{{goalIndex}}" data-field="goal" bindchange="onPickerChange">
         <text>{{goalOptions[goalIndex].label}}</text>
       </picker>
     </view>
   </view>
 
-  <view class="card">
+  <view class="recommendation-panel">
     <view class="row">
-      <text class="card-title">推荐目标</text>
-      <text class="pill">自动计算</text>
+      <text class="card-title">每日建议</text>
+      <text class="pill">实时计算</text>
     </view>
     <view class="metrics">
-      <view><text class="metric-label">BMR</text><text class="metric-value">{{result.bmr}}</text></view>
-      <view><text class="metric-label">TDEE</text><text class="metric-value">{{result.tdee}}</text></view>
-      <view><text class="metric-label">推荐摄入</text><text class="metric-value">{{result.targetCalories}}</text></view>
+      <view class="metric"><text class="metric-label">BMR</text><text class="metric-value">{{result.bmr}}</text><text class="metric-unit">kcal</text></view>
+      <view class="metric"><text class="metric-label">TDEE</text><text class="metric-value">{{result.tdee}}</text><text class="metric-unit">kcal</text></view>
+      <view class="metric accent-metric"><text class="metric-label">推荐摄入</text><text class="metric-value">{{result.targetCalories}}</text><text class="metric-unit">kcal</text></view>
     </view>
-    <view class="copy">蛋白质 {{result.macros.protein}} · 碳水 {{result.macros.carbs}} · 脂肪 {{result.macros.fat}}</view>
+    <view class="macro-summary">
+      <text>蛋白质 {{result.macros.protein}}</text>
+      <text>碳水 {{result.macros.carbs}}</text>
+      <text>脂肪 {{result.macros.fat}}</text>
+    </view>
   </view>
 
   <button class="button" loading="{{saving}}" disabled="{{saving}}" bindtap="startRecord">保存并开始记录</button>

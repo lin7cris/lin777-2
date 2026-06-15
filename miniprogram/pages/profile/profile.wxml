@@ -1,78 +1,55 @@
-<view class="page">
-  <!-- 用户资料摘要，保存成功后会展示最新计算结果。 -->
-  <view class="card profile-card">
-    <view class="avatar">热</view>
-    <view>
-      <view class="card-title">AI热量记录助手用户</view>
-      <view class="copy">{{genderText}} · {{profile.age}} 岁 · {{profile.height}}cm · {{profile.weight}}kg</view>
+<view class="page profile-page">
+  <view class="profile-heading">
+    <view class="avatar"><text>{{profile.weight}}</text><text class="avatar-unit">kg</text></view>
+    <view class="profile-copy">
+      <text class="page-title">我的健康档案</text>
+      <text class="profile-meta">{{genderText}} · {{profile.age}} 岁 · {{profile.height}} cm</text>
+      <text class="profile-goal">{{goalText}} · {{activityText}}</text>
     </view>
   </view>
 
-  <!-- 用户基础信息表单，所有字段都会保存到 users 云数据库集合。 -->
-  <view class="card">
-    <text class="card-title">基础信息</text>
+  <view wx:if="{{loadingProfile}}" class="sync-status muted">正在同步云端资料...</view>
+  <view wx:elif="{{profileError}}" class="error-banner sync-error">
+    <text>{{profileError}}</text>
+    <button class="inline-retry" bindtap="retryCloudProfile">重试</button>
+  </view>
 
-    <view class="row field">
-      <text>性别</text>
+  <view class="section-label">基础信息</view>
+  <view class="settings-group">
+    <view class="settings-row">
+      <text class="field-label">性别</text>
       <picker class="picker-value" range="{{genderOptions}}" range-key="label" value="{{genderIndex}}" data-field="gender" bindchange="onPickerChange">
         <text>{{genderOptions[genderIndex].label}}</text>
       </picker>
     </view>
-
-    <view class="row field">
-      <text>年龄</text>
-      <input class="input-value" type="number" value="{{form.age}}" data-field="age" bindinput="onNumberInput" />
+    <view class="settings-row"><text class="field-label">年龄</text><view class="input-group"><input class="input-value" type="number" value="{{form.age}}" data-field="age" bindinput="onNumberInput" /><text class="unit">岁</text></view></view>
+    <view class="settings-row"><text class="field-label">身高</text><view class="input-group"><input class="input-value" type="digit" value="{{form.height}}" data-field="height" bindinput="onNumberInput" /><text class="unit">cm</text></view></view>
+    <view class="settings-row"><text class="field-label">当前体重</text><view class="input-group"><input class="input-value" type="digit" value="{{form.weight}}" data-field="weight" bindinput="onNumberInput" /><text class="unit">kg</text></view></view>
+    <view class="settings-row"><text class="field-label">目标体重</text><view class="input-group"><input class="input-value" type="digit" value="{{form.targetWeight}}" data-field="targetWeight" bindinput="onNumberInput" /><text class="unit">kg</text></view></view>
+    <view class="settings-row">
+      <text class="field-label">活动强度</text>
+      <picker class="picker-value" range="{{activityOptions}}" range-key="label" value="{{activityIndex}}" data-field="activityLevel" bindchange="onPickerChange"><text>{{activityOptions[activityIndex].label}}</text></picker>
     </view>
-
-    <view class="row field">
-      <text>身高 cm</text>
-      <input class="input-value" type="digit" value="{{form.height}}" data-field="height" bindinput="onNumberInput" />
+    <view class="settings-row">
+      <text class="field-label">目标</text>
+      <picker class="picker-value" range="{{goalOptions}}" range-key="label" value="{{goalIndex}}" data-field="goal" bindchange="onPickerChange"><text>{{goalOptions[goalIndex].label}}</text></picker>
     </view>
-
-    <view class="row field">
-      <text>当前体重 kg</text>
-      <input class="input-value" type="digit" value="{{form.weight}}" data-field="weight" bindinput="onNumberInput" />
-    </view>
-
-    <view class="row field">
-      <text>目标体重 kg</text>
-      <input class="input-value" type="digit" value="{{form.targetWeight}}" data-field="targetWeight" bindinput="onNumberInput" />
-    </view>
-
-    <view class="row field">
-      <text>活动强度</text>
-      <picker class="picker-value" range="{{activityOptions}}" range-key="label" value="{{activityIndex}}" data-field="activityLevel" bindchange="onPickerChange">
-        <text>{{activityOptions[activityIndex].label}}</text>
-      </picker>
-    </view>
-
-    <view class="row field">
-      <text>目标</text>
-      <picker class="picker-value" range="{{goalOptions}}" range-key="label" value="{{goalIndex}}" data-field="goal" bindchange="onPickerChange">
-        <text>{{goalOptions[goalIndex].label}}</text>
-      </picker>
-    </view>
-
-    <button class="button" loading="{{saving}}" bindtap="saveProfile">保存用户信息</button>
   </view>
 
-  <!-- 推荐结果由 utils/calorie.js 根据表单信息实时保存时计算。 -->
-  <view class="card">
-    <text class="card-title">目标与推荐</text>
-    <view class="row field"><text>BMR</text><text class="value">{{profile.bmr}} kcal</text></view>
-    <view class="row field"><text>TDEE</text><text class="value">{{profile.tdee}} kcal</text></view>
-    <view class="row field"><text>推荐摄入</text><text class="value">{{profile.targetCalories}} kcal</text></view>
-    <view class="row field"><text>蛋白质范围</text><text class="value">{{profile.macros.protein}}</text></view>
-    <view class="row field"><text>碳水范围</text><text class="value">{{profile.macros.carbs}}</text></view>
-    <view class="row field"><text>脂肪范围</text><text class="value">{{profile.macros.fat}}</text></view>
-  </view>
+  <button class="button" loading="{{saving}}" disabled="{{saving}}" bindtap="saveProfile">保存用户信息</button>
 
-  <!-- 后续 AI 和数据能力入口，目前先作为设置占位。 -->
-  <view class="card">
-    <text class="card-title">数据与 AI</text>
-    <view class="row field" wx:for="{{options}}" wx:key="name">
-      <text>{{item.name}}</text>
-      <text class="value">›</text>
+  <view class="section-label">目标与推荐</view>
+  <view class="recommendation-panel profile-recommendation">
+    <view class="target-highlight">
+      <text class="target-label">每日推荐摄入</text>
+      <view><text class="target-number">{{profile.targetCalories}}</text><text class="target-unit"> kcal</text></view>
+    </view>
+    <view class="recommendation-list">
+      <view class="recommendation-row"><text>BMR</text><text>{{profile.bmr}} kcal</text></view>
+      <view class="recommendation-row"><text>TDEE</text><text>{{profile.tdee}} kcal</text></view>
+      <view class="recommendation-row"><text>蛋白质</text><text>{{profile.macros.protein}}</text></view>
+      <view class="recommendation-row"><text>碳水</text><text>{{profile.macros.carbs}}</text></view>
+      <view class="recommendation-row"><text>脂肪</text><text>{{profile.macros.fat}}</text></view>
     </view>
   </view>
 </view>

@@ -23,6 +23,8 @@ const goalOptions = [
 Page({
   data: {
     saving: false,
+    loadingProfile: false,
+    profileError: '',
     dirty: false,
     profile: DEFAULT_PROFILE,
     form: DEFAULT_PROFILE,
@@ -34,13 +36,7 @@ Page({
     goalIndex: 0,
     genderText: '女',
     goalText: '减脂',
-    activityText: '轻度活动',
-    options: [
-      { name: '重新计算推荐热量' },
-      { name: '食物识别偏好' },
-      { name: '导出每日记录' },
-      { name: '隐私与数据授权' }
-    ]
+    activityText: '轻度活动'
   },
 
   onShow() {
@@ -52,8 +48,15 @@ Page({
   // 从云数据库读取当前用户资料，读取失败时保留本地缓存，不影响页面编辑。
   async loadCloudProfile() {
     const app = getApp()
-    if (!app.globalData.cloudReady) return
+    if (!app.globalData.cloudReady) {
+      this.setData({
+        loadingProfile: false,
+        profileError: '云开发尚未连接，当前显示本机资料。'
+      })
+      return
+    }
 
+    this.setData({ loadingProfile: true, profileError: '' })
     try {
       const result = await wx.cloud.callFunction({
         name: 'userProfile',
@@ -67,7 +70,16 @@ Page({
       }
     } catch (error) {
       console.warn('load cloud user profile failed', error)
+      this.setData({
+        profileError: '云端资料暂时无法同步，当前显示本机资料。'
+      })
+    } finally {
+      this.setData({ loadingProfile: false })
     }
+  },
+
+  retryCloudProfile() {
+    this.loadCloudProfile()
   },
 
   // 把 profile 同步到展示数据、表单数据和 picker 当前索引。

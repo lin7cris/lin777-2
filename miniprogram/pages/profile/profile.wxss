@@ -1,34 +1,182 @@
-.profile-card {
+.profile-heading {
   display: flex;
+  min-width: 0;
   align-items: center;
   gap: 24rpx;
+  padding: 16rpx 4rpx 8rpx;
 }
 
 .avatar {
-  width: 104rpx;
-  height: 104rpx;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #13905a, #78d49b);
-  color: #fff;
-  font-size: 38rpx;
-  font-weight: 800;
   display: flex;
+  width: 112rpx;
+  height: 112rpx;
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
+  border-radius: 32rpx;
+  background: rgba(52, 199, 89, 0.12);
+  color: #248a3d;
+  font-size: 36rpx;
+  font-weight: 800;
 }
 
-/* 表单输入统一右对齐，和普通 value 文本保持同一视觉节奏。 */
-.input-value,
-.picker-value {
-  min-width: 220rpx;
-  color: #13905a;
+.avatar-unit {
+  margin: 10rpx 0 0 4rpx;
+  font-size: 18rpx;
+  font-weight: 600;
+}
+
+.profile-copy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.profile-copy .page-title {
+  font-size: 40rpx;
+}
+
+.profile-meta,
+.profile-goal {
+  margin-top: 6rpx;
+  color: #636366;
+  font-size: 24rpx;
+}
+
+.profile-goal {
+  color: #248a3d;
+  font-weight: 600;
+}
+
+.section-label {
+  margin: 34rpx 0 12rpx 12rpx;
+  color: #8e8e93;
+  font-size: 23rpx;
+  font-weight: 600;
+}
+
+.settings-group {
+  margin-top: 0;
+}
+
+.input-group {
+  display: flex;
+  min-width: 210rpx;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.input-value {
+  width: 138rpx;
+  height: 58rpx;
+  color: #1c1c1e;
   font-size: 28rpx;
-  font-weight: 700;
+  line-height: 58rpx;
+  font-weight: 600;
   text-align: right;
 }
 
-/* 微信 input 默认高度偏紧，这里固定高度避免字段编辑时行高跳动。 */
-.input-value {
-  height: 48rpx;
-  line-height: 48rpx;
+.picker-value {
+  min-width: 210rpx;
+  color: #1c1c1e;
+  font-size: 28rpx;
+  font-weight: 600;
+  text-align: right;
+}
+
+.unit {
+  width: 58rpx;
+  margin-left: 8rpx;
+  color: #8e8e93;
+  font-size: 24rpx;
+  text-align: left;
+}
+
+.sync-status {
+  margin-top: 22rpx;
+  font-size: 24rpx;
+  text-align: center;
+}
+
+.sync-error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18rpx;
+}
+
+.inline-retry {
+  flex-shrink: 0;
+  height: 56rpx;
+  margin: 0;
+  padding: 0 22rpx;
+  border: 0;
+  border-radius: 16rpx;
+  background: rgba(255, 69, 58, 0.1);
+  color: #c9342c;
+  font-size: 23rpx;
+  line-height: 56rpx;
+  font-weight: 700;
+}
+
+.inline-retry::after {
+  border: 0;
+}
+
+.profile-recommendation {
+  margin-top: 0;
+  border-color: rgba(255, 255, 255, 0.72);
+}
+
+.target-highlight {
+  padding-bottom: 26rpx;
+  border-bottom: 1rpx solid rgba(60, 60, 67, 0.1);
+}
+
+.target-label {
+  color: #8e8e93;
+  font-size: 23rpx;
+}
+
+.target-number {
+  color: #1c1c1e;
+  font-size: 56rpx;
+  line-height: 1.2;
+  font-weight: 800;
+}
+
+.target-unit {
+  color: #8e8e93;
+  font-size: 24rpx;
+}
+
+.recommendation-list {
+  margin-top: 10rpx;
+}
+
+.recommendation-row {
+  display: flex;
+  min-height: 70rpx;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20rpx;
+  color: #636366;
+  font-size: 25rpx;
+}
+
+.recommendation-row text:last-child {
+  color: #1c1c1e;
+  font-weight: 600;
+  text-align: right;
+}
+
+@media (max-width: 340px) {
+  .profile-copy .page-title {
+    font-size: 36rpx;
+  }
+
+  .avatar {
+    width: 96rpx;
+    height: 96rpx;
+  }
 }

@@ -15,4 +15,15 @@ assert.match(todayWxml, /bindtap="retryDailyRecord"/)
 assert.match(todayWxml, /AI 解析失败/)
 assert.match(todayWxml, /calorie-ring/)
 
+const onboarding = read('miniprogram/pages/onboarding/onboarding.wxml')
+const profileJs = read('miniprogram/pages/profile/profile.js')
+const profileWxml = read('miniprogram/pages/profile/profile.wxml')
+
+assert.match(onboarding, /settings-group/)
+assert.match(onboarding, /recommendation-panel/)
+assert.match(profileJs, /profileError/)
+assert.match(profileJs, /retryCloudProfile/)
+assert.match(profileWxml, /settings-group/)
+assert.doesNotMatch(profileWxml, /wx:for="{{options}}"/)
+
 console.log('page state UI tests passed')

@@ -1,57 +1,130 @@
-.metrics {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 18rpx;
-  margin-top: 28rpx;
+.onboarding-page {
+  padding-bottom: calc(52rpx + env(safe-area-inset-bottom));
+}
+
+.onboarding-heading {
+  padding: 18rpx 4rpx 4rpx;
+}
+
+.eyebrow,
+.section-label {
+  color: #8e8e93;
+  font-size: 23rpx;
+  font-weight: 600;
+}
+
+.hero-title {
+  display: block;
+  margin-top: 10rpx;
+  max-width: 620rpx;
+}
+
+.section-label {
+  margin: 36rpx 0 12rpx 12rpx;
 }
 
 .form-card {
-  padding-top: 18rpx;
-  padding-bottom: 18rpx;
+  margin-top: 0;
 }
 
 .input-group {
   display: flex;
+  min-width: 210rpx;
   align-items: center;
   justify-content: flex-end;
-  min-width: 220rpx;
 }
 
 .input-value {
-  width: 140rpx;
-  height: 48rpx;
-  color: #13905a;
+  width: 138rpx;
+  height: 58rpx;
+  color: #1c1c1e;
   font-size: 28rpx;
-  font-weight: 700;
-  line-height: 48rpx;
+  line-height: 58rpx;
+  font-weight: 600;
   text-align: right;
 }
 
 .picker-value {
-  min-width: 220rpx;
-  color: #13905a;
+  min-width: 210rpx;
+  color: #1c1c1e;
   font-size: 28rpx;
-  font-weight: 700;
+  font-weight: 600;
   text-align: right;
 }
 
 .unit {
-  width: 54rpx;
+  width: 58rpx;
   margin-left: 8rpx;
-  color: #6d7a72;
-  font-size: 26rpx;
+  color: #8e8e93;
+  font-size: 24rpx;
   text-align: left;
 }
 
-.metric-label {
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12rpx;
+  margin-top: 30rpx;
+}
+
+.metric {
+  min-width: 0;
+  padding: 20rpx 12rpx;
+  border-radius: 20rpx;
+  background: rgba(118, 118, 128, 0.08);
+  text-align: center;
+}
+
+.accent-metric {
+  background: rgba(52, 199, 89, 0.11);
+}
+
+.metric-label,
+.metric-unit {
   display: block;
-  color: #6d7a72;
-  font-size: 22rpx;
+  overflow: hidden;
+  color: #8e8e93;
+  font-size: 20rpx;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .metric-value {
   display: block;
-  margin-top: 8rpx;
+  margin-top: 5rpx;
+  overflow: hidden;
+  color: #1c1c1e;
   font-size: 34rpx;
+  line-height: 1.2;
   font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.metric-unit {
+  margin-top: 3rpx;
+}
+
+.macro-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10rpx 20rpx;
+  margin-top: 24rpx;
+  color: #636366;
+  font-size: 23rpx;
+}
+
+@media (max-width: 340px) {
+  .metrics {
+    gap: 8rpx;
+  }
+
+  .metric {
+    padding-right: 6rpx;
+    padding-left: 6rpx;
+  }
+
+  .metric-value {
+    font-size: 30rpx;
+  }
 }
