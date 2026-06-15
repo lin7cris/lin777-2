@@ -4,7 +4,8 @@ const path = require('path')
 
 const projectRoot = path.resolve(__dirname, '..')
 const projectConfig = require(path.join(projectRoot, 'project.config.json'))
-const privateConfig = require(path.join(projectRoot, 'project.private.config.json'))
+const privateConfigPath = path.join(projectRoot, 'project.private.config.json')
+const privateConfig = fs.existsSync(privateConfigPath) ? require(privateConfigPath) : {}
 const miniprogramRoot = path.resolve(projectRoot, projectConfig.miniprogramRoot || '')
 const appConfig = require(path.join(miniprogramRoot, 'app.json'))
 const requiredPageFiles = ['.js', '.json', '.wxml', '.wxss']
@@ -34,5 +35,13 @@ for (const item of appConfig.tabBar.list) {
     assert.ok(fs.existsSync(iconPath), `missing tabBar icon: ${iconPath}`)
   }
 }
+
+const readme = fs.readFileSync(path.join(projectRoot, 'README.md'), 'utf8')
+assert.match(readme, /parseDailyInput/)
+assert.match(readme, /dailyRecords/)
+assert.match(readme, /userProfile/)
+assert.match(readme, /daily_records/)
+assert.match(readme, /所有用户不可读写/)
+assert.doesNotMatch(readme, /上传并部署 `cloudfunctions\/parseRecord`/)
 
 console.log('project entry tests passed')
