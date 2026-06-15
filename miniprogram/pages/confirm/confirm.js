@@ -5,6 +5,8 @@ Page({
   data: {
     confidenceText: '86%',
     saving: false,
+    saveError: '',
+    hasParsedItems: false,
     sourceText: '',
     foods: [],
     exercises: [],
@@ -28,6 +30,7 @@ Page({
       sourceText: payload.sourceText,
       foods: payload.foods,
       exercises: payload.exercises,
+      hasParsedItems: payload.foods.length + payload.exercises.length > 0,
       payload
     })
   },
@@ -35,14 +38,21 @@ Page({
   async confirmRecord() {
     if (this.data.saving) return
 
+    if (!this.data.hasParsedItems) {
+      this.setData({ saveError: '没有可保存的饮食或运动条目，请返回重新解析。' })
+      wx.showToast({ title: '没有可保存的条目', icon: 'none' })
+      return
+    }
+
     const app = getApp()
     const profile = wx.getStorageSync(STORAGE_KEYS.profile) || {}
     if (!app.globalData.cloudReady) {
+      this.setData({ saveError: '云开发尚未连接，请检查环境配置。' })
       wx.showToast({ title: '云开发未初始化', icon: 'none' })
       return
     }
 
-    this.setData({ saving: true })
+    this.setData({ saving: true, saveError: '' })
     try {
       const response = await wx.cloud.callFunction({
         name: 'dailyRecords',
@@ -57,8 +67,10 @@ Page({
       })
       const result = response.result || {}
       if (result.success === false) {
+        const message = result.error && result.error.message ? result.error.message : '保存失败，请稍后重试'
+        this.setData({ saveError: message })
         wx.showToast({
-          title: result.error && result.error.message ? result.error.message : '保存失败',
+          title: message,
           icon: 'none'
         })
         return
@@ -71,6 +83,7 @@ Page({
       }, 500)
     } catch (error) {
       console.error('save daily record failed', error)
+      this.setData({ saveError: '保存失败，请检查网络后重试。' })
       wx.showToast({ title: '保存失败，请稍后重试', icon: 'none' })
     } finally {
       this.setData({ saving: false })

@@ -4,7 +4,8 @@ const { normalizeParsedDailyInput } = require('../../utils/dailyInput')
 Page({
   data: {
     loading: false,
-    text: ''
+    text: '',
+    aiError: ''
   },
 
   onInput(event) {
@@ -19,16 +20,18 @@ Page({
     const app = getApp()
 
     if (!text) {
+      this.setData({ aiError: '' })
       wx.showToast({ title: '先写点内容', icon: 'none' })
       return
     }
 
     if (!app.globalData.cloudReady) {
+      this.setData({ aiError: 'AI 服务尚未连接，请检查云环境配置。' })
       wx.showToast({ title: '云开发未初始化', icon: 'none' })
       return
     }
 
-    this.setData({ loading: true })
+    this.setData({ loading: true, aiError: '' })
     try {
       const response = await wx.cloud.callFunction({
         name: 'parseDailyInput',
@@ -37,10 +40,12 @@ Page({
 
       const result = response.result || {}
       if (result.success === false) {
+        const message = result.error && result.error.message
+          ? result.error.message
+          : 'AI 解析失败，请稍后重试。'
+        this.setData({ aiError: message })
         wx.showToast({
-          title: result.error && result.error.message
-            ? result.error.message
-            : 'AI解析失败',
+          title: message,
           icon: 'none'
         })
         return
@@ -53,6 +58,7 @@ Page({
       })
     } catch (error) {
       console.error('parse entry input failed', error)
+      this.setData({ aiError: 'AI 解析失败，请检查网络后重试。' })
       wx.showToast({
         title: 'AI解析失败',
         icon: 'none'

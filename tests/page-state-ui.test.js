@@ -26,4 +26,16 @@ assert.match(profileJs, /retryCloudProfile/)
 assert.match(profileWxml, /settings-group/)
 assert.doesNotMatch(profileWxml, /wx:for="{{options}}"/)
 
+const entryJs = read('miniprogram/pages/entry/entry.js')
+const entryWxml = read('miniprogram/pages/entry/entry.wxml')
+const confirmJs = read('miniprogram/pages/confirm/confirm.js')
+const confirmWxml = read('miniprogram/pages/confirm/confirm.wxml')
+
+assert.match(entryJs, /aiError/)
+assert.match(entryWxml, /bindtap="parseText"/)
+assert.match(entryWxml, /error-banner/)
+assert.match(confirmJs, /saveError/)
+assert.match(confirmJs, /hasParsedItems/)
+assert.match(confirmWxml, /disabled="{{saving \|\| !hasParsedItems}}"/)
+
 console.log('page state UI tests passed')
