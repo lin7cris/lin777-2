@@ -9,7 +9,7 @@ async function run() {
     logger: { error() {} },
     getProvider: () => ({
       name: 'deepseek',
-      model: 'deepseek-chat',
+      model: 'deepseek-v4-flash',
       parseDailyInput: async (input) => {
         providerInput = input
         return {
@@ -26,7 +26,7 @@ async function run() {
   assert.deepStrictEqual(providerInput, { text: '吃了一个苹果', profile })
   assert.strictEqual(result.success, true)
   assert.strictEqual(result.provider, 'deepseek')
-  assert.strictEqual(result.model, 'deepseek-chat')
+  assert.strictEqual(result.model, 'deepseek-v4-flash')
   assert.strictEqual(result.foods[0].meal, '加餐')
   assert.strictEqual(result.summary.foodCalories, 95)
 

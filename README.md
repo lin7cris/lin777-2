@@ -55,7 +55,7 @@
 ```text
 AI_PROVIDER=deepseek
 DEEPSEEK_API_KEY=你的新 DeepSeek API Key
-DEEPSEEK_MODEL=deepseek-chat
+DEEPSEEK_MODEL=deepseek-v4-flash
 ```
 
 可选：

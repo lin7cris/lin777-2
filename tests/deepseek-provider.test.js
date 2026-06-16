@@ -7,7 +7,7 @@ async function run() {
   const provider = createDeepSeekProvider({
     env: {
       DEEPSEEK_API_KEY: 'test-key',
-      DEEPSEEK_MODEL: 'deepseek-chat'
+      DEEPSEEK_MODEL: 'deepseek-v4-flash'
     },
     requestJson: async (request) => {
       capturedRequest = request
@@ -32,7 +32,7 @@ async function run() {
 
   assert.strictEqual(capturedRequest.url, 'https://api.deepseek.com/chat/completions')
   assert.strictEqual(capturedRequest.headers.Authorization, 'Bearer test-key')
-  assert.strictEqual(capturedRequest.body.model, 'deepseek-chat')
+  assert.strictEqual(capturedRequest.body.model, 'deepseek-v4-flash')
   assert.deepStrictEqual(capturedRequest.body.response_format, { type: 'json_object' })
   assert.match(capturedRequest.body.messages[1].content, /中午吃了一碗牛肉面/)
   assert.match(capturedRequest.body.messages[1].content, /"weight":75/)
@@ -42,7 +42,7 @@ async function run() {
     env: { DEEPSEEK_API_KEY: 'test-key' },
     requestJson: async () => ({ choices: [{ message: { content: '{"foods":[],"exercises":[]}' } }] })
   })
-  assert.strictEqual(defaultModelProvider.model, 'deepseek-chat')
+  assert.strictEqual(defaultModelProvider.model, 'deepseek-v4-flash')
 
   const customModelProvider = createDeepSeekProvider({
     env: {
