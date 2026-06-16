@@ -34,7 +34,7 @@
     <view class="summary-band">
       <view class="summary-item"><text class="summary-label">摄入</text><text class="summary-number">{{record.totalCaloriesIn}}</text><text class="summary-unit">kcal</text></view>
       <view class="summary-item"><text class="summary-label">运动</text><text class="summary-number blue-number">{{record.totalCaloriesOut}}</text><text class="summary-unit">kcal</text></view>
-      <view class="summary-item"><text class="summary-label">净摄入</text><text class="summary-number">{{record.netCalories}}</text><text class="summary-unit">kcal</text></view>
+      <view class="summary-item"><text class="summary-label">热量缺口</text><text class="summary-number {{record.deficitTone === 'negative' ? 'red-number' : 'green-number'}}">{{record.calorieDeficit}}</text><text class="summary-unit">kcal</text></view>
       <view class="summary-item"><text class="summary-label">体重</text><text class="summary-number weight-value">{{record.weightText}}</text><text class="summary-unit">快照</text></view>
     </view>
 

@@ -115,6 +115,14 @@
   color: #0a84ff;
 }
 
+.green-number {
+  color: #248a3d;
+}
+
+.red-number {
+  color: #ff453a;
+}
+
 .summary-item .weight-value {
   font-size: 25rpx;
 }

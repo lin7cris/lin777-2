@@ -7,15 +7,21 @@ function sum(items, field) {
   return items.reduce((total, item) => total + toNumber(item[field]), 0)
 }
 
+function calculateCalorieDeficit(targetCalories, totalCaloriesIn, totalCaloriesOut) {
+  return Math.round(toNumber(targetCalories) + toNumber(totalCaloriesOut) - toNumber(totalCaloriesIn))
+}
+
 function emptyDailyRecord(date) {
   return {
     date,
     foods: [],
     exercises: [],
     sourceTexts: [],
+    targetCalories: 0,
     totalCaloriesIn: 0,
     totalCaloriesOut: 0,
     netCalories: 0,
+    calorieDeficit: 0,
     totalProtein: 0,
     totalCarbs: 0,
     totalFat: 0
@@ -27,14 +33,17 @@ function recalculateTotals(record) {
   const exercises = Array.isArray(record.exercises) ? record.exercises : []
   const totalCaloriesIn = sum(foods, 'calories')
   const totalCaloriesOut = sum(exercises, 'calories')
+  const targetCalories = toNumber(record.targetCalories)
 
   return {
     ...record,
     foods,
     exercises,
+    targetCalories,
     totalCaloriesIn,
     totalCaloriesOut,
     netCalories: totalCaloriesIn - totalCaloriesOut,
+    calorieDeficit: calculateCalorieDeficit(targetCalories, totalCaloriesIn, totalCaloriesOut),
     totalProtein: sum(foods, 'protein'),
     totalCarbs: sum(foods, 'carbs'),
     totalFat: sum(foods, 'fat')
@@ -54,6 +63,7 @@ function mergeDailyRecord(existing, input, context) {
   const current = existing || emptyDailyRecord(context.date)
   const sourceText = String(input && input.sourceText || '').trim()
   const latestWeight = toNumber(input && input.weight) || toNumber(current.weight)
+  const targetCalories = toNumber(input && input.targetCalories) || toNumber(current.targetCalories)
   const sourceTexts = Array.isArray(current.sourceTexts) ? current.sourceTexts.slice() : []
   if (sourceText) sourceTexts.push(sourceText)
 
@@ -64,6 +74,7 @@ function mergeDailyRecord(existing, input, context) {
     foods: (current.foods || []).concat(normalizeItems(input && input.foods, 'food', context)),
     exercises: (current.exercises || []).concat(normalizeItems(input && input.exercises, 'exercise', context)),
     sourceTexts,
+    targetCalories,
     createdAt: current.createdAt || context.now,
     updatedAt: context.now
   }

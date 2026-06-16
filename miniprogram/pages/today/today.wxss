@@ -15,6 +15,23 @@
   min-height: 92rpx;
 }
 
+.status-pill {
+  max-width: 240rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pill-success {
+  background: rgba(52, 199, 89, 0.12);
+  color: #248a3d;
+}
+
+.pill-danger {
+  background: rgba(255, 69, 58, 0.11);
+  color: #c9342c;
+}
+
 .page-heading .page-title {
   display: block;
   margin-top: 4rpx;
@@ -49,6 +66,16 @@
   box-sizing: border-box;
 }
 
+.calorie-ring-positive {
+  background: conic-gradient(#34c759 0 78%, rgba(52, 199, 89, 0.13) 78% 100%);
+  box-shadow: 0 12rpx 30rpx rgba(52, 199, 89, 0.14);
+}
+
+.calorie-ring-negative {
+  background: conic-gradient(#ff453a 0 78%, rgba(255, 69, 58, 0.12) 78% 100%);
+  box-shadow: 0 12rpx 30rpx rgba(255, 69, 58, 0.12);
+}
+
 .calorie-ring-inner {
   display: flex;
   width: 100%;
@@ -72,10 +99,24 @@
 }
 
 .ring-label {
-  margin-top: 8rpx;
+  margin-top: 6rpx;
   color: #8e8e93;
   font-size: 22rpx;
   font-weight: 600;
+}
+
+.deficit-message {
+  margin-top: 8rpx;
+  font-size: 20rpx;
+  font-weight: 700;
+}
+
+.success-text {
+  color: #248a3d;
+}
+
+.danger-text {
+  color: #ff453a;
 }
 
 .stat-list {
@@ -108,6 +149,26 @@
 
 .blue-text {
   color: #0a84ff;
+}
+
+@media (max-width: 340px) {
+  .summary {
+    grid-template-columns: 220rpx minmax(0, 1fr);
+    gap: 22rpx;
+  }
+
+  .calorie-ring {
+    width: 220rpx;
+    height: 220rpx;
+  }
+
+  .ring-number {
+    font-size: 48rpx;
+  }
+
+  .stat-value {
+    font-size: 26rpx;
+  }
 }
 
 .nutrition-card,

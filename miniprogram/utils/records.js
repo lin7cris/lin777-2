@@ -45,6 +45,33 @@ function sum(items, field) {
   return items.reduce((total, item) => total + toNumber(item[field]), 0)
 }
 
+function resolveTargetCalories(data, fallback) {
+  const source = data || {}
+  return toNumber(source.targetCalories) ||
+    toNumber(source.targetBurn) ||
+    toNumber(source.targetConsumption) ||
+    toNumber(fallback) ||
+    DEFAULT_PROFILE.targetCalories
+}
+
+function buildCalorieDeficit(foodCalories, exerciseCalories, targetCalories) {
+  return Math.round(resolveTargetCalories({ targetCalories }) + toNumber(exerciseCalories) - toNumber(foodCalories))
+}
+
+function calorieDeficitStatus(calorieDeficit) {
+  const value = toNumber(calorieDeficit)
+  if (value >= 500) {
+    return { deficitStatusLabel: '🔥 减脂优秀', deficitMessage: '已形成热量缺口', deficitTone: 'positive' }
+  }
+  if (value >= 200) {
+    return { deficitStatusLabel: '🟢 达成目标', deficitMessage: '已形成热量缺口', deficitTone: 'positive' }
+  }
+  if (value >= 0) {
+    return { deficitStatusLabel: '🟡 接近目标', deficitMessage: '已形成热量缺口', deficitTone: 'positive' }
+  }
+  return { deficitStatusLabel: '🔴 今日超标', deficitMessage: '热量超标', deficitTone: 'negative' }
+}
+
 function upperRangeValue(value, fallback) {
   if (typeof value === 'number') return value
   const numbers = String(value || '').match(/\d+/g)
@@ -100,7 +127,9 @@ function summarizeDay(entries, dateKey, options) {
     carbs: 0,
     fat: 0
   })
-  const targetCalories = toNumber(options && options.targetCalories) || DEFAULT_PROFILE.targetCalories
+  const targetCalories = resolveTargetCalories(options)
+  const calorieDeficit = buildCalorieDeficit(totals.foodCalories, totals.exerciseCalories, targetCalories)
+  const deficitStatus = calorieDeficitStatus(calorieDeficit)
   const macroTargets = (options && options.macroTargets) || {}
   const proteinTarget = upperRangeValue(macroTargets.protein, 100)
   const carbsTarget = upperRangeValue(macroTargets.carbs, 180)
@@ -111,7 +140,10 @@ function summarizeDay(entries, dateKey, options) {
     foodCalories: totals.foodCalories,
     exerciseCalories: totals.exerciseCalories,
     netCalories: totals.netCalories,
-    remainingCalories: targetCalories - totals.netCalories,
+    targetCalories,
+    calorieDeficit,
+    remainingCalories: calorieDeficit,
+    ...deficitStatus,
     macros: [
       { name: '蛋白质', value: `${Math.round(totals.protein)} / ${proteinTarget}g`, percent: percent(totals.protein, proteinTarget), color: 'green' },
       { name: '碳水', value: `${Math.round(totals.carbs)} / ${carbsTarget}g`, percent: percent(totals.carbs, carbsTarget), color: 'amber' },
@@ -173,7 +205,11 @@ function summarizeDailyRecord(record, options) {
   const protein = data.totalProtein === undefined ? sum(foods, 'protein') : toNumber(data.totalProtein)
   const carbs = data.totalCarbs === undefined ? sum(foods, 'carbs') : toNumber(data.totalCarbs)
   const fat = data.totalFat === undefined ? sum(foods, 'fat') : toNumber(data.totalFat)
-  const targetCalories = toNumber(options && options.targetCalories) || DEFAULT_PROFILE.targetCalories
+  const targetCalories = resolveTargetCalories(data, options && options.targetCalories)
+  const calorieDeficit = data.calorieDeficit === undefined
+    ? buildCalorieDeficit(foodCalories, exerciseCalories, targetCalories)
+    : toNumber(data.calorieDeficit)
+  const deficitStatus = calorieDeficitStatus(calorieDeficit)
   const macroTargets = (options && options.macroTargets) || {}
   const proteinTarget = upperRangeValue(macroTargets.protein, 100)
   const carbsTarget = upperRangeValue(macroTargets.carbs, 180)
@@ -183,7 +219,10 @@ function summarizeDailyRecord(record, options) {
     foodCalories,
     exerciseCalories,
     netCalories,
-    remainingCalories: targetCalories - netCalories,
+    targetCalories,
+    calorieDeficit,
+    remainingCalories: calorieDeficit,
+    ...deficitStatus,
     macros: [
       { name: '蛋白质', value: `${Math.round(protein)} / ${proteinTarget}g`, percent: percent(protein, proteinTarget), color: 'green' },
       { name: '碳水', value: `${Math.round(carbs)} / ${carbsTarget}g`, percent: percent(carbs, carbsTarget), color: 'amber' },
@@ -210,6 +249,13 @@ function buildHistoryRecord(record) {
   const data = record || {}
   const foods = Array.isArray(data.foods) ? data.foods : []
   const exercises = Array.isArray(data.exercises) ? data.exercises : []
+  const totalCaloriesIn = toNumber(data.totalCaloriesIn)
+  const totalCaloriesOut = toNumber(data.totalCaloriesOut)
+  const targetCalories = resolveTargetCalories(data, 0)
+  const calorieDeficit = data.calorieDeficit === undefined
+    ? buildCalorieDeficit(totalCaloriesIn, totalCaloriesOut, targetCalories)
+    : toNumber(data.calorieDeficit)
+  const deficitStatus = calorieDeficitStatus(calorieDeficit)
 
   return {
     dateKey: data.date || '',
@@ -224,9 +270,13 @@ function buildHistoryRecord(record) {
       durationText: `${toNumber(exercise.duration)} 分钟`,
       caloriesText: `-${toNumber(exercise.calories)} kcal`
     })),
-    totalCaloriesIn: toNumber(data.totalCaloriesIn),
-    totalCaloriesOut: toNumber(data.totalCaloriesOut),
+    totalCaloriesIn,
+    totalCaloriesOut,
     netCalories: toNumber(data.netCalories),
+    targetCalories,
+    calorieDeficit,
+    calorieDeficitText: `${calorieDeficit} kcal`,
+    ...deficitStatus,
     weightText: toNumber(data.weight) > 0 ? `${toNumber(data.weight)} kg` : '--'
   }
 }
@@ -276,7 +326,20 @@ function buildTrendStats(records, days, now) {
   const count = days === 30 ? 30 : 7
   const recordsByDate = {}
   ;(Array.isArray(records) ? records : []).forEach((record) => {
-    if (record && record.date) recordsByDate[record.date] = record
+    if (record && record.date) {
+      const totalCaloriesIn = toNumber(record.totalCaloriesIn)
+      const totalCaloriesOut = toNumber(record.totalCaloriesOut)
+      const targetCalories = resolveTargetCalories(record, 0)
+      recordsByDate[record.date] = {
+        ...record,
+        totalCaloriesIn,
+        totalCaloriesOut,
+        targetCalories,
+        calorieDeficit: record.calorieDeficit === undefined
+          ? buildCalorieDeficit(totalCaloriesIn, totalCaloriesOut, targetCalories)
+          : toNumber(record.calorieDeficit)
+      }
+    }
   })
 
   for (let offset = -(count - 1); offset <= 0; offset += 1) {
@@ -289,6 +352,7 @@ function buildTrendStats(records, days, now) {
     hasData: Object.keys(recordsByDate).length > 0,
     intake: chartMetric(recordsByDate, dayKeys, 'totalCaloriesIn'),
     exercise: chartMetric(recordsByDate, dayKeys, 'totalCaloriesOut'),
+    deficit: chartMetric(recordsByDate, dayKeys, 'calorieDeficit'),
     net: chartMetric(recordsByDate, dayKeys, 'netCalories'),
     weight: chartMetric(recordsByDate, dayKeys, 'weight', { unit: 'kg', suffix: ' kg' })
   }
@@ -347,6 +411,8 @@ module.exports = {
   summarizeDailyRecord,
   buildHistoryRecord,
   buildTrendStats,
+  buildCalorieDeficit,
+  calorieDeficitStatus,
   dateRangeForDays,
   buildSevenDayStats,
   formatDateKey

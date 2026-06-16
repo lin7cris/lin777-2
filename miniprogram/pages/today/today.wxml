@@ -4,22 +4,23 @@
       <text class="eyebrow">今日概览</text>
       <text class="page-title">{{dateTitle}}</text>
     </view>
-    <text class="pill">{{goalLabel}}</text>
+    <text class="pill status-pill {{deficitTone === 'negative' ? 'pill-danger' : 'pill-success'}}">{{deficitStatusLabel}}</text>
   </view>
 
   <view class="card overview-card">
     <view class="summary">
-      <view class="calorie-ring">
+      <view class="calorie-ring {{deficitTone === 'negative' ? 'calorie-ring-negative' : 'calorie-ring-positive'}}">
         <view class="calorie-ring-inner">
-          <text class="ring-number">{{netCalories}}</text>
-          <text class="ring-label">净摄入 kcal</text>
+          <text class="ring-number {{deficitTone === 'negative' ? 'danger-text' : 'success-text'}}">{{calorieDeficit}}</text>
+          <text class="ring-label">热量缺口 kcal</text>
+          <text class="deficit-message {{deficitTone === 'negative' ? 'danger-text' : 'success-text'}}">{{deficitMessage}}</text>
         </view>
       </view>
       <view class="stat-list">
-        <view class="stat-row"><text class="stat-label">推荐</text><text class="stat-value">{{targetCalories}}</text></view>
-        <view class="stat-row"><text class="stat-label">摄入</text><text class="stat-value">{{foodCalories}}</text></view>
-        <view class="stat-row"><text class="stat-label">运动</text><text class="stat-value blue-text">-{{exerciseCalories}}</text></view>
-        <view class="stat-row"><text class="stat-label">剩余</text><text class="stat-value">{{remainingCalories}}</text></view>
+        <view class="stat-row"><text class="stat-label">目标消耗</text><text class="stat-value">{{targetCalories}}</text></view>
+        <view class="stat-row"><text class="stat-label">饮食摄入</text><text class="stat-value">{{foodCalories}}</text></view>
+        <view class="stat-row"><text class="stat-label">运动消耗</text><text class="stat-value blue-text">{{exerciseCalories}}</text></view>
+        <view class="stat-row"><text class="stat-label">热量缺口</text><text class="stat-value {{deficitTone === 'negative' ? 'danger-text' : 'success-text'}}">{{calorieDeficit}}</text></view>
       </view>
     </view>
   </view>

@@ -62,7 +62,8 @@ Page({
           sourceText: this.data.sourceText,
           foods: this.data.foods,
           exercises: this.data.exercises,
-          weight: profile.weight
+          weight: profile.weight,
+          targetCalories: profile.targetCalories
         }
       })
       const result = response.result || {}

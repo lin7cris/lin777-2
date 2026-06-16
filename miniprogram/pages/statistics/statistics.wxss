@@ -125,6 +125,13 @@
   margin-bottom: 20rpx;
 }
 
+.trend-meta {
+  display: flex;
+  min-width: 112rpx;
+  flex-shrink: 0;
+  justify-content: flex-end;
+}
+
 .trend-title,
 .trend-subtitle {
   display: block;
@@ -148,6 +155,26 @@
   margin-top: 0;
 }
 
+.selected-trend-value {
+  display: flex;
+  min-height: 52rpx;
+  align-items: center;
+  gap: 8rpx;
+  padding: 0 16rpx;
+  border-radius: 999rpx;
+  background: rgba(52, 199, 89, 0.12);
+  color: #1c1c1e;
+  font-size: 22rpx;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.selected-trend-date {
+  color: #636366;
+  font-size: 19rpx;
+  font-weight: 700;
+}
+
 .chart {
   display: flex;
   width: 100%;
@@ -163,6 +190,12 @@
   flex: 1;
   flex-direction: column;
   align-items: center;
+  border-radius: 14rpx;
+  transition: background 160ms ease;
+}
+
+.chart-point-selected {
+  background: rgba(52, 199, 89, 0.08);
 }
 
 .bar-track {
@@ -179,10 +212,18 @@
   max-width: 30rpx;
   min-height: 4rpx;
   border-radius: 6rpx 6rpx 0 0;
+  transition: transform 160ms ease, opacity 160ms ease;
+}
+
+.chart-point-selected .trend-bar {
+  opacity: 0.92;
+  transform: scaleX(1.18);
 }
 
 .intake-bar { background: #1c1c1e; }
 .exercise-bar { background: #34c759; }
+.deficit-positive { background: #34c759; }
+.deficit-negative { background: #ff453a; }
 .net-positive { background: #ff9f0a; }
 .net-negative { background: #ff453a; }
 .weight-bar { background: #0a84ff; }

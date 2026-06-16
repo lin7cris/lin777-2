@@ -11,8 +11,10 @@ Page({
     loading: false,
     statisticsError: '',
     hasData: false,
+    selectedTrend: null,
     intake: { points: [], hasData: false },
     exercise: { points: [], hasData: false },
+    deficit: { points: [], hasData: false },
     net: { points: [], hasData: false },
     weight: { points: [], hasData: false }
   },
@@ -24,7 +26,7 @@ Page({
   selectRange(event) {
     const rangeDays = Number(event.currentTarget.dataset.days) === 30 ? 30 : 7
     if (rangeDays === this.data.rangeDays && this.data.hasData) return
-    this.setData({ rangeDays })
+    this.setData({ rangeDays, selectedTrend: null })
     this.loadStatistics(rangeDays)
   },
 
@@ -35,6 +37,7 @@ Page({
       const emptyStats = buildTrendStats([], rangeDays, new Date())
       this.setData({
         ...emptyStats,
+        selectedTrend: null,
         loading: false,
         statisticsError: '云开发尚未连接，请检查环境配置后重试。'
       })
@@ -48,7 +51,7 @@ Page({
       endDate: range.endDate
     }
     let response
-    this.setData({ loading: true, statisticsError: '' })
+    this.setData({ loading: true, statisticsError: '', selectedTrend: null })
     try {
       response = await wx.cloud.callFunction({
         name: 'dailyRecords',
@@ -68,7 +71,10 @@ Page({
       }
       if (requestId !== requestSequence) return
       const stats = buildTrendStats(result.records, rangeDays, new Date())
-      this.setData(stats)
+      this.setData({
+        ...stats,
+        selectedTrend: null
+      })
     } catch (error) {
       console.error('load statistics failed', {
         rangeDays,
@@ -86,6 +92,7 @@ Page({
       const emptyStats = buildTrendStats([], rangeDays, new Date())
       this.setData({
         ...emptyStats,
+        selectedTrend: null,
         statisticsError: '无法读取统计数据，请检查网络后重试。'
       })
       wx.showToast({ title: '读取统计数据失败', icon: 'none' })
@@ -96,6 +103,28 @@ Page({
 
   retryStatistics() {
     this.loadStatistics(this.data.rangeDays)
+  },
+
+  selectTrendPoint(event) {
+    const { chart, title, unit, index } = event.currentTarget.dataset
+    const points = this.data[chart] && this.data[chart].points
+    const point = Array.isArray(points) ? points[Number(index)] : null
+    if (!point || !point.hasValue) return
+
+    this.setData({
+      selectedTrend: {
+        chart,
+        index: Number(index),
+        title,
+        dateLabel: point.label,
+        valueText: point.valueText,
+        unit
+      }
+    })
+  },
+
+  clearSelectedTrend() {
+    this.setData({ selectedTrend: null })
   },
 
   onUnload() {

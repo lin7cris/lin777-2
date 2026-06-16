@@ -9,11 +9,14 @@ const { normalizeParsedDailyInput } = require('../../utils/dailyInput')
 Page({
   data: {
     dateTitle: '',
-    goalLabel: '减脂日',
+    deficitStatusLabel: '🟡 接近目标',
+    deficitMessage: '已形成热量缺口',
+    deficitTone: 'positive',
     targetCalories: 0,
     foodCalories: 0,
     exerciseCalories: 0,
     netCalories: 0,
+    calorieDeficit: 0,
     remainingCalories: 0,
     macros: [],
     records: [],
@@ -31,7 +34,6 @@ Page({
 
     this.setData({
       dateTitle: this.formatDateTitle(todayKey),
-      goalLabel: this.goalLabel(profile.goal),
       targetCalories: profile.targetCalories
     })
     this.loadDailyRecord(todayKey, profile)
@@ -83,7 +85,11 @@ Page({
       foodCalories: summary.foodCalories,
       exerciseCalories: summary.exerciseCalories,
       netCalories: summary.netCalories,
+      calorieDeficit: summary.calorieDeficit,
       remainingCalories: summary.remainingCalories,
+      deficitStatusLabel: summary.deficitStatusLabel,
+      deficitMessage: summary.deficitMessage,
+      deficitTone: summary.deficitTone,
       macros: summary.macros,
       records: summary.records
     })
@@ -122,12 +128,6 @@ Page({
   formatDateTitle(dateKey) {
     const parts = dateKey.split('-')
     return `${Number(parts[1])} 月 ${Number(parts[2])} 日`
-  },
-
-  goalLabel(goal) {
-    if (goal === 'muscle_gain') return '增肌日'
-    if (goal === 'maintain') return '维持日'
-    return '减脂日'
   },
 
   goEntry() {

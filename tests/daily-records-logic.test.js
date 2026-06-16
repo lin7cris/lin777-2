@@ -18,6 +18,7 @@ const context = {
 const first = mergeDailyRecord(null, {
   sourceText: '早餐一个鸡蛋，跑步30分钟',
   weight: 62.5,
+  targetCalories: 1540,
   foods: [
     { name: '鸡蛋', amount: '1个', calories: 70, protein: 6, carbs: 1, fat: 5 }
   ],
@@ -33,6 +34,8 @@ assert.strictEqual(first.exercises[0].id, 'exercise-1')
 assert.strictEqual(first.totalCaloriesIn, 70)
 assert.strictEqual(first.totalCaloriesOut, 300)
 assert.strictEqual(first.netCalories, -230)
+assert.strictEqual(first.targetCalories, 1540)
+assert.strictEqual(first.calorieDeficit, 1770)
 assert.strictEqual(first.weight, 62.5)
 
 const second = mergeDailyRecord(first, {
@@ -56,6 +59,8 @@ assert.strictEqual(second.foods[1].id, 'food-next-1')
 assert.strictEqual(second.totalCaloriesIn, 165)
 assert.strictEqual(second.totalCaloriesOut, 300)
 assert.strictEqual(second.netCalories, -135)
+assert.strictEqual(second.targetCalories, 1540)
+assert.strictEqual(second.calorieDeficit, 1675)
 assert.strictEqual(second.totalProtein, 6.5)
 assert.deepStrictEqual(second.sourceTexts, ['早餐一个鸡蛋，跑步30分钟', '午餐一个苹果'])
 assert.strictEqual(second.weight, 61.8)
@@ -67,6 +72,7 @@ assert.deepStrictEqual(afterFoodDelete.foods.map((item) => item.name), ['苹果'
 assert.strictEqual(afterFoodDelete.totalCaloriesIn, 95)
 assert.strictEqual(afterFoodDelete.totalCaloriesOut, 300)
 assert.strictEqual(afterFoodDelete.netCalories, -205)
+assert.strictEqual(afterFoodDelete.calorieDeficit, 1745)
 
 const afterExerciseDelete = deleteDailyItem(afterFoodDelete, 'exercise', 'exercise-1', {
   now: '2026-06-12T07:00:00.000Z'
@@ -74,6 +80,7 @@ const afterExerciseDelete = deleteDailyItem(afterFoodDelete, 'exercise', 'exerci
 assert.deepStrictEqual(afterExerciseDelete.exercises, [])
 assert.strictEqual(afterExerciseDelete.totalCaloriesOut, 0)
 assert.strictEqual(afterExerciseDelete.netCalories, 95)
+assert.strictEqual(afterExerciseDelete.calorieDeficit, 1445)
 
 assert.throws(
   () => deleteDailyItem(second, 'food', 'missing', context),
@@ -85,9 +92,11 @@ assert.deepStrictEqual(emptyDailyRecord('2026-06-13'), {
   foods: [],
   exercises: [],
   sourceTexts: [],
+  targetCalories: 0,
   totalCaloriesIn: 0,
   totalCaloriesOut: 0,
   netCalories: 0,
+  calorieDeficit: 0,
   totalProtein: 0,
   totalCarbs: 0,
   totalFat: 0
