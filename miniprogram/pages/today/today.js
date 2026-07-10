@@ -12,6 +12,15 @@ Page({
     deficitStatusLabel: '🟡 接近目标',
     deficitMessage: '已形成热量缺口',
     deficitTone: 'positive',
+    goalTag: '减脂日',
+    calorieDeficitText: '+0',
+    calorieDeficitSizeClass: 'deficit-size-large',
+    calorieDeficitAbs: 0,
+    deficitHeadline: '距离今日目标还差 0 kcal',
+    goalProgress: 0,
+    goalProgressStyle: '',
+    coachSummary: '',
+    coachTips: [],
     targetCalories: 0,
     foodCalories: 0,
     exerciseCalories: 0,
@@ -25,7 +34,8 @@ Page({
     deletingId: '',
     dailyInput: '',
     parsing: false,
-    aiError: ''
+    aiError: '',
+    inputDockStyle: ''
   },
 
   onShow() {
@@ -34,6 +44,7 @@ Page({
 
     this.setData({
       dateTitle: this.formatDateTitle(todayKey),
+      goalTag: this.formatGoalTag(profile.goal),
       targetCalories: profile.targetCalories
     })
     this.loadDailyRecord(todayKey, profile)
@@ -81,6 +92,7 @@ Page({
       targetCalories: profile.targetCalories,
       macroTargets: profile.macros
     })
+    const display = this.buildTodayDisplay(summary)
     this.setData({
       foodCalories: summary.foodCalories,
       exerciseCalories: summary.exerciseCalories,
@@ -90,9 +102,66 @@ Page({
       deficitStatusLabel: summary.deficitStatusLabel,
       deficitMessage: summary.deficitMessage,
       deficitTone: summary.deficitTone,
+      ...display,
       macros: summary.macros,
       records: summary.records
     })
+  },
+
+  buildTodayDisplay(summary) {
+    const calorieDeficit = Number(summary.calorieDeficit) || 0
+    const calorieDeficitAbs = Math.abs(calorieDeficit)
+    const targetBudget = (Number(summary.targetCalories) || 0) + (Number(summary.exerciseCalories) || 0)
+    const progress = targetBudget > 0
+      ? Math.min(100, Math.max(0, Math.round((Number(summary.foodCalories) || 0) / targetBudget * 100)))
+      : 0
+    const isOver = calorieDeficit < 0
+    const progressColor = isOver ? '#FF453A' : '#34C759'
+
+    return {
+      calorieDeficitAbs,
+      calorieDeficitText: `${calorieDeficit >= 0 ? '+' : '-'}${calorieDeficitAbs}`,
+      calorieDeficitSizeClass: this.getDeficitSizeClass(calorieDeficitAbs),
+      deficitHeadline: calorieDeficit >= 0
+        ? `距离今日目标还差 ${calorieDeficitAbs} kcal`
+        : `今日已超过目标 ${calorieDeficitAbs} kcal`,
+      goalProgress: progress,
+      goalProgressStyle: `background: conic-gradient(${progressColor} 0 ${progress}%, rgba(118, 118, 128, 0.14) ${progress}% 100%);`,
+      coachSummary: this.buildCoachSummary(summary, isOver),
+      coachTips: this.buildCoachTips(summary, isOver)
+    }
+  },
+
+  getDeficitSizeClass(value) {
+    const digitCount = String(Math.abs(Number(value) || 0)).length
+    if (digitCount >= 5) return 'deficit-size-compact'
+    if (digitCount >= 4) return 'deficit-size-medium'
+    return 'deficit-size-large'
+  },
+
+  buildCoachSummary(summary, isOver) {
+    const calorieDeficit = Math.abs(Number(summary.calorieDeficit) || 0)
+    if (isOver) {
+      return `今天已经超过目标 ${calorieDeficit} kcal。接下来先不要追求补偿式节食，重点是把晚间摄入控制在低热量、高蛋白、低油脂的组合里。`
+    }
+    return `你今天还留有 ${calorieDeficit} kcal 的空间。可以把它当作晚餐预算，优先安排蛋白质和蔬菜，把饱腹感留住。`
+  },
+
+  buildCoachTips(summary, isOver) {
+    if (isOver) {
+      return [
+        '晚餐避免油炸、奶茶和高糖零食，选择鸡蛋、鸡胸、鱼虾或豆制品。',
+        '如果体力允许，增加 20 分钟轻松步行，帮助今天的热量曲线回到可控范围。',
+        '明天早餐保持清淡但不要跳过，避免因为饥饿导致下一餐失控。'
+      ]
+    }
+
+    const tips = [
+      '晚餐可以选择一份优质蛋白，加一份蔬菜，再搭配少量主食。',
+      '如果今天蛋白质进度偏低，优先补蛋白，不要把剩余热量全部给甜食。',
+      '饭后轻松步行 20 分钟，可以让今日目标更稳地完成。'
+    ]
+    return tips
   },
 
   deleteDailyItem(event) {
@@ -130,6 +199,12 @@ Page({
     return `${Number(parts[1])} 月 ${Number(parts[2])} 日`
   },
 
+  formatGoalTag(goal) {
+    if (goal === 'muscle_gain') return '增肌日'
+    if (goal === 'maintain') return '维持日'
+    return '减脂日'
+  },
+
   goEntry() {
     wx.navigateTo({
       url: '/pages/entry/entry'
@@ -140,6 +215,17 @@ Page({
     this.setData({
       dailyInput: event.detail.value
     })
+  },
+
+  onInputKeyboardHeightChange(event) {
+    const keyboardHeight = Number(event.detail && event.detail.height) || 0
+    this.setData({
+      inputDockStyle: keyboardHeight > 0 ? `bottom: ${keyboardHeight + 8}px;` : ''
+    })
+  },
+
+  onInputBlur() {
+    this.setData({ inputDockStyle: '' })
   },
 
   parseDailyInput() {

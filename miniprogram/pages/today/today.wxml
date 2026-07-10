@@ -1,79 +1,138 @@
-<view class="page">
-  <view class="page-heading">
+<view class="today-root">
+  <scroll-view class="page-content today-page" scroll-y enhanced show-scrollbar="{{false}}">
+  <view class="today-hero">
     <view>
-      <text class="eyebrow">今日概览</text>
-      <text class="page-title">{{dateTitle}}</text>
+      <text class="today-kicker">Today</text>
+      <text class="today-title">今日</text>
+      <text class="today-date">{{dateTitle}}</text>
     </view>
-    <text class="pill status-pill {{deficitTone === 'negative' ? 'pill-danger' : 'pill-success'}}">{{deficitStatusLabel}}</text>
+    <view class="goal-tag">{{goalTag}}</view>
   </view>
 
-  <view class="card overview-card">
-    <view class="summary">
-      <view class="calorie-ring {{deficitTone === 'negative' ? 'calorie-ring-negative' : 'calorie-ring-positive'}}">
-        <view class="calorie-ring-inner">
-          <text class="ring-number {{deficitTone === 'negative' ? 'danger-text' : 'success-text'}}">{{calorieDeficit}}</text>
-          <text class="ring-label">热量缺口 kcal</text>
-          <text class="deficit-message {{deficitTone === 'negative' ? 'danger-text' : 'success-text'}}">{{deficitMessage}}</text>
-        </view>
+  <view class="goal-card card-fade">
+    <view class="goal-copy">
+      <text class="goal-eyebrow">Today's Goal</text>
+      <text class="goal-title">今日热量缺口</text>
+      <view class="deficit-line {{calorieDeficitSizeClass}} {{deficitTone === 'negative' ? 'danger-text' : 'success-text'}}">
+        <text class="deficit-number">{{calorieDeficitText}}</text>
+        <text class="deficit-unit">kcal</text>
       </view>
-      <view class="stat-list">
-        <view class="stat-row"><text class="stat-label">目标消耗</text><text class="stat-value">{{targetCalories}}</text></view>
-        <view class="stat-row"><text class="stat-label">饮食摄入</text><text class="stat-value">{{foodCalories}}</text></view>
-        <view class="stat-row"><text class="stat-label">运动消耗</text><text class="stat-value blue-text">{{exerciseCalories}}</text></view>
-        <view class="stat-row"><text class="stat-label">热量缺口</text><text class="stat-value {{deficitTone === 'negative' ? 'danger-text' : 'success-text'}}">{{calorieDeficit}}</text></view>
+      <text class="goal-subtitle">{{deficitHeadline}}</text>
+    </view>
+
+    <view class="goal-ring" style="{{goalProgressStyle}}">
+      <view class="goal-ring-inner">
+        <text class="goal-progress">{{goalProgress}}%</text>
       </view>
     </view>
   </view>
 
-  <view class="card nutrition-card">
+  <view class="metric-strip card-fade">
+    <view class="metric-item">
+      <view class="metric-number-line"><text class="metric-value">{{foodCalories}}</text><text class="metric-unit">kcal</text></view>
+      <text class="metric-label">摄入</text>
+    </view>
+    <view class="metric-item">
+      <view class="metric-number-line"><text class="metric-value blue-text">{{exerciseCalories}}</text><text class="metric-unit">kcal</text></view>
+      <text class="metric-label">消耗</text>
+    </view>
+    <view class="metric-item">
+      <view class="metric-number-line"><text class="metric-value">{{netCalories}}</text><text class="metric-unit">kcal</text></view>
+      <text class="metric-label">净摄入</text>
+    </view>
+  </view>
+
+  <view class="nutrition-card apple-card card-fade">
     <view class="section-heading">
-      <text class="card-title">营养素</text>
+      <view>
+        <text class="section-title">营养素</text>
+        <text class="section-subtitle">Apple Health style</text>
+      </view>
       <text class="section-caption">今日进度</text>
     </view>
-    <view class="macro" wx:for="{{macros}}" wx:key="name">
-      <view class="row"><text>{{item.name}}</text><text class="value">{{item.value}}</text></view>
-      <view class="track"><view class="fill {{item.color}}" style="width: {{item.percent}}%;"></view></view>
+    <view class="macro-grid">
+      <view class="macro-tile" wx:for="{{macros}}" wx:key="name">
+        <view class="macro-head">
+          <text class="macro-name">{{item.name}}</text>
+          <text class="macro-percent">{{item.percent}}%</text>
+        </view>
+        <text class="macro-value">{{item.value}}</text>
+        <view class="macro-track">
+          <view class="macro-fill {{item.color}}" style="width: {{item.percent}}%;"></view>
+        </view>
+      </view>
     </view>
   </view>
 
-  <view class="actions">
-    <button class="quick-action primary-quick" bindtap="goEntry">记录饮食</button>
-    <button class="quick-action" bindtap="goEntry">记录运动</button>
+  <view class="coach-card apple-card card-fade">
+    <view class="section-heading">
+      <view>
+        <text class="section-title">AI Coach</text>
+        <text class="section-subtitle">今天的饮食策略</text>
+      </view>
+      <view class="coach-mark">AI</view>
+    </view>
+    <view class="coach-bubble">
+      <view class="coach-avatar">AI</view>
+      <view class="coach-message">
+        <text class="coach-summary">{{coachSummary}}</text>
+        <view class="coach-list">
+          <view class="coach-item" wx:for="{{coachTips}}" wx:key="*this">
+            <view class="coach-dot"></view>
+            <text>{{item}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
   </view>
 
-  <view class="card records-card">
+  <view class="records-card apple-card card-fade">
     <view class="section-heading">
-      <text class="card-title">今日记录</text>
+      <view>
+        <text class="section-title">今日记录</text>
+        <text class="section-subtitle">Timeline</text>
+      </view>
       <text class="record-count" wx:if="{{records.length}}">{{records.length}} 条</text>
     </view>
 
-    <view wx:if="{{loadingRecords}}" class="loading-list">
-      <view class="skeleton skeleton-line"></view>
-      <view class="skeleton skeleton-line short"></view>
+    <view wx:if="{{loadingRecords}}" class="timeline-skeleton">
+      <view class="skeleton timeline-skeleton-avatar"></view>
+      <view class="timeline-skeleton-lines">
+        <view class="skeleton skeleton-line"></view>
+        <view class="skeleton skeleton-line short"></view>
+      </view>
     </view>
 
     <view wx:elif="{{recordError}}" class="state-view compact-state">
       <text class="state-title">记录暂时无法载入</text>
       <text class="state-copy">{{recordError}}</text>
-      <button class="state-action" bindtap="retryDailyRecord">重新加载</button>
+      <button class="state-action button-press" bindtap="retryDailyRecord">重新加载</button>
     </view>
 
     <view wx:elif="{{!records.length}}" class="state-view compact-state">
-      <text class="empty-symbol">＋</text>
+      <view class="empty-orbit"></view>
       <text class="state-title">还没有今日记录</text>
-      <text class="state-copy">写下今天吃了什么或完成了哪些运动。</text>
+      <text class="state-copy">写下今天吃了什么，AI Coach 会整理成时间线。</text>
     </view>
 
-    <block wx:else>
-      <view class="record row" wx:for="{{records}}" wx:key="id">
-        <view class="record-content">
-          <view class="record-title">{{item.title}}</view>
-          <view class="muted small">{{item.desc}}</view>
+    <view wx:else class="timeline">
+      <view class="timeline-row" wx:for="{{records}}" wx:key="id">
+        <view class="timeline-rail">
+          <view class="timeline-dot"></view>
         </view>
-        <view class="record-actions">
-          <text class="record-calories {{item.type === 'exercise' ? 'blue-text' : ''}}">{{item.calories}}</text>
+        <scroll-view class="swipe-shell" scroll-x enhanced show-scrollbar="{{false}}">
+          <view class="swipe-content">
+            <view class="record-thumb {{item.type === 'exercise' ? 'record-thumb-blue' : ''}}">
+              <text>{{item.type === 'exercise' ? 'M' : 'F'}}</text>
+            </view>
+            <view class="record-content">
+              <view class="record-title">{{item.title}}</view>
+              <view class="record-meta">{{item.desc}}</view>
+            </view>
+            <text class="record-calories {{item.type === 'exercise' ? 'blue-text' : ''}}">{{item.calories}}</text>
+          </view>
           <button
-            class="delete-button {{deletingId ? 'delete-button-disabled' : ''}}"
+            class="swipe-delete button-press {{deletingId ? 'delete-button-disabled' : ''}}"
             loading="{{deletingId === item.id}}"
             disabled="{{!!deletingId}}"
             data-item-type="{{item.itemType}}"
@@ -81,12 +140,14 @@
             data-title="{{item.title}}"
             bindtap="deleteDailyItem"
           >删除</button>
-        </view>
+        </scroll-view>
       </view>
-    </block>
+    </view>
   </view>
 
-  <view class="input-dock">
+  </scroll-view>
+
+  <view class="input-dock" style="{{inputDockStyle}}">
     <view wx:if="{{aiError}}" class="error-banner ai-error">
       <text class="error-title">AI 解析失败</text>
       <text>{{aiError}}</text>
@@ -95,12 +156,16 @@
       <textarea
         class="daily-input"
         value="{{dailyInput}}"
-        placeholder="描述饮食或运动..."
+        placeholder="告诉 AI 今天吃了什么、运动多久…"
         maxlength="500"
         auto-height
+        adjust-position="{{false}}"
+        cursor-spacing="12"
         bindinput="onDailyInput"
+        bindblur="onInputBlur"
+        bindkeyboardheightchange="onInputKeyboardHeightChange"
       />
-      <button class="parse-button" loading="{{parsing}}" disabled="{{parsing}}" bindtap="parseDailyInput">AI 解析</button>
+      <button class="parse-button button-press" loading="{{parsing}}" disabled="{{parsing}}" bindtap="parseDailyInput">↑</button>
     </view>
   </view>
 </view>

@@ -1,55 +1,115 @@
 <view class="page profile-page">
-  <view class="profile-heading">
-    <view class="avatar"><text>{{profile.weight}}</text><text class="avatar-unit">kg</text></view>
-    <view class="profile-copy">
-      <text class="page-title">我的健康档案</text>
-      <text class="profile-meta">{{genderText}} · {{profile.age}} 岁 · {{profile.height}} cm</text>
-      <text class="profile-goal">{{goalText}} · {{activityText}}</text>
+  <view class="profile-hero">
+    <view>
+      <text class="profile-kicker">Account</text>
+      <text class="profile-title">我的</text>
+      <text class="profile-subtitle">AI 饮食教练档案</text>
+    </view>
+    <view class="avatar">
+      <text class="avatar-name">AI</text>
     </view>
   </view>
 
-  <view wx:if="{{loadingProfile}}" class="sync-status muted">正在同步云端资料...</view>
+  <view class="identity-card card-fade">
+    <view class="identity-main">
+      <view class="identity-avatar">
+        <text>{{profile.weight}}</text>
+        <text class="avatar-unit">kg</text>
+      </view>
+      <view class="identity-copy">
+        <text class="identity-name">健康档案</text>
+        <text class="identity-meta">{{genderText}} · {{profile.age}} 岁 · {{profile.height}} cm</text>
+        <text class="identity-goal">{{goalText}} · {{activityText}}</text>
+      </view>
+    </view>
+
+    <view class="profile-metrics">
+      <view class="metric-tile">
+        <text class="metric-value">{{bmiText}}</text>
+        <text class="metric-label">BMI · {{bmiLevel}}</text>
+      </view>
+      <view class="metric-tile">
+        <text class="metric-value">{{profile.targetWeight}}</text>
+        <text class="metric-label">目标体重 kg</text>
+      </view>
+      <view class="metric-tile">
+        <text class="metric-value">{{targetDeltaText}}</text>
+        <text class="metric-label">距离目标</text>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{loadingProfile}}" class="sync-card muted">正在同步云端资料...</view>
   <view wx:elif="{{profileError}}" class="error-banner sync-error">
     <text>{{profileError}}</text>
-    <button class="inline-retry" bindtap="retryCloudProfile">重试</button>
+    <button class="inline-retry button-press" bindtap="retryCloudProfile">重试</button>
   </view>
 
-  <view class="section-label">基础信息</view>
-  <view class="settings-group">
-    <view class="settings-row">
-      <text class="field-label">性别</text>
-      <picker class="picker-value" range="{{genderOptions}}" range-key="label" value="{{genderIndex}}" data-field="gender" bindchange="onPickerChange">
-        <text>{{genderOptions[genderIndex].label}}</text>
-      </picker>
+  <view class="settings-section">
+    <view class="section-heading">
+      <view>
+        <text class="section-title">个人档案</text>
+        <text class="section-subtitle">用于计算每日目标</text>
+      </view>
     </view>
-    <view class="settings-row"><text class="field-label">年龄</text><view class="input-group"><input class="input-value" type="number" value="{{form.age}}" data-field="age" bindinput="onNumberInput" /><text class="unit">岁</text></view></view>
-    <view class="settings-row"><text class="field-label">身高</text><view class="input-group"><input class="input-value" type="digit" value="{{form.height}}" data-field="height" bindinput="onNumberInput" /><text class="unit">cm</text></view></view>
-    <view class="settings-row"><text class="field-label">当前体重</text><view class="input-group"><input class="input-value" type="digit" value="{{form.weight}}" data-field="weight" bindinput="onNumberInput" /><text class="unit">kg</text></view></view>
-    <view class="settings-row"><text class="field-label">目标体重</text><view class="input-group"><input class="input-value" type="digit" value="{{form.targetWeight}}" data-field="targetWeight" bindinput="onNumberInput" /><text class="unit">kg</text></view></view>
-    <view class="settings-row">
-      <text class="field-label">活动强度</text>
-      <picker class="picker-value" range="{{activityOptions}}" range-key="label" value="{{activityIndex}}" data-field="activityLevel" bindchange="onPickerChange"><text>{{activityOptions[activityIndex].label}}</text></picker>
+
+    <view class="settings-group profile-form-card">
+      <view class="settings-row">
+        <text class="field-label">性别</text>
+        <picker class="picker-value" range="{{genderOptions}}" range-key="label" value="{{genderIndex}}" data-field="gender" bindchange="onPickerChange">
+          <text>{{genderOptions[genderIndex].label}}</text>
+        </picker>
+      </view>
+      <view class="settings-row"><text class="field-label">年龄</text><view class="input-group"><input class="input-value" type="number" value="{{form.age}}" data-field="age" bindinput="onNumberInput" /><text class="unit">岁</text></view></view>
+      <view class="settings-row"><text class="field-label">身高</text><view class="input-group"><input class="input-value" type="digit" value="{{form.height}}" data-field="height" bindinput="onNumberInput" /><text class="unit">cm</text></view></view>
+      <view class="settings-row"><text class="field-label">当前体重</text><view class="input-group"><input class="input-value" type="digit" value="{{form.weight}}" data-field="weight" bindinput="onNumberInput" /><text class="unit">kg</text></view></view>
+      <view class="settings-row"><text class="field-label">目标体重</text><view class="input-group"><input class="input-value" type="digit" value="{{form.targetWeight}}" data-field="targetWeight" bindinput="onNumberInput" /><text class="unit">kg</text></view></view>
+      <view class="settings-row">
+        <text class="field-label">活动强度</text>
+        <picker class="picker-value" range="{{activityOptions}}" range-key="label" value="{{activityIndex}}" data-field="activityLevel" bindchange="onPickerChange"><text>{{activityOptions[activityIndex].label}}</text></picker>
+      </view>
+      <view class="settings-row">
+        <text class="field-label">目标</text>
+        <picker class="picker-value" range="{{goalOptions}}" range-key="label" value="{{goalIndex}}" data-field="goal" bindchange="onPickerChange"><text>{{goalOptions[goalIndex].label}}</text></picker>
+      </view>
     </view>
-    <view class="settings-row">
-      <text class="field-label">目标</text>
-      <picker class="picker-value" range="{{goalOptions}}" range-key="label" value="{{goalIndex}}" data-field="goal" bindchange="onPickerChange"><text>{{goalOptions[goalIndex].label}}</text></picker>
-    </view>
+
+    <button class="save-button button-press" loading="{{saving}}" disabled="{{saving}}" bindtap="saveProfile">保存用户信息</button>
   </view>
 
-  <button class="button" loading="{{saving}}" disabled="{{saving}}" bindtap="saveProfile">保存用户信息</button>
+  <view class="recommendation-card card-fade">
+    <view class="section-heading">
+      <view>
+        <text class="section-title">目标与推荐</text>
+        <text class="section-subtitle">系统根据档案自动计算</text>
+      </view>
+    </view>
 
-  <view class="section-label">目标与推荐</view>
-  <view class="recommendation-panel profile-recommendation">
     <view class="target-highlight">
       <text class="target-label">每日推荐摄入</text>
       <view><text class="target-number">{{profile.targetCalories}}</text><text class="target-unit"> kcal</text></view>
     </view>
+
     <view class="recommendation-list">
       <view class="recommendation-row"><text>BMR</text><text>{{profile.bmr}} kcal</text></view>
       <view class="recommendation-row"><text>TDEE</text><text>{{profile.tdee}} kcal</text></view>
       <view class="recommendation-row"><text>蛋白质</text><text>{{profile.macros.protein}}</text></view>
       <view class="recommendation-row"><text>碳水</text><text>{{profile.macros.carbs}}</text></view>
       <view class="recommendation-row"><text>脂肪</text><text>{{profile.macros.fat}}</text></view>
+    </view>
+  </view>
+
+  <view class="system-card card-fade">
+    <view class="section-heading">
+      <view>
+        <text class="section-title">系统</text>
+        <text class="section-subtitle">AI 与数据同步</text>
+      </view>
+    </view>
+    <view class="settings-list">
+      <view class="settings-line"><text>AI 模型</text><text>{{aiModelText}}</text></view>
+      <view class="settings-line"><text>数据同步</text><text>{{profileError ? '本机资料' : '云端同步'}}</text></view>
+      <view class="settings-line"><text>关于</text><text>AI 热量记录助手</text></view>
     </view>
   </view>
 </view>

@@ -36,7 +36,11 @@ Page({
     goalIndex: 0,
     genderText: '女',
     goalText: '减脂',
-    activityText: '轻度活动'
+    activityText: '轻度活动',
+    bmiText: '--',
+    bmiLevel: '未计算',
+    targetDeltaText: '--',
+    aiModelText: 'DeepSeek v4 Flash'
   },
 
   onShow() {
@@ -98,8 +102,31 @@ Page({
       goalIndex: this.findOptionIndex(goalOptions, normalized.goal),
       genderText: this.genderText(normalized.gender),
       goalText: this.goalText(normalized.goal),
-      activityText: this.activityText(normalized.activityLevel)
+      activityText: this.activityText(normalized.activityLevel),
+      ...this.buildProfileDisplay(normalized)
     })
+  },
+
+  buildProfileDisplay(profile) {
+    const height = Number(profile.height) || 0
+    const weight = Number(profile.weight) || 0
+    const targetWeight = Number(profile.targetWeight) || 0
+    const bmi = height > 0 ? weight / Math.pow(height / 100, 2) : 0
+    const targetDelta = targetWeight > 0 ? Math.abs(weight - targetWeight) : 0
+
+    return {
+      bmiText: bmi > 0 ? bmi.toFixed(1) : '--',
+      bmiLevel: this.bmiLevel(bmi),
+      targetDeltaText: targetDelta > 0 ? `${targetDelta.toFixed(1)} kg` : '--'
+    }
+  },
+
+  bmiLevel(bmi) {
+    if (!bmi) return '未计算'
+    if (bmi < 18.5) return '偏瘦'
+    if (bmi < 24) return '标准'
+    if (bmi < 28) return '偏高'
+    return '较高'
   },
 
   // 根据选项值定位 picker 的索引，找不到时回到第一项。

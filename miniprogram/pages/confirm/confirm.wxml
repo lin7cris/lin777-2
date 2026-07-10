@@ -1,39 +1,60 @@
 <view class="page confirm-page">
-  <view class="confirm-heading">
+  <view class="confirm-hero">
     <view>
-      <text class="eyebrow">解析结果</text>
-      <text class="page-title">确认今日记录</text>
+      <text class="confirm-kicker">AI Review</text>
+      <text class="confirm-title">确认记录</text>
+      <text class="confirm-subtitle">检查 AI 识别结果后写入今日</text>
     </view>
-    <text class="confidence-badge">{{confidenceText}}</text>
+    <view class="confidence-badge">
+      <text class="confidence-number">{{confidenceText}}</text>
+      <text class="confidence-label">置信度</text>
+    </view>
   </view>
 
-  <view class="source-panel" wx:if="{{sourceText}}">
-    <text class="source-label">原始描述</text>
-    <text class="source-text">{{sourceText}}</text>
+  <view class="source-card card-fade" wx:if="{{sourceText}}">
+    <view class="source-ai">AI</view>
+    <view class="source-bubble">
+      <text class="source-label">原始描述</text>
+      <text class="source-text">{{sourceText}}</text>
+    </view>
   </view>
 
   <view wx:if="{{saveError}}" class="error-banner save-error">{{saveError}}</view>
 
-  <view class="section-heading">
-    <text class="section-title">饮食</text>
-    <text class="item-count">{{foods.length}} 项</text>
-  </view>
-  <view class="settings-group edit-group">
+  <view class="review-section card-fade">
+    <view class="section-heading">
+      <view>
+        <text class="section-title">饮食</text>
+        <text class="section-subtitle">{{foods.length}} 项可编辑</text>
+      </view>
+    </view>
+
     <view wx:if="{{!foods.length}}" class="state-view inline-state">
       <text class="state-title">没有识别到饮食</text>
       <text class="state-copy">如有遗漏，请返回重新描述。</text>
     </view>
+
     <view class="parse-item" wx:for="{{foods}}" wx:key="index">
-      <view class="item-heading"><text>饮食 {{index + 1}}</text><text wx:if="{{item.estimated}}" class="estimated-tag">估算</text></view>
+      <view class="item-heading">
+        <view class="item-title-wrap">
+          <view class="item-icon">F</view>
+          <view>
+            <text class="item-title">饮食 {{index + 1}}</text>
+            <text class="item-subtitle">Food item</text>
+          </view>
+        </view>
+        <text wx:if="{{item.estimated}}" class="estimated-tag">估算</text>
+      </view>
+
       <view class="edit-grid two">
         <view class="edit-field"><text class="edit-label">名称</text><input class="edit-input" value="{{item.name}}" data-index="{{index}}" data-field="name" bindinput="onFoodInput" /></view>
         <view class="edit-field"><text class="edit-label">份量</text><input class="edit-input" value="{{item.amount}}" data-index="{{index}}" data-field="amount" bindinput="onFoodInput" /></view>
       </view>
       <view class="edit-grid two">
         <view class="edit-field"><text class="edit-label">餐次</text><input class="edit-input" value="{{item.meal}}" data-index="{{index}}" data-field="meal" bindinput="onFoodInput" /></view>
-        <view class="edit-field"><text class="edit-label">热量 kcal</text><input class="edit-input" type="number" value="{{item.calories}}" data-index="{{index}}" data-field="calories" bindinput="onFoodInput" /></view>
+        <view class="edit-field"><text class="edit-label">热量 kcal</text><input class="edit-input number-input" type="number" value="{{item.calories}}" data-index="{{index}}" data-field="calories" bindinput="onFoodInput" /></view>
       </view>
-      <view class="edit-grid four">
+      <view class="macro-edit-grid">
         <view class="edit-field"><text class="edit-label">蛋白质</text><input class="edit-input" type="digit" value="{{item.protein}}" data-index="{{index}}" data-field="protein" bindinput="onFoodInput" /></view>
         <view class="edit-field"><text class="edit-label">碳水</text><input class="edit-input" type="digit" value="{{item.carbs}}" data-index="{{index}}" data-field="carbs" bindinput="onFoodInput" /></view>
         <view class="edit-field"><text class="edit-label">脂肪</text><input class="edit-input" type="digit" value="{{item.fat}}" data-index="{{index}}" data-field="fat" bindinput="onFoodInput" /></view>
@@ -42,28 +63,43 @@
     </view>
   </view>
 
-  <view class="section-heading">
-    <text class="section-title">运动</text>
-    <text class="item-count">{{exercises.length}} 项</text>
-  </view>
-  <view class="settings-group edit-group">
+  <view class="review-section card-fade">
+    <view class="section-heading">
+      <view>
+        <text class="section-title">运动</text>
+        <text class="section-subtitle">{{exercises.length}} 项可编辑</text>
+      </view>
+    </view>
+
     <view wx:if="{{!exercises.length}}" class="state-view inline-state">
       <text class="state-title">没有识别到运动</text>
       <text class="state-copy">如有遗漏，请返回重新描述。</text>
     </view>
+
     <view class="parse-item" wx:for="{{exercises}}" wx:key="index">
-      <view class="item-heading"><text>运动 {{index + 1}}</text><text wx:if="{{item.estimated}}" class="estimated-tag">估算</text></view>
+      <view class="item-heading">
+        <view class="item-title-wrap">
+          <view class="item-icon item-icon-blue">M</view>
+          <view>
+            <text class="item-title">运动 {{index + 1}}</text>
+            <text class="item-subtitle">Movement</text>
+          </view>
+        </view>
+        <text wx:if="{{item.estimated}}" class="estimated-tag">估算</text>
+      </view>
       <view class="edit-grid two">
         <view class="edit-field"><text class="edit-label">名称</text><input class="edit-input" value="{{item.name}}" data-index="{{index}}" data-field="name" bindinput="onExerciseInput" /></view>
         <view class="edit-field"><text class="edit-label">强度</text><input class="edit-input" value="{{item.intensity}}" data-index="{{index}}" data-field="intensity" bindinput="onExerciseInput" /></view>
       </view>
       <view class="edit-grid two">
         <view class="edit-field"><text class="edit-label">时长（分钟）</text><input class="edit-input" type="number" value="{{item.duration}}" data-index="{{index}}" data-field="duration" bindinput="onExerciseInput" /></view>
-        <view class="edit-field"><text class="edit-label">消耗 kcal</text><input class="edit-input" type="number" value="{{item.calories}}" data-index="{{index}}" data-field="calories" bindinput="onExerciseInput" /></view>
+        <view class="edit-field"><text class="edit-label">消耗 kcal</text><input class="edit-input number-input" type="number" value="{{item.calories}}" data-index="{{index}}" data-field="calories" bindinput="onExerciseInput" /></view>
       </view>
     </view>
   </view>
 
-  <button class="button" loading="{{saving}}" disabled="{{saving || !hasParsedItems}}" bindtap="confirmRecord">写入今日记录</button>
-  <button class="button secondary" disabled="{{saving}}" bindtap="adjustRecord">返回调整描述</button>
+  <view class="action-dock">
+    <button class="save-button button-press" loading="{{saving}}" disabled="{{saving || !hasParsedItems}}" bindtap="confirmRecord">写入今日记录</button>
+    <button class="secondary-button button-press" disabled="{{saving}}" bindtap="adjustRecord">返回调整描述</button>
+  </view>
 </view>

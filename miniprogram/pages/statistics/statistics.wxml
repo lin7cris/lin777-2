@@ -1,8 +1,9 @@
 <view class="page statistics-page">
-  <view class="statistics-header">
+  <view class="statistics-hero">
     <view>
-      <view class="eyebrow">健康趋势</view>
-      <view class="page-title">统计分析</view>
+      <text class="statistics-kicker">Trends</text>
+      <text class="statistics-title">统计</text>
+      <text class="statistics-subtitle">最近 {{rangeDays}} 天健康趋势</text>
     </view>
     <view class="segmented-control">
       <button class="segment {{rangeDays === 7 ? 'segment-active' : ''}}" data-days="7" bindtap="selectRange">7 天</button>
@@ -10,28 +11,69 @@
     </view>
   </view>
 
-  <view class="state-view" wx:if="{{loading}}">
-    <view class="loading-chart"><view class="skeleton chart-skeleton one"></view><view class="skeleton chart-skeleton two"></view><view class="skeleton chart-skeleton three"></view></view>
+  <view class="state-card" wx:if="{{loading}}">
+    <view class="loading-chart">
+      <view class="skeleton chart-skeleton one"></view>
+      <view class="skeleton chart-skeleton two"></view>
+      <view class="skeleton chart-skeleton three"></view>
+    </view>
     <view class="state-copy">正在生成趋势...</view>
   </view>
 
-  <view class="state-view error-state" wx:elif="{{statisticsError}}">
-    <view class="state-icon error-icon">!</view>
+  <view class="state-card error-state" wx:elif="{{statisticsError}}">
+    <view class="state-orb error-orb">!</view>
     <view class="state-title">统计暂时无法载入</view>
     <view class="state-copy">{{statisticsError}}</view>
-    <button class="state-action" bindtap="retryStatistics">重新加载</button>
+    <button class="state-action button-press" bindtap="retryStatistics">重新加载</button>
   </view>
 
-  <view class="state-view empty-state" wx:elif="{{!hasData}}">
-    <view class="empty-lines"><view></view><view></view><view></view></view>
+  <view class="state-card empty-state" wx:elif="{{!hasData}}">
+    <view class="empty-chart">
+      <view></view><view></view><view></view>
+    </view>
     <view class="state-title">还没有趋势数据</view>
     <view class="state-copy">记录饮食或运动后，这里会自动生成趋势。</view>
   </view>
 
   <block wx:else>
-    <view class="trend-card">
+    <view class="trend-card primary-trend card-fade">
       <view class="trend-heading">
-        <view><text class="trend-title">摄入热量趋势</text><text class="trend-subtitle">每日饮食总热量</text></view>
+        <view>
+          <text class="trend-label">Primary Metric</text>
+          <text class="trend-title">热量缺口趋势</text>
+          <text class="trend-subtitle">目标消耗加运动减饮食</text>
+        </view>
+        <view class="trend-meta">
+          <view wx:if="{{selectedTrend && selectedTrend.chart === 'deficit'}}" class="selected-trend-value">
+            <text class="selected-trend-date">{{selectedTrend.dateLabel}}</text>
+            <text>{{selectedTrend.valueText}}</text>
+          </view>
+          <text wx:else class="unit">kcal</text>
+        </view>
+      </view>
+      <view class="chart hero-chart">
+        <view
+          class="chart-point {{selectedTrend && selectedTrend.chart === 'deficit' && selectedTrend.index === index ? 'chart-point-selected' : ''}}"
+          wx:for="{{deficit.points}}"
+          wx:key="dateKey"
+          data-chart="deficit"
+          data-title="热量缺口趋势"
+          data-unit="kcal"
+          data-index="{{index}}"
+          bindtap="selectTrendPoint"
+        >
+          <view class="bar-track"><view class="trend-bar {{item.negative ? 'deficit-negative' : 'deficit-positive'}}" style="height: {{item.height}}rpx;"></view></view>
+          <text class="axis-label">{{item.showLabel ? item.label : ''}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="trend-card card-fade">
+      <view class="trend-heading">
+        <view>
+          <text class="trend-title">摄入热量趋势</text>
+          <text class="trend-subtitle">每日饮食总热量</text>
+        </view>
         <view class="trend-meta">
           <view wx:if="{{selectedTrend && selectedTrend.chart === 'intake'}}" class="selected-trend-value">
             <text class="selected-trend-date">{{selectedTrend.dateLabel}}</text>
@@ -50,13 +92,19 @@
           data-unit="kcal"
           data-index="{{index}}"
           bindtap="selectTrendPoint"
-        ><view class="bar-track"><view class="trend-bar intake-bar" style="height: {{item.height}}rpx;"></view></view><text class="axis-label">{{item.showLabel ? item.label : ''}}</text></view>
+        >
+          <view class="bar-track"><view class="trend-bar intake-bar" style="height: {{item.height}}rpx;"></view></view>
+          <text class="axis-label">{{item.showLabel ? item.label : ''}}</text>
+        </view>
       </view>
     </view>
 
-    <view class="trend-card">
+    <view class="trend-card card-fade">
       <view class="trend-heading">
-        <view><text class="trend-title">运动消耗趋势</text><text class="trend-subtitle">每日运动消耗</text></view>
+        <view>
+          <text class="trend-title">运动消耗趋势</text>
+          <text class="trend-subtitle">每日运动消耗</text>
+        </view>
         <view class="trend-meta">
           <view wx:if="{{selectedTrend && selectedTrend.chart === 'exercise'}}" class="selected-trend-value">
             <text class="selected-trend-date">{{selectedTrend.dateLabel}}</text>
@@ -75,38 +123,19 @@
           data-unit="kcal"
           data-index="{{index}}"
           bindtap="selectTrendPoint"
-        ><view class="bar-track"><view class="trend-bar exercise-bar" style="height: {{item.height}}rpx;"></view></view><text class="axis-label">{{item.showLabel ? item.label : ''}}</text></view>
-      </view>
-    </view>
-
-    <view class="trend-card">
-      <view class="trend-heading">
-        <view><text class="trend-title">热量缺口趋势</text><text class="trend-subtitle">目标消耗加运动减饮食</text></view>
-        <view class="trend-meta">
-          <view wx:if="{{selectedTrend && selectedTrend.chart === 'deficit'}}" class="selected-trend-value">
-            <text class="selected-trend-date">{{selectedTrend.dateLabel}}</text>
-            <text>{{selectedTrend.valueText}}</text>
-          </view>
-          <text wx:else class="unit">kcal</text>
+        >
+          <view class="bar-track"><view class="trend-bar exercise-bar" style="height: {{item.height}}rpx;"></view></view>
+          <text class="axis-label">{{item.showLabel ? item.label : ''}}</text>
         </view>
       </view>
-      <view class="chart">
-        <view
-          class="chart-point {{selectedTrend && selectedTrend.chart === 'deficit' && selectedTrend.index === index ? 'chart-point-selected' : ''}}"
-          wx:for="{{deficit.points}}"
-          wx:key="dateKey"
-          data-chart="deficit"
-          data-title="热量缺口趋势"
-          data-unit="kcal"
-          data-index="{{index}}"
-          bindtap="selectTrendPoint"
-        ><view class="bar-track"><view class="trend-bar {{item.negative ? 'deficit-negative' : 'deficit-positive'}}" style="height: {{item.height}}rpx;"></view></view><text class="axis-label">{{item.showLabel ? item.label : ''}}</text></view>
-      </view>
     </view>
 
-    <view class="trend-card">
+    <view class="trend-card card-fade">
       <view class="trend-heading">
-        <view><text class="trend-title">体重趋势</text><text class="trend-subtitle">保存记录时的体重快照</text></view>
+        <view>
+          <text class="trend-title">体重趋势</text>
+          <text class="trend-subtitle">保存记录时的体重快照</text>
+        </view>
         <view class="trend-meta">
           <view wx:if="{{selectedTrend && selectedTrend.chart === 'weight'}}" class="selected-trend-value">
             <text class="selected-trend-date">{{selectedTrend.dateLabel}}</text>
@@ -125,7 +154,10 @@
           data-unit="kg"
           data-index="{{index}}"
           bindtap="selectTrendPoint"
-        ><view class="bar-track"><view class="trend-bar weight-bar {{item.hasValue ? '' : 'bar-empty'}}" style="height: {{item.height}}rpx;"></view></view><text class="axis-label">{{item.showLabel ? item.label : ''}}</text></view>
+        >
+          <view class="bar-track"><view class="trend-bar weight-bar {{item.hasValue ? '' : 'bar-empty'}}" style="height: {{item.height}}rpx;"></view></view>
+          <text class="axis-label">{{item.showLabel ? item.label : ''}}</text>
+        </view>
       </view>
       <view class="chart-empty" wx:else>当前范围内还没有体重快照</view>
     </view>
