@@ -1,5 +1,5 @@
 {
-  "description": "AI热量记录助手微信小程序",
+  "description": "饮食热量记录工具微信小程序",
   "packOptions": {
     "ignore": [],
     "include": []
@@ -49,7 +49,7 @@
   "compileType": "miniprogram",
   "libVersion": "3.6.6",
   "appid": "wxde7b81d104a5411e",
-  "projectname": "AI热量记录助手",
+  "projectname": "热量记录助手",
   "condition": {},
   "miniprogramRoot": "miniprogram/",
   "cloudfunctionRoot": "cloudfunctions/",

@@ -67,13 +67,13 @@
   <view class="coach-card apple-card card-fade">
     <view class="section-heading">
       <view>
-        <text class="section-title">AI Coach</text>
+        <text class="section-title">今日建议</text>
         <text class="section-subtitle">今天的饮食策略</text>
       </view>
-      <view class="coach-mark">AI</view>
+      <view class="coach-mark">荐</view>
     </view>
     <view class="coach-bubble">
-      <view class="coach-avatar">AI</view>
+      <view class="coach-avatar">记</view>
       <view class="coach-message">
         <text class="coach-summary">{{coachSummary}}</text>
         <view class="coach-list">
@@ -112,7 +112,7 @@
     <view wx:elif="{{!records.length}}" class="state-view compact-state">
       <view class="empty-orbit"></view>
       <text class="state-title">还没有今日记录</text>
-      <text class="state-copy">写下今天吃了什么，AI Coach 会整理成时间线。</text>
+      <text class="state-copy">写下今天吃了什么，系统会整理成时间线。</text>
     </view>
 
     <view wx:else class="timeline">
@@ -149,14 +149,14 @@
 
   <view class="input-dock" style="{{inputDockStyle}}">
     <view wx:if="{{aiError}}" class="error-banner ai-error">
-      <text class="error-title">AI 解析失败</text>
+      <text class="error-title">智能识别失败</text>
       <text>{{aiError}}</text>
     </view>
     <view class="input-row">
       <textarea
         class="daily-input"
         value="{{dailyInput}}"
-        placeholder="告诉 AI 今天吃了什么、运动多久…"
+        placeholder="输入今天的饮食或运动记录..."
         maxlength="500"
         auto-height
         adjust-position="{{false}}"

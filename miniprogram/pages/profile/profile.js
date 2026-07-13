@@ -40,7 +40,7 @@ Page({
     bmiText: '--',
     bmiLevel: '未计算',
     targetDeltaText: '--',
-    aiModelText: 'DeepSeek v4 Flash'
+    aiModelText: '智能识别已启用'
   },
 
   onShow() {

@@ -1,6 +1,6 @@
 <view class="page entry-page">
   <view class="entry-heading">
-    <text class="eyebrow">AI 快速记录</text>
+    <text class="eyebrow">快速记录</text>
     <text class="hero-title">今天发生了什么？</text>
     <text class="copy">饮食和运动可以写在一起。</text>
   </view>
@@ -21,7 +21,7 @@
   </view>
 
   <view wx:if="{{aiError}}" class="error-banner">
-    <text class="error-title">AI 解析失败</text>
+    <text class="error-title">智能识别失败</text>
     <text>{{aiError}}</text>
   </view>
 
@@ -32,6 +32,6 @@
     <view class="example-row"><text class="example-dot orange-dot"></text><text>晚餐火锅，牛肉约 200g，青菜很多</text></view>
   </view>
 
-  <button class="button" loading="{{loading}}" disabled="{{loading}}" bindtap="parseText">AI 解析</button>
+  <button class="button" loading="{{loading}}" disabled="{{loading}}" bindtap="parseText">智能识别</button>
   <button class="button secondary" disabled="{{loading}}" bindtap="backToday">返回今日</button>
 </view>

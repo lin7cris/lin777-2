@@ -3,10 +3,10 @@
     <view>
       <text class="profile-kicker">Account</text>
       <text class="profile-title">我的</text>
-      <text class="profile-subtitle">AI 饮食教练档案</text>
+      <text class="profile-subtitle">饮食热量记录档案</text>
     </view>
     <view class="avatar">
-      <text class="avatar-name">AI</text>
+      <text class="avatar-name">热</text>
     </view>
   </view>
 
@@ -103,13 +103,13 @@
     <view class="section-heading">
       <view>
         <text class="section-title">系统</text>
-        <text class="section-subtitle">AI 与数据同步</text>
+        <text class="section-subtitle">识别与数据同步</text>
       </view>
     </view>
     <view class="settings-list">
-      <view class="settings-line"><text>AI 模型</text><text>{{aiModelText}}</text></view>
+      <view class="settings-line"><text>识别服务</text><text>{{aiModelText}}</text></view>
       <view class="settings-line"><text>数据同步</text><text>{{profileError ? '本机资料' : '云端同步'}}</text></view>
-      <view class="settings-line"><text>关于</text><text>AI 热量记录助手</text></view>
+      <view class="settings-line"><text>关于</text><text>热量记录助手</text></view>
     </view>
   </view>
 </view>

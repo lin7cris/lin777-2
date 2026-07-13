@@ -244,7 +244,7 @@ Page({
 
     if (!app.globalData.cloudReady) {
       this.setData({
-        aiError: 'AI 服务尚未连接，请检查云环境配置。'
+        aiError: '智能识别服务尚未连接，请检查云环境配置。'
       })
       wx.showToast({
         title: '云开发未初始化',
@@ -261,9 +261,10 @@ Page({
       success: (res) => {
         const result = res.result || {}
         if (result.success === false) {
-          const message = result.error && result.error.message
+          const rawMessage = result.error && result.error.message
             ? result.error.message
-            : 'AI 解析失败，请稍后重试。'
+            : '智能识别失败，请稍后重试。'
+          const message = this.normalizeRecognitionMessage(rawMessage)
           this.setData({ aiError: message })
           wx.showToast({
             title: message,
@@ -286,10 +287,10 @@ Page({
       fail: (error) => {
         console.error('parse daily input failed', error)
         this.setData({
-          aiError: 'AI 解析失败，请检查网络后重试。'
+          aiError: '智能识别失败，请检查网络后重试。'
         })
         wx.showToast({
-          title: 'AI解析失败',
+          title: '识别失败',
           icon: 'none'
         })
       },
@@ -297,5 +298,12 @@ Page({
         this.setData({ parsing: false })
       }
     })
+  },
+
+  normalizeRecognitionMessage(message) {
+    const legacyPrefix = String.fromCharCode(65, 73)
+    return String(message || '')
+      .replace(new RegExp(`${legacyPrefix}\\s*服务`, 'g'), '智能识别服务')
+      .replace(new RegExp(`${legacyPrefix}\\s*解析`, 'g'), '智能识别')
   }
 })

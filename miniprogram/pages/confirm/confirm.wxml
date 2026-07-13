@@ -1,9 +1,9 @@
 <view class="page confirm-page">
   <view class="confirm-hero">
     <view>
-      <text class="confirm-kicker">AI Review</text>
+      <text class="confirm-kicker">Review</text>
       <text class="confirm-title">确认记录</text>
-      <text class="confirm-subtitle">检查 AI 识别结果后写入今日</text>
+      <text class="confirm-subtitle">检查识别结果后写入今日</text>
     </view>
     <view class="confidence-badge">
       <text class="confidence-number">{{confidenceText}}</text>
@@ -12,7 +12,7 @@
   </view>
 
   <view class="source-card card-fade" wx:if="{{sourceText}}">
-    <view class="source-ai">AI</view>
+    <view class="source-ai">识别</view>
     <view class="source-bubble">
       <text class="source-label">原始描述</text>
       <text class="source-text">{{sourceText}}</text>
