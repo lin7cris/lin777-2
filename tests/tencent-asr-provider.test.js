@@ -52,8 +52,17 @@ async function run() {
     (error) => error.code === 'ASR_KEY_MISSING'
   )
 
+  const manualVariablesAreIgnored = createTencentAsrProvider({
+    env: { ASR_SECRET_ID: 'manual-id', ASR_SECRET_KEY: 'manual-key' },
+    createClient() { throw new Error('must not create client') }
+  })
+  await assert.rejects(
+    () => manualVariablesAreIgnored.transcribe({ audioBase64, voiceFormat: 'mp3' }),
+    (error) => error.code === 'ASR_KEY_MISSING'
+  )
+
   const emptyProvider = createTencentAsrProvider({
-    env: { ASR_SECRET_ID: 'id', ASR_SECRET_KEY: 'key' },
+    env: { TENCENTCLOUD_SECRETID: 'id', TENCENTCLOUD_SECRETKEY: 'key' },
     createClient() {
       return { async SentenceRecognition() { return { Result: '', RequestId: 'request-2' } } }
     }
@@ -64,7 +73,7 @@ async function run() {
   )
 
   const timeoutProvider = createTencentAsrProvider({
-    env: { ASR_SECRET_ID: 'id', ASR_SECRET_KEY: 'key' },
+    env: { TENCENTCLOUD_SECRETID: 'id', TENCENTCLOUD_SECRETKEY: 'key' },
     createClient() {
       return {
         async SentenceRecognition() {

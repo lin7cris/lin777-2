@@ -28,10 +28,10 @@ function createTencentAsrProvider(options) {
     name: 'tencent-asr',
 
     async transcribe(input) {
-      const secretId = String(env.ASR_SECRET_ID || env.TENCENTCLOUD_SECRETID || '').trim()
-      const secretKey = String(env.ASR_SECRET_KEY || env.TENCENTCLOUD_SECRETKEY || '').trim()
-      const token = String(env.ASR_SESSION_TOKEN || env.TENCENTCLOUD_SESSIONTOKEN || '').trim()
-      const region = String(env.ASR_REGION || env.TENCENTCLOUD_REGION || 'ap-shanghai').trim() || 'ap-shanghai'
+      const secretId = String(env.TENCENTCLOUD_SECRETID || '').trim()
+      const secretKey = String(env.TENCENTCLOUD_SECRETKEY || '').trim()
+      const token = String(env.TENCENTCLOUD_SESSIONTOKEN || '').trim()
+      const region = String(env.TENCENTCLOUD_REGION || 'ap-shanghai').trim() || 'ap-shanghai'
       if (!secretId || !secretKey) {
         throw new SpeechToTextError('ASR_KEY_MISSING', 'Tencent Cloud ASR credentials are not configured')
       }

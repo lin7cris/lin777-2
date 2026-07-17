@@ -107,15 +107,18 @@
 
 如密钥曾经公开，应立即在供应商控制台撤销并重新生成。
 
-语音转写使用 `speechToText` 云函数。请在该云函数配置：
+语音转写使用 `speechToText` 云函数，并读取 CloudBase 自动注入的临时凭证：
 
-- `TENCENTCLOUD_SECRET_ID`
-- `TENCENTCLOUD_SECRET_KEY`
-- `TENCENTCLOUD_ASR_REGION=ap-shanghai`
+- `TENCENTCLOUD_SECRETID`
+- `TENCENTCLOUD_SECRETKEY`
+- `TENCENTCLOUD_SESSIONTOKEN`
+- `TENCENTCLOUD_REGION`
+
+这些变量无需手动配置；CloudBase 也不允许自定义 `TENCENTCLOUD_*` 环境变量。
 
 小程序只在用户主动点击麦克风后录音，转写完成后不保存原始语音。发布前还需要在微信公众平台的隐私保护指引中声明麦克风用于将饮食和运动语音转换为可编辑文字。
 
-腾讯云账号需先开通语音识别服务。建议为云函数创建只允许调用 ASR 的子账号密钥，不要使用权限过大的主账号长期密钥。
+腾讯云账号需先开通语音识别服务，并确保云函数运行角色具备 ASR 调用权限。
 
 ## 真机运行方法
 
