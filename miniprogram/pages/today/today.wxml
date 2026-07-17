@@ -152,20 +152,22 @@
       <text class="error-title">智能识别失败</text>
       <text>{{aiError}}</text>
     </view>
-    <view class="input-row">
-      <textarea
-        class="daily-input"
-        value="{{dailyInput}}"
-        placeholder="输入今天的饮食或运动记录..."
-        maxlength="500"
-        auto-height
-        adjust-position="{{false}}"
-        cursor-spacing="12"
-        bindinput="onDailyInput"
-        bindblur="onInputBlur"
-        bindkeyboardheightchange="onInputKeyboardHeightChange"
-      />
-      <button class="parse-button button-press" loading="{{parsing}}" disabled="{{parsing}}" bindtap="parseDailyInput">↑</button>
-    </view>
+    <daily-composer
+      value="{{dailyInput}}"
+      parsing="{{parsing}}"
+      voice-status="{{voiceStatus}}"
+      voice-duration-text="{{voiceDurationText}}"
+      voice-canceling="{{voiceCanceling}}"
+      voice-error="{{voiceError}}"
+      bindinput="onDailyInput"
+      bindsubmit="parseDailyInput"
+      bindvoicestart="startVoiceInput"
+      bindvoicestop="stopVoiceInput"
+      bindvoicecancel="cancelVoiceInput"
+      bindvoicecancelchange="onVoiceCancelChange"
+      bindcameratap="onCameraTap"
+      bindblur="onInputBlur"
+      bindkeyboardheightchange="onInputKeyboardHeightChange"
+    />
   </view>
 </view>

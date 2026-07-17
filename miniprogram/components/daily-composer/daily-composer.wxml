@@ -1,0 +1,54 @@
+<view class="composer-shell">
+  <view wx:if="{{voiceError}}" class="voice-error" role="alert">{{voiceError}}</view>
+
+  <view wx:if="{{voiceStatus === 'recording' || voiceStatus === 'transcribing'}}" class="voice-status {{voiceCanceling ? 'voice-status-cancel' : ''}}">
+    <view class="voice-status-copy">
+      <text class="voice-status-title">{{voiceStatus === 'transcribing' ? '正在转写' : voiceCanceling ? '松开取消' : '正在录音'}}</text>
+      <text class="voice-status-meta">{{voiceStatus === 'transcribing' ? '请稍候，结果会填入输入框' : voiceDurationText + ' · 上滑取消'}}</text>
+    </view>
+    <view class="voice-wave" aria-hidden="true">
+      <view class="wave-bar wave-bar-1"></view>
+      <view class="wave-bar wave-bar-2"></view>
+      <view class="wave-bar wave-bar-3"></view>
+      <view class="wave-bar wave-bar-4"></view>
+    </view>
+  </view>
+
+  <view class="composer-row">
+    <button
+      class="composer-button mic-button {{voiceStatus === 'recording' ? 'mic-button-active' : ''}}"
+      aria-label="{{voiceStatus === 'recording' ? '结束录音' : '开始语音输入'}}"
+      bindtap="onMicTap"
+      bindtouchstart="onMicTouchStart"
+      bindtouchmove="onMicTouchMove"
+      bindtouchend="onMicTouchEnd"
+      bindtouchcancel="onMicTouchCancel"
+    ><view class="mic-icon"><view class="mic-head"></view><view class="mic-stem"></view></view></button>
+
+    <button class="composer-button camera-button" aria-label="拍照识别食物" bindtap="onCameraTap">
+      <view class="camera-icon"><view class="camera-lens"></view></view>
+    </button>
+
+    <textarea
+      class="composer-input"
+      value="{{value}}"
+      placeholder="输入今天的饮食或运动记录..."
+      maxlength="500"
+      auto-height
+      disabled="{{voiceStatus === 'recording' || voiceStatus === 'transcribing'}}"
+      adjust-position="{{false}}"
+      cursor-spacing="12"
+      bindinput="onInput"
+      bindblur="onBlur"
+      bindkeyboardheightchange="onKeyboardHeightChange"
+    />
+
+    <button
+      class="composer-button submit-button"
+      aria-label="添加记录"
+      loading="{{parsing}}"
+      disabled="{{parsing || voiceStatus === 'recording' || voiceStatus === 'transcribing'}}"
+      bindtap="onSubmit"
+    >↑</button>
+  </view>
+</view>

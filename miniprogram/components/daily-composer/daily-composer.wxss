@@ -1,0 +1,215 @@
+.composer-shell {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.composer-row {
+  display: grid;
+  grid-template-columns: 72rpx 72rpx minmax(0, 1fr) 80rpx;
+  gap: 8rpx;
+  align-items: end;
+  min-height: 108rpx;
+  padding: 10rpx;
+  border: 1rpx solid rgba(255, 255, 255, 0.82);
+  border-radius: 48rpx;
+  background: rgba(248, 248, 250, 0.9);
+  box-shadow: 0 10rpx 28rpx rgba(28, 28, 30, 0.09);
+  -webkit-backdrop-filter: blur(34rpx);
+  backdrop-filter: blur(34rpx);
+  box-sizing: border-box;
+}
+
+.composer-button {
+  display: flex;
+  width: 72rpx;
+  height: 72rpx;
+  min-height: 72rpx;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  border-radius: 50%;
+  background: rgba(118, 118, 128, 0.09);
+  color: #1c1c1e;
+  line-height: 72rpx;
+  transition: opacity 250ms ease-out, transform 250ms ease-out, background 250ms ease-out;
+}
+
+.composer-button::after {
+  border: 0;
+}
+
+.composer-button:active {
+  opacity: 0.68;
+  transform: scale(0.94);
+}
+
+.submit-button {
+  width: 80rpx;
+  height: 80rpx;
+  min-height: 80rpx;
+  background: #1c1c1e;
+  color: #ffffff;
+  font-size: 36rpx;
+  font-weight: 820;
+  line-height: 80rpx;
+}
+
+.mic-button-active {
+  background: #ff453a;
+  color: #ffffff;
+}
+
+.composer-input {
+  width: 100%;
+  min-height: 80rpx;
+  max-height: 160rpx;
+  padding: 20rpx 14rpx;
+  background: transparent;
+  color: #1c1c1e;
+  font-size: 26rpx;
+  line-height: 1.4;
+  box-sizing: border-box;
+}
+
+.mic-icon {
+  position: relative;
+  width: 30rpx;
+  height: 38rpx;
+}
+
+.mic-head {
+  position: absolute;
+  top: 0;
+  left: 8rpx;
+  width: 14rpx;
+  height: 24rpx;
+  border: 4rpx solid currentColor;
+  border-radius: 999rpx;
+  box-sizing: border-box;
+}
+
+.mic-stem {
+  position: absolute;
+  right: 3rpx;
+  bottom: 2rpx;
+  left: 3rpx;
+  height: 20rpx;
+  border-right: 4rpx solid currentColor;
+  border-bottom: 4rpx solid currentColor;
+  border-left: 4rpx solid currentColor;
+  border-radius: 0 0 16rpx 16rpx;
+  box-sizing: border-box;
+}
+
+.camera-icon {
+  position: relative;
+  width: 34rpx;
+  height: 26rpx;
+  border: 4rpx solid currentColor;
+  border-radius: 8rpx;
+  box-sizing: border-box;
+}
+
+.camera-icon::before {
+  position: absolute;
+  top: -10rpx;
+  left: 6rpx;
+  width: 14rpx;
+  height: 8rpx;
+  border-radius: 5rpx 5rpx 0 0;
+  background: currentColor;
+  content: '';
+}
+
+.camera-lens {
+  position: absolute;
+  top: 5rpx;
+  left: 9rpx;
+  width: 10rpx;
+  height: 10rpx;
+  border: 3rpx solid currentColor;
+  border-radius: 50%;
+  box-sizing: border-box;
+}
+
+.voice-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20rpx;
+  margin-bottom: 14rpx;
+  padding: 24rpx 28rpx;
+  border: 1rpx solid rgba(255, 255, 255, 0.78);
+  border-radius: 48rpx;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 10rpx 28rpx rgba(28, 28, 30, 0.08);
+  -webkit-backdrop-filter: blur(30rpx);
+  backdrop-filter: blur(30rpx);
+  box-sizing: border-box;
+}
+
+.voice-status-cancel {
+  background: rgba(255, 69, 58, 0.94);
+  color: #ffffff;
+}
+
+.voice-status-title,
+.voice-status-meta {
+  display: block;
+}
+
+.voice-status-title {
+  color: inherit;
+  font-size: 27rpx;
+  font-weight: 820;
+}
+
+.voice-status-meta {
+  margin-top: 5rpx;
+  color: #8e8e93;
+  font-size: 21rpx;
+  font-weight: 650;
+}
+
+.voice-status-cancel .voice-status-meta {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.voice-wave {
+  display: flex;
+  height: 40rpx;
+  align-items: center;
+  gap: 6rpx;
+}
+
+.wave-bar {
+  width: 6rpx;
+  height: 16rpx;
+  border-radius: 999rpx;
+  background: #34c759;
+  animation: voice-wave 800ms ease-in-out infinite alternate;
+}
+
+.wave-bar-2 { animation-delay: 120ms; }
+.wave-bar-3 { animation-delay: 240ms; }
+.wave-bar-4 { animation-delay: 360ms; }
+
+.voice-status-cancel .wave-bar {
+  background: #ffffff;
+}
+
+.voice-error {
+  margin-bottom: 12rpx;
+  padding: 18rpx 24rpx;
+  border-radius: 28rpx;
+  background: rgba(255, 69, 58, 0.1);
+  color: #c9342d;
+  font-size: 23rpx;
+  font-weight: 700;
+}
+
+@keyframes voice-wave {
+  from { height: 12rpx; opacity: 0.55; }
+  to { height: 38rpx; opacity: 1; }
+}

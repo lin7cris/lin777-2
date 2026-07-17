@@ -5,6 +5,10 @@ const {
   summarizeDailyRecord
 } = require('../../utils/records')
 const { normalizeParsedDailyInput } = require('../../utils/dailyInput')
+const { appendTranscript } = require('../../utils/voiceInput')
+const { createVoiceRecorder } = require('../../utils/voiceRecorder')
+
+const VOICE_PERMISSION_EXPLAINED_KEY = 'voicePermissionExplainedV1'
 
 Page({
   data: {
@@ -35,10 +39,19 @@ Page({
     dailyInput: '',
     parsing: false,
     aiError: '',
+    voiceStatus: 'idle',
+    voiceDurationText: '0:00',
+    voiceCanceling: false,
+    voiceError: '',
     inputDockStyle: ''
   },
 
+  onLoad() {
+    this.initializeVoiceRecorder()
+  },
+
   onShow() {
+    this.initializeVoiceRecorder()
     const profile = wx.getStorageSync(STORAGE_KEYS.profile) || DEFAULT_PROFILE
     const todayKey = formatDateKey(new Date())
 
@@ -48,6 +61,111 @@ Page({
       targetCalories: profile.targetCalories
     })
     this.loadDailyRecord(todayKey, profile)
+  },
+
+  onHide() {
+    const voiceStatus = this.voiceRecorder && this.voiceRecorder.getState().status
+    if (voiceStatus === 'recording' || voiceStatus === 'requestingPermission') {
+      this.voiceRecorder.cancel()
+    }
+  },
+
+  onUnload() {
+    if (this.voiceRecorder) this.voiceRecorder.destroy()
+    this.voiceRecorder = null
+  },
+
+  initializeVoiceRecorder() {
+    if (this.voiceRecorder || typeof wx.getRecorderManager !== 'function') return
+
+    this.voiceRecorder = createVoiceRecorder({
+      wxApi: wx,
+      onState: (state) => {
+        this.setData({
+          voiceStatus: state.status,
+          voiceDurationText: state.durationText,
+          voiceCanceling: state.canceling,
+          voiceError: state.error
+        })
+      },
+      onTranscript: (text) => this.onVoiceTranscript(text),
+      onError: (message, code) => this.onVoiceError(message, code),
+      onCancel: () => {
+        wx.showToast({ title: '已取消录音', icon: 'none' })
+      }
+    })
+  },
+
+  onVoiceTranscript(text) {
+    this.setData({
+      dailyInput: appendTranscript(this.data.dailyInput, text),
+      voiceError: ''
+    })
+    wx.showToast({ title: '已转为文字', icon: 'success' })
+  },
+
+  startVoiceInput() {
+    const app = getApp()
+    if (!app.globalData.cloudReady) {
+      wx.showToast({ title: '云开发未初始化', icon: 'none' })
+      return
+    }
+
+    this.initializeVoiceRecorder()
+    if (!this.voiceRecorder) {
+      wx.showToast({ title: '当前设备不支持录音', icon: 'none' })
+      return
+    }
+
+    if (!wx.getStorageSync(VOICE_PERMISSION_EXPLAINED_KEY)) {
+      wx.showModal({
+        title: '语音输入',
+        content: '麦克风仅用于把本次饮食和运动语音转换为可编辑文字，原始录音不会长期保存。',
+        confirmText: '开始录音',
+        cancelText: '继续输入',
+        success: (result) => {
+          if (!result.confirm) return
+          wx.setStorageSync(VOICE_PERMISSION_EXPLAINED_KEY, true)
+          this.voiceRecorder.start()
+        }
+      })
+      return
+    }
+
+    this.voiceRecorder.start()
+  },
+
+  stopVoiceInput() {
+    if (this.voiceRecorder) this.voiceRecorder.stop()
+  },
+
+  cancelVoiceInput() {
+    if (this.voiceRecorder) this.voiceRecorder.cancel()
+  },
+
+  onVoiceCancelChange(event) {
+    if (this.voiceRecorder) this.voiceRecorder.markCancel(event.detail.canceling)
+  },
+
+  onVoiceError(message, code) {
+    this.setData({ voiceError: message })
+    wx.showToast({ title: message, icon: 'none' })
+
+    if (code === 'PERMISSION_DENIED') {
+      wx.showModal({
+        title: '需要麦克风权限',
+        content: '开启麦克风后才能使用语音输入。你也可以继续使用文字输入。',
+        confirmText: '去设置',
+        cancelText: '继续输入',
+        success: (result) => {
+          if (result.confirm && this.voiceRecorder) this.voiceRecorder.openSettings()
+        }
+      })
+    }
+  },
+
+  onCameraTap() {
+    wx.showToast({ title: '拍照识别将在下一阶段开放', icon: 'none' })
   },
 
   async loadDailyRecord(date, profile) {

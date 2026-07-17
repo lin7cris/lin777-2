@@ -15,6 +15,11 @@
     "backgroundColor": "#F2F2F7",
     "backgroundTextStyle": "dark"
   },
+  "permission": {
+    "scope.record": {
+      "desc": "用于将您说出的饮食和运动记录转换为可编辑文字"
+    }
+  },
   "tabBar": {
     "color": "#8E8E93",
     "selectedColor": "#34C759",

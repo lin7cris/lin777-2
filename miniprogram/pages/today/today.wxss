@@ -616,56 +616,6 @@
   transition: bottom 250ms ease-out, opacity 250ms ease-out, transform 250ms ease-out;
 }
 
-.input-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 72rpx;
-  gap: 8rpx;
-  align-items: end;
-  padding: 8rpx;
-  border: 1rpx solid rgba(255, 255, 255, 0.82);
-  border-radius: 40rpx;
-  background: rgba(248, 248, 250, 0.88);
-  box-shadow: 0 10rpx 28rpx rgba(28, 28, 30, 0.09);
-  -webkit-backdrop-filter: blur(34rpx);
-  backdrop-filter: blur(34rpx);
-  box-sizing: border-box;
-}
-
-.daily-input {
-  width: 100%;
-  min-height: 72rpx;
-  max-height: 160rpx;
-  padding: 18rpx 22rpx;
-  border-radius: 36rpx;
-  background: rgba(255, 255, 255, 0.82);
-  color: var(--text-primary);
-  font-size: 26rpx;
-  line-height: 1.36;
-  box-sizing: border-box;
-}
-
-.parse-button {
-  display: flex;
-  width: 72rpx;
-  height: 72rpx;
-  min-height: 72rpx;
-  align-items: center;
-  justify-content: center;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
-  background: #1c1c1e;
-  color: #ffffff;
-  font-size: 34rpx;
-  line-height: 72rpx;
-  font-weight: 820;
-}
-
-.parse-button::after {
-  border: 0;
-}
-
 .button-press {
   transition: opacity 250ms ease-out, transform 250ms ease-out;
 }

@@ -10,6 +10,7 @@
 
 - 首次建档：填写基础身体信息，计算推荐热量和营养素目标。
 - 智能识别：输入饮食和运动描述，识别食物、份量、餐次、热量、蛋白质、脂肪、碳水和运动消耗。
+- 语音输入：录制最长 45 秒的中文饮食或运动描述，转写后可继续编辑再提交。
 - 识别结果确认：用户可在保存前修改每一项食物和运动数据。
 - 今日首页：展示热量缺口、摄入、消耗、净摄入、营养素进度、今日建议和今日 Timeline。
 - 历史记录：按日期查看每日饮食、运动和热量汇总。
@@ -42,6 +43,8 @@
 ```text
 .
 ├── miniprogram/
+│   ├── components/
+│   │   └── daily-composer/  # 文字、语音、拍照入口和提交按钮
 │   ├── pages/
 │   │   ├── onboarding/     # 首次建档与基础目标计算
 │   │   ├── today/          # 今日首页、热量缺口、智能输入、今日记录
@@ -54,13 +57,14 @@
 ├── cloudfunctions/
 │   ├── userProfile/        # 用户档案保存和查询
 │   ├── parseDailyInput/    # 统一智能识别入口
+│   ├── speechToText/       # 一次性语音转写，不保存原始录音
 │   ├── dailyRecords/       # 每日记录保存、查询、删除和汇总
 │   └── parseRecord/        # 早期 mock 目录，当前前端不再调用
 ├── tests/                  # 本地自动化测试
 └── docs/                   # 产品规划、设计说明和 Roadmap
 ```
 
-当前项目暂未启用独立 `components/` 目录。页面 UI 仍以原生页面 WXML/WXSS 组织，后续可将卡片、输入框、趋势图等抽取为公共组件。
+首页录入区域使用独立 `daily-composer` 原生组件，其他页面仍以页面级 WXML/WXSS 组织。
 
 ## 微信开发方式
 
@@ -90,7 +94,8 @@
 
 1. `cloudfunctions/userProfile`
 2. `cloudfunctions/parseDailyInput`
-3. `cloudfunctions/dailyRecords`
+3. `cloudfunctions/speechToText`
+4. `cloudfunctions/dailyRecords`
 
 `cloudfunctions/parseRecord` 是早期 mock 目录，不再被前端调用，无需上传部署。
 
@@ -102,6 +107,16 @@
 
 如密钥曾经公开，应立即在供应商控制台撤销并重新生成。
 
+语音转写使用 `speechToText` 云函数。请在该云函数配置：
+
+- `TENCENTCLOUD_SECRET_ID`
+- `TENCENTCLOUD_SECRET_KEY`
+- `TENCENTCLOUD_ASR_REGION=ap-shanghai`
+
+小程序只在用户主动点击麦克风后录音，转写完成后不保存原始语音。发布前还需要在微信公众平台的隐私保护指引中声明麦克风用于将饮食和运动语音转换为可编辑文字。
+
+腾讯云账号需先开通语音识别服务。建议为云函数创建只允许调用 ASR 的子账号密钥，不要使用权限过大的主账号长期密钥。
+
 ## 真机运行方法
 
 1. 确认云开发环境 ID、云函数和数据库集合已配置完成。
@@ -110,6 +125,9 @@
 4. 使用绑定该小程序开发权限的微信扫码。
 5. 真机测试以下流程：
    - 保存个人档案。
+   - 首次点击麦克风，确认用途说明和系统授权正常。
+   - 分别测试点击开始/结束、长按松开结束、上滑取消和 45 秒自动结束。
+   - 确认转写文字只填入输入框，可以继续修改，且不会自动保存。
    - 在首页输入饮食和运动描述。
    - 进入识别结果确认页并修改数据。
    - 保存到今日记录。
@@ -137,6 +155,10 @@ find miniprogram cloudfunctions tests -name '*.js' -print0 | xargs -0 -n1 node -
 ### 智能识别失败
 
 检查 `parseDailyInput` 是否已重新上传、云函数环境变量是否生效。可在云开发控制台查看云函数日志中的错误代码。
+
+### 语音转写失败
+
+确认 `speechToText` 已使用“云端安装依赖”方式上传，并检查腾讯云 ASR 服务是否开通、三个环境变量是否配置。麦克风授权和真实录音必须使用微信真机预览验证，开发者工具模拟器只能检查页面状态。
 
 ### 历史或统计读取失败
 

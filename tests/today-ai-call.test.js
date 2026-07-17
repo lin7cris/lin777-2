@@ -10,5 +10,6 @@ const todayScript = fs.readFileSync(
 assert.match(todayScript, /data:\s*{\s*text,\s*profile\s*}/)
 assert.match(todayScript, /result\.success === false/)
 assert.match(todayScript, /result\.error\.message/)
+assert.doesNotMatch(todayScript, /data:\s*{\s*audioBase64[^}]*parseDailyInput/)
 
 console.log('today AI call tests passed')

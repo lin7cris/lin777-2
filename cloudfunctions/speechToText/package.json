@@ -1,0 +1,10 @@
+{
+  "name": "speech-to-text",
+  "version": "1.0.0",
+  "description": "One-time Mandarin transcription for dietary and exercise entry",
+  "main": "index.js",
+  "dependencies": {
+    "tencentcloud-sdk-nodejs-asr": "4.1.266",
+    "wx-server-sdk": "4.0.2"
+  }
+}

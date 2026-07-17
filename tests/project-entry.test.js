@@ -37,11 +37,27 @@ for (const item of appConfig.tabBar.list) {
 }
 
 const readme = fs.readFileSync(path.join(projectRoot, 'README.md'), 'utf8')
+const speechFunctionRoot = path.join(projectRoot, 'cloudfunctions/speechToText')
+const speechIndex = fs.readFileSync(path.join(speechFunctionRoot, 'index.js'), 'utf8')
+const speechPackage = require(path.join(speechFunctionRoot, 'package.json'))
+const speechReadme = fs.readFileSync(path.join(speechFunctionRoot, 'README.md'), 'utf8')
+
 assert.match(readme, /parseDailyInput/)
 assert.match(readme, /dailyRecords/)
 assert.match(readme, /userProfile/)
+assert.match(readme, /speechToText/)
 assert.match(readme, /daily_records/)
 assert.match(readme, /所有用户不可读写/)
 assert.doesNotMatch(readme, /上传并部署 `cloudfunctions\/parseRecord`/)
+
+assert.match(speechIndex, /cloud\.DYNAMIC_CURRENT_ENV/)
+assert.match(speechIndex, /cloud\.getWXContext\(\)\.OPENID/)
+assert.ok(speechPackage.dependencies['wx-server-sdk'])
+assert.ok(speechPackage.dependencies['tencentcloud-sdk-nodejs-asr'])
+assert.match(speechReadme, /TENCENTCLOUD_SECRET_ID/)
+assert.match(speechReadme, /TENCENTCLOUD_SECRET_KEY/)
+assert.match(speechReadme, /TENCENTCLOUD_ASR_REGION/)
+assert.match(speechReadme, /45 秒/)
+assert.match(speechReadme, /不保存原始语音/)
 
 console.log('project entry tests passed')
