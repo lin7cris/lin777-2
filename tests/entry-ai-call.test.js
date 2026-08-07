@@ -24,5 +24,3 @@ assert.doesNotMatch(entryScript, /text:\s*'今天早上吃了一个鸡蛋/)
 assert.doesNotMatch(confirmScript, /const fallback/)
 assert.doesNotMatch(confirmScript, /name:\s*'鸡蛋'/)
 assert.match(confirmScript, /normalizeParsedDailyInput\(null\)/)
-
-console.log('entry AI call tests passed')

@@ -73,7 +73,6 @@ Page({
         this.applyProfile(profile)
       }
     } catch (error) {
-      console.warn('load cloud user profile failed', error)
       this.setData({
         profileError: '云端资料暂时无法同步，当前显示本机资料。'
       })
@@ -186,7 +185,6 @@ Page({
         icon: 'success'
       })
     } catch (error) {
-      console.error('save cloud user profile failed', error)
       wx.showToast({
         title: '已本地保存',
         icon: 'none'

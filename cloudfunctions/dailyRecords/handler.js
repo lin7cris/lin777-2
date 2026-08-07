@@ -92,23 +92,22 @@ function createDailyRecordsHandler(options) {
       error.code = 'INVALID_ACTION'
       throw error
     } catch (error) {
+      const code = error && error.code || 'DAILY_RECORDS_ERROR'
+      const message = code === 'INVALID_INPUT'
+        ? '日期格式不正确'
+        : code === 'RECORD_NOT_FOUND'
+          ? '当天记录不存在'
+          : '每日记录操作失败，请稍后重试'
       logger.error('dailyRecords failed', {
-        action,
-        code: error && error.code,
-        errCode: error && error.errCode,
-        message: error && error.message,
-        errMsg: error && error.errMsg,
-        stack: error && error.stack
+        code,
+        message,
+        requestId: String(error && (error.requestId || error.RequestId) || '')
       })
       return {
         success: false,
         error: {
-          code: error && error.code || 'DAILY_RECORDS_ERROR',
-          message: error && error.code === 'INVALID_INPUT'
-            ? '日期格式不正确'
-            : error && error.code === 'RECORD_NOT_FOUND'
-              ? '当天记录不存在'
-              : '每日记录操作失败，请稍后重试'
+          code,
+          message
         }
       }
     }

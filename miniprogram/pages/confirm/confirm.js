@@ -83,7 +83,6 @@ Page({
         wx.switchTab({ url: '/pages/today/today' })
       }, 500)
     } catch (error) {
-      console.error('save daily record failed', error)
       this.setData({ saveError: '保存失败，请检查网络后重试。' })
       wx.showToast({ title: '保存失败，请稍后重试', icon: 'none' })
     } finally {

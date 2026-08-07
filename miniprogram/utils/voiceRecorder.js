@@ -64,6 +64,20 @@ function createVoiceRecorder(options) {
     onError(message, code)
   }
 
+  function transcriptionMessage(code) {
+    const messages = {
+      UNAUTHORIZED: '请重新进入小程序后再试',
+      INVALID_AUDIO: '录音文件无效，请重新录制',
+      INVALID_FORMAT: '暂不支持该录音格式',
+      RECORDING_TOO_SHORT: '录音时间太短，请再说一次',
+      RECORDING_TOO_LONG: '单次录音不能超过 45 秒',
+      AUDIO_TOO_LARGE: '录音文件过大，请缩短录音时间',
+      EMPTY_TRANSCRIPT: '没有识别到清晰语音，请再说一次',
+      TRANSCRIPTION_TIMEOUT: '语音转写超时，请稍后重试'
+    }
+    return messages[code] || '语音转写失败，请稍后重试'
+  }
+
   async function ensurePermission() {
     const setting = await callbackPromise((callbacks) => {
       wxApi.getSetting(callbacks)
@@ -131,12 +145,13 @@ function createVoiceRecorder(options) {
     try {
       const audioBase64 = await readBase64(filePath)
       if (destroyed) return
-      const response = await transcribe(audioBase64, Math.min(durationMs, MAX_RECORDING_MS))
+      const res = await transcribe(audioBase64, Math.min(durationMs, MAX_RECORDING_MS))
       if (destroyed) return
-      const cloudResult = response && response.result || {}
+      const cloudResult = res && res.result || {}
       if (cloudResult.success === false) {
-        const error = cloudResult.error || {}
-        emitError(error.message || '语音转写失败，请稍后重试', error.code || 'TRANSCRIPTION_FAILED')
+        const error = cloudResult.error || cloudResult
+        const code = String(error.code || 'TRANSCRIPTION_FAILED')
+        emitError(transcriptionMessage(code), code)
         return
       }
 
@@ -148,8 +163,8 @@ function createVoiceRecorder(options) {
 
       onTranscript(text)
       dispatch({ type: 'SUCCESS' })
-    } catch (error) {
-      emitError('语音转写失败，请检查网络后重试', 'NETWORK_ERROR')
+    } catch (err) {
+      emitError('语音转写失败，请稍后重试', 'NETWORK_ERROR')
     } finally {
       await cleanup(filePath)
     }

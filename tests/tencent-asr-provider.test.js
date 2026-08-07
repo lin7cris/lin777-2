@@ -5,12 +5,18 @@ const { createTencentAsrProvider } = require('../cloudfunctions/speechToText/pro
 async function run() {
   let clientConfig
   let request
+  const logs = []
   const provider = createTencentAsrProvider({
     env: {
       TENCENTCLOUD_SECRETID: 'temporary-secret-id',
       TENCENTCLOUD_SECRETKEY: 'temporary-secret-key',
       TENCENTCLOUD_SESSIONTOKEN: 'temporary-token',
       TENCENTCLOUD_REGION: 'ap-shanghai'
+    },
+    logger: {
+      info(message, details) {
+        logs.push({ message, details })
+      }
     },
     createClient(config) {
       clientConfig = config
@@ -32,6 +38,7 @@ async function run() {
     token: 'temporary-token',
     region: 'ap-shanghai'
   })
+  assert.deepStrictEqual(logs, [])
   assert.strictEqual(request.EngSerViceType, '16k_zh')
   assert.strictEqual(request.SourceType, 1)
   assert.strictEqual(request.VoiceFormat, 'mp3')
@@ -63,6 +70,7 @@ async function run() {
 
   const emptyProvider = createTencentAsrProvider({
     env: { TENCENTCLOUD_SECRETID: 'id', TENCENTCLOUD_SECRETKEY: 'key' },
+    logger: {},
     createClient() {
       return { async SentenceRecognition() { return { Result: '', RequestId: 'request-2' } } }
     }
@@ -74,6 +82,7 @@ async function run() {
 
   const timeoutProvider = createTencentAsrProvider({
     env: { TENCENTCLOUD_SECRETID: 'id', TENCENTCLOUD_SECRETKEY: 'key' },
+    logger: {},
     createClient() {
       return {
         async SentenceRecognition() {
@@ -89,7 +98,30 @@ async function run() {
     (error) => error.code === 'TRANSCRIPTION_TIMEOUT'
   )
 
-  console.log('tencent asr provider tests passed')
+  const sdkErrorProvider = createTencentAsrProvider({
+    env: { TENCENTCLOUD_SECRETID: 'id', TENCENTCLOUD_SECRETKEY: 'key' },
+    logger: {},
+    createClient() {
+      return {
+        async SentenceRecognition() {
+          const error = new Error('signature expired from tencent')
+          error.code = 'AuthFailure.SignatureFailure'
+          error.requestId = 'request-sdk-error'
+          throw error
+        }
+      }
+    }
+  })
+  await assert.rejects(
+    () => sdkErrorProvider.transcribe({ audioBase64, voiceFormat: 'mp3' }),
+    (error) => {
+      assert.strictEqual(error.code, 'AuthFailure.SignatureFailure')
+      assert.strictEqual(error.message, 'signature expired from tencent')
+      assert.strictEqual(error.requestId, 'request-sdk-error')
+      return true
+    }
+  )
+
 }
 
 run().catch((error) => {

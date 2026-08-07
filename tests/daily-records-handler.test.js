@@ -115,7 +115,6 @@ async function run() {
   assert.strictEqual(missingOpenId.error.code, 'UNAUTHORIZED')
 
   assert.ok(calls.every((call) => call[1] === 'trusted-openid'))
-  console.log('daily records handler tests passed')
 }
 
 run().catch((error) => {

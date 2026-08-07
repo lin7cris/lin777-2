@@ -59,5 +59,3 @@ assert.strictEqual(failed.error, '语音转写超时，请稍后重试')
 
 const cancelled = reduceVoiceState(canceling, { type: 'CANCEL' })
 assert.deepStrictEqual(cancelled, initialVoiceState())
-
-console.log('voice input tests passed')

@@ -42,5 +42,3 @@ const transcriptMethod = todayJs.slice(
 )
 assert.doesNotMatch(transcriptMethod, /parseDailyInput/)
 assert.doesNotMatch(transcriptMethod, /dailyRecords/)
-
-console.log('today voice input tests passed')

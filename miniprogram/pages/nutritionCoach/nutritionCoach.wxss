@@ -1,0 +1,389 @@
+.nutrition-coach-page {
+  min-height: 100vh;
+  padding: calc(32rpx + env(safe-area-inset-top)) 32rpx calc(48rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+  background: #f7f8f5;
+}
+
+.nutrition-coach-card {
+  display: flex;
+  flex-direction: column;
+  margin-top: 28rpx;
+  padding: 34rpx;
+  border: 1rpx solid rgba(255, 255, 255, 0.78);
+  border-radius: 48rpx;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 12rpx 34rpx rgba(0, 0, 0, 0.045);
+}
+
+.nutrition-coach-header {
+  display: flex;
+  flex-direction: column;
+}
+
+.nutrition-coach-eyebrow {
+  color: #8e8e93;
+  font-size: 22rpx;
+  font-weight: 760;
+}
+
+.nutrition-coach-title {
+  margin-top: 10rpx;
+  color: #1c1c1e;
+  font-size: 52rpx;
+  line-height: 1.2;
+  font-weight: 900;
+}
+
+.coach-section-heading,
+.coach-macro-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20rpx;
+}
+
+.coach-section-title {
+  color: #1c1c1e;
+  font-size: 34rpx;
+  line-height: 1.25;
+  font-weight: 850;
+}
+
+.coach-section-note {
+  color: #8e8e93;
+  font-size: 22rpx;
+  font-weight: 700;
+}
+
+.coach-completion {
+  color: #248a3d;
+  font-size: 30rpx;
+  font-weight: 900;
+}
+
+.coach-summary-number-line {
+  display: flex;
+  align-items: baseline;
+  gap: 10rpx;
+  margin-top: 28rpx;
+}
+
+.coach-summary-number {
+  color: #1c1c1e;
+  font-size: 78rpx;
+  line-height: 0.95;
+  font-weight: 920;
+}
+
+.coach-summary-unit,
+.coach-summary-caption,
+.coach-macro-value,
+.coach-macro-status {
+  color: #8e8e93;
+  font-size: 23rpx;
+  font-weight: 700;
+}
+
+.coach-summary-caption {
+  display: block;
+  margin-top: 12rpx;
+}
+
+.coach-summary-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12rpx;
+  margin-top: 28rpx;
+}
+
+.coach-summary-metric {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  padding: 18rpx 14rpx;
+  border-radius: 24rpx;
+  background: rgba(242, 242, 247, 0.8);
+}
+
+.coach-summary-metric-value {
+  overflow: hidden;
+  color: #1c1c1e;
+  font-size: 31rpx;
+  font-weight: 850;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.coach-summary-metric-label {
+  margin-top: 8rpx;
+  color: #8e8e93;
+  font-size: 20rpx;
+  font-weight: 700;
+}
+
+.coach-summary-text,
+.coach-analysis-copy,
+.coach-dinner-copy {
+  display: block;
+  color: #3a3a3c;
+  font-size: 28rpx;
+  line-height: 1.58;
+  font-weight: 650;
+}
+
+.coach-summary-text {
+  margin-top: 22rpx;
+}
+
+.coach-macro-list {
+  display: grid;
+  gap: 26rpx;
+  margin-top: 30rpx;
+}
+
+.coach-macro-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.coach-macro-name {
+  color: #1c1c1e;
+  font-size: 28rpx;
+  font-weight: 820;
+}
+
+.coach-progress-track {
+  height: 12rpx;
+  margin-top: 16rpx;
+  overflow: hidden;
+  border-radius: 999rpx;
+  background: rgba(118, 118, 128, 0.14);
+}
+
+.coach-progress-fill {
+  height: 100%;
+  border-radius: 999rpx;
+}
+
+.coach-progress-fill.protein { background: #34c759; }
+.coach-progress-fill.carbs { background: #0a84ff; }
+.coach-progress-fill.fat { background: #ff9f0a; }
+
+.coach-macro-status {
+  margin-top: 12rpx;
+  color: #636366;
+}
+
+.coach-analysis-copy {
+  margin-top: 28rpx;
+  padding: 22rpx;
+  border-radius: 24rpx;
+  background: rgba(242, 242, 247, 0.76);
+}
+
+.coach-suggestion-list {
+  display: grid;
+  gap: 20rpx;
+  margin-top: 28rpx;
+}
+
+.coach-suggestion-item {
+  display: grid;
+  grid-template-columns: 14rpx minmax(0, 1fr);
+  gap: 16rpx;
+  align-items: start;
+  color: #3a3a3c;
+  font-size: 28rpx;
+  line-height: 1.5;
+  font-weight: 650;
+}
+
+.coach-suggestion-dot {
+  width: 10rpx;
+  height: 10rpx;
+  margin-top: 15rpx;
+  border-radius: 50%;
+  background: #34c759;
+}
+
+.coach-dinner-card {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 252, 249, 0.94));
+}
+
+.coach-dinner-copy {
+  margin-top: 24rpx;
+}
+
+.coach-recommendation-list {
+  display: grid;
+  gap: 18rpx;
+  margin-top: 28rpx;
+}
+
+.coach-recommendation-item {
+  display: flex;
+  flex-direction: column;
+  padding: 26rpx;
+  border-radius: 30rpx;
+  background: rgba(242, 242, 247, 0.76);
+}
+
+.coach-recommendation-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20rpx;
+}
+
+.coach-recommendation-name,
+.coach-recommendation-amount,
+.coach-recommendation-description,
+.coach-recommendation-macros {
+  display: block;
+}
+
+.coach-recommendation-name {
+  color: #1c1c1e;
+  font-size: 30rpx;
+  font-weight: 850;
+}
+
+.coach-recommendation-amount,
+.coach-recommendation-description,
+.coach-recommendation-macros,
+.coach-recommendation-error {
+  color: #636366;
+  font-size: 23rpx;
+  line-height: 1.45;
+  font-weight: 650;
+}
+
+.coach-recommendation-amount {
+  margin-top: 6rpx;
+}
+
+.coach-recommendation-calories {
+  flex-shrink: 0;
+  color: #248a3d;
+  font-size: 27rpx;
+  font-weight: 900;
+}
+
+.coach-recommendation-description {
+  margin-top: 18rpx;
+}
+
+.coach-recommendation-macros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8rpx 16rpx;
+  margin-top: 16rpx;
+}
+
+.coach-add-button {
+  width: 100%;
+  height: 72rpx;
+  margin: 22rpx 0 0;
+  border: 0;
+  border-radius: 999rpx;
+  background: #1c1c1e;
+  color: #ffffff;
+  font-size: 25rpx;
+  font-weight: 800;
+  line-height: 72rpx;
+}
+
+.coach-add-button[disabled] {
+  opacity: 0.48;
+}
+
+.coach-recommendation-error {
+  margin-top: 18rpx;
+  color: #ff453a;
+}
+
+.coach-chat-entry {
+  display: flex;
+  width: 100%;
+  height: 92rpx;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 28rpx;
+  padding: 0 30rpx;
+  border: 1rpx solid rgba(255, 255, 255, 0.78);
+  border-radius: 48rpx;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.92);
+  color: #1c1c1e;
+  font-size: 30rpx;
+  font-weight: 850;
+  line-height: 92rpx;
+  text-align: left;
+}
+
+.coach-chat-entry-arrow {
+  color: #8e8e93;
+  font-size: 42rpx;
+  font-weight: 500;
+}
+
+.coach-state-card,
+.coach-skeleton-card {
+  display: flex;
+  min-height: 260rpx;
+  flex-direction: column;
+  justify-content: center;
+  margin-top: 28rpx;
+  padding: 40rpx 34rpx;
+  border: 1rpx solid rgba(255, 255, 255, 0.78);
+  border-radius: 48rpx;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 12rpx 34rpx rgba(0, 0, 0, 0.045);
+}
+
+.coach-state-title {
+  color: #1c1c1e;
+  font-size: 34rpx;
+  font-weight: 850;
+}
+
+.coach-state-copy {
+  margin-top: 14rpx;
+  color: #636366;
+  font-size: 27rpx;
+  line-height: 1.5;
+  font-weight: 650;
+}
+
+.coach-retry {
+  width: 190rpx;
+  height: 68rpx;
+  margin: 28rpx 0 0;
+  border: 0;
+  border-radius: 999rpx;
+  background: rgba(52, 199, 89, 0.12);
+  color: #248a3d;
+  font-size: 25rpx;
+  font-weight: 800;
+  line-height: 68rpx;
+}
+
+.coach-skeleton {
+  border-radius: 16rpx;
+  background: linear-gradient(90deg, #f2f2f7 25%, #fafafa 50%, #f2f2f7 75%);
+  background-size: 200% 100%;
+  animation: coach-skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+.coach-skeleton-title { width: 160rpx; height: 28rpx; }
+.coach-skeleton-value { width: 310rpx; height: 76rpx; margin-top: 26rpx; }
+.coach-skeleton-copy { width: 100%; height: 32rpx; margin-top: 24rpx; }
+
+@keyframes coach-skeleton-shimmer {
+  from { background-position: 100% 0; }
+  to { background-position: -100% 0; }
+}

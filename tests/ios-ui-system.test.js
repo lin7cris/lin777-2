@@ -15,5 +15,3 @@ assert.match(appStyles, /button\[disabled\]/)
 
 assert.strictEqual(appConfig.window.backgroundColor, '#F2F2F7')
 assert.strictEqual(appConfig.tabBar.selectedColor, '#34C759')
-
-console.log('iOS UI system tests passed')

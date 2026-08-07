@@ -155,13 +155,17 @@ async function run() {
   await flush()
   assert.strictEqual(cloudFailed.calls.transcripts.length, 0)
   assert.deepStrictEqual(cloudFailed.calls.errors.at(-1), {
-    message: '语音转写失败，请检查网络后重试',
+    message: '语音转写失败，请稍后重试',
     code: 'NETWORK_ERROR'
   })
 
   const functionFailed = createHarness({
     permission: true,
-    cloudResult: { success: false, error: { code: 'EMPTY_TRANSCRIPT', message: '没有识别到清晰语音，请再说一次' } }
+    cloudResult: {
+      success: false,
+      code: 'EMPTY_TRANSCRIPT',
+      message: '没有识别到清晰语音，请再说一次'
+    }
   })
   await functionFailed.recorder.start()
   functionFailed.recorder.stop()
@@ -211,7 +215,6 @@ async function run() {
   assert.deepStrictEqual(callbacksAfterDestroy.calls.unlinked, [])
   assert.deepStrictEqual(callbacksAfterDestroy.calls.errors, [])
 
-  console.log('voice recorder tests passed')
 }
 
 run().catch((error) => {

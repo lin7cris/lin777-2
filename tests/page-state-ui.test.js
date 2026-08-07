@@ -69,5 +69,3 @@ assert.match(statisticsJs, /statisticsError/)
 assert.match(statisticsJs, /requestSequence/)
 assert.match(statisticsJs, /retryStatistics/)
 assert.match(statisticsWxml, /bindtap="retryStatistics"/)
-
-console.log('page state UI tests passed')

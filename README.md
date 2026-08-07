@@ -11,6 +11,9 @@
 - 首次建档：填写基础身体信息，计算推荐热量和营养素目标。
 - 智能识别：输入饮食和运动描述，识别食物、份量、餐次、热量、蛋白质、脂肪、碳水和运动消耗。
 - 语音输入：录制最长 45 秒的中文饮食或运动描述，转写后可继续编辑再提交。
+- 今日营养分析：根据当天饮食、运动和个人目标生成热量与三大营养素评价。
+- 智能饮食推荐：基于剩余热量和蛋白质缺口给出可直接加入今日记录的晚餐建议。
+- AI 私人营养顾问：支持围绕饮食调整、运动安排和明日计划连续咨询，并在云端保存最近对话上下文。
 - 识别结果确认：用户可在保存前修改每一项食物和运动数据。
 - 今日首页：展示热量缺口、摄入、消耗、净摄入、营养素进度、今日建议和今日 Timeline。
 - 历史记录：按日期查看每日饮食、运动和热量汇总。
@@ -22,17 +25,17 @@
 
 > 截图占位，后续可补充微信开发者工具或真机截图。
 
-| 首页 Today | 历史记录 | 统计分析 | 我的页面 | 确认页 |
+| 首页 Today | 营养教练 | 私人顾问 | 历史记录 | 统计分析 |
 | --- | --- | --- | --- | --- |
-| `docs/screenshots/today.png` | `docs/screenshots/history.png` | `docs/screenshots/statistics.png` | `docs/screenshots/profile.png` | `docs/screenshots/confirm.png` |
+| `docs/screenshots/today.png` | `docs/screenshots/nutrition-coach.png` | `docs/screenshots/nutrition-chat.png` | `docs/screenshots/history.png` | `docs/screenshots/statistics.png` |
 
 ## 技术栈
 
 - 前端：微信小程序原生 WXML / WXSS / JavaScript
 - 后端：微信云开发
 - 云函数：Node.js
-- 云数据库：`users`、`daily_records`
-- 智能识别入口：`parseDailyInput` 云函数
+- 云数据库：`users`、`daily_records`、`nutrition_chat_records`
+- 智能服务入口：`parseDailyInput`、`nutritionCoach`、`nutritionChat` 云函数
 - 图表：原生 WXML / WXSS 绘制，不引入第三方图表库
 - 测试：Node.js 内置测试运行器
 
@@ -48,6 +51,8 @@
 │   ├── pages/
 │   │   ├── onboarding/     # 首次建档与基础目标计算
 │   │   ├── today/          # 今日首页、热量缺口、智能输入、今日记录
+│   │   ├── nutritionCoach/ # 今日营养分析、智能饮食推荐
+│   │   ├── nutritionChat/  # 私人营养顾问连续对话
 │   │   ├── entry/          # 完整自然语言录入页
 │   │   ├── confirm/        # 识别结果确认与编辑页
 │   │   ├── record/         # 历史记录页
@@ -59,6 +64,8 @@
 │   ├── parseDailyInput/    # 统一智能识别入口
 │   ├── speechToText/       # 一次性语音转写，不保存原始录音
 │   ├── dailyRecords/       # 每日记录保存、查询、删除和汇总
+│   ├── nutritionCoach/     # 今日营养分析和智能饮食推荐
+│   ├── nutritionChat/      # 私人营养顾问和聊天上下文保存
 │   └── parseRecord/        # 早期 mock 目录，当前前端不再调用
 ├── tests/                  # 本地自动化测试
 └── docs/                   # 产品规划、设计说明和 Roadmap
@@ -83,8 +90,9 @@
 | --- | --- | --- |
 | `users` | 用户身体资料和推荐热量 | 所有用户不可读写 |
 | `daily_records` | 每个用户每天一条饮食、运动与体重快照 | 所有用户不可读写 |
+| `nutrition_chat_records` | 私人营养顾问的用户与助手消息 | 所有用户不可读写（`ADMINONLY`） |
 
-两个集合都由云函数通过 `openid` 访问。小程序前端不应直接读写数据库，因此请把集合权限设为「所有用户不可读写」，只允许云函数访问。
+以上集合均由云函数通过 `openid` 访问。小程序前端不应直接读写数据库；`nutrition_chat_records` 已使用 `ADMINONLY` 权限，聊天记录只能经 `nutritionChat` 云函数访问。
 
 `daily_records` 使用 `_openid + date` 区分记录，`dailyRecords` 云函数会保证每位用户每天只保留一条记录，并在追加或删除条目后重新计算汇总。
 
@@ -96,6 +104,8 @@
 2. `cloudfunctions/parseDailyInput`
 3. `cloudfunctions/speechToText`
 4. `cloudfunctions/dailyRecords`
+5. `cloudfunctions/nutritionCoach`
+6. `cloudfunctions/nutritionChat`
 
 `cloudfunctions/parseRecord` 是早期 mock 目录，不再被前端调用，无需上传部署。
 
@@ -106,6 +116,8 @@
 智能识别相关接口密钥只允许配置在云函数环境变量中，不要写入前端、Git 仓库、截图或聊天记录。
 
 如密钥曾经公开，应立即在供应商控制台撤销并重新生成。
+
+`parseDailyInput`、`nutritionCoach` 和 `nutritionChat` 均需要在各自云函数环境中配置 `DEEPSEEK_API_KEY`；营养教练与顾问当前使用 `DEEPSEEK_MODEL=deepseek-v4-flash`。生产错误仅向用户展示友好提示，云函数日志仅保留错误代码、友好说明和请求 ID。
 
 语音转写使用 `speechToText` 云函数，并读取 CloudBase 自动注入的临时凭证：
 
@@ -134,6 +146,7 @@
    - 在首页输入饮食和运动描述。
    - 进入识别结果确认页并修改数据。
    - 保存到今日记录。
+   - 进入「AI营养教练」，验证今日分析、推荐加入今日记录和连续提问。
    - 查看历史页和统计页。
    - 测试删除单条食物或运动记录。
 
@@ -157,7 +170,7 @@ find miniprogram cloudfunctions tests -name '*.js' -print0 | xargs -0 -n1 node -
 
 ### 智能识别失败
 
-检查 `parseDailyInput` 是否已重新上传、云函数环境变量是否生效。可在云开发控制台查看云函数日志中的错误代码。
+检查 `parseDailyInput` 是否已重新上传、云函数环境变量是否生效。可在云开发控制台按请求 ID 查询安全日志。
 
 ### 语音转写失败
 

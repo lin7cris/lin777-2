@@ -189,7 +189,6 @@ Page({
       if (result.success === false) throw new Error(result.error && result.error.message)
       this.applyDailyRecord(result.record, profile)
     } catch (error) {
-      console.error('load daily record failed', error)
       wx.showToast({ title: '读取今日记录失败', icon: 'none' })
       this.applyDailyRecord(null, profile)
       this.setData({
@@ -303,7 +302,6 @@ Page({
           this.applyDailyRecord(result.record, profile)
           wx.showToast({ title: '已删除', icon: 'success' })
         } catch (error) {
-          console.error('delete daily item failed', error)
           wx.showToast({ title: '删除失败，请稍后重试', icon: 'none' })
         } finally {
           this.setData({ deletingId: '' })
@@ -326,6 +324,12 @@ Page({
   goEntry() {
     wx.navigateTo({
       url: '/pages/entry/entry'
+    })
+  },
+
+  goNutritionCoach() {
+    wx.navigateTo({
+      url: '/pages/nutritionCoach/nutritionCoach'
     })
   },
 
@@ -403,7 +407,6 @@ Page({
         })
       },
       fail: (error) => {
-        console.error('parse daily input failed', error)
         this.setData({
           aiError: '智能识别失败，请检查网络后重试。'
         })

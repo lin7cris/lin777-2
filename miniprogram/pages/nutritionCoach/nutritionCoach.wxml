@@ -1,0 +1,115 @@
+<view class="nutrition-coach-page">
+  <view class="nutrition-coach-header">
+    <text class="nutrition-coach-eyebrow">TODAY</text>
+    <text class="nutrition-coach-title">AI营养教练</text>
+  </view>
+
+  <view wx:if="{{loading}}" class="coach-skeleton-card">
+    <view class="coach-skeleton coach-skeleton-title"></view>
+    <view class="coach-skeleton coach-skeleton-value"></view>
+    <view class="coach-skeleton coach-skeleton-copy"></view>
+  </view>
+
+  <view wx:elif="{{error}}" class="coach-state-card">
+    <text class="coach-state-title">暂时无法生成建议</text>
+    <text class="coach-state-copy">{{error}}</text>
+    <button class="coach-retry button-press" bindtap="retryNutritionCoach">重新生成</button>
+  </view>
+
+  <view wx:elif="{{!hasContent}}" class="coach-state-card">
+    <text class="coach-state-title">等待今天的饮食记录</text>
+    <text class="coach-state-copy">{{emptyReason}}</text>
+  </view>
+
+  <block wx:else>
+    <view class="nutrition-coach-card coach-summary-card">
+      <view class="coach-section-heading">
+        <text class="coach-section-title">今日总结</text>
+        <text class="coach-completion">{{summary.completion}}%</text>
+      </view>
+      <view class="coach-summary-number-line">
+        <text class="coach-summary-number">{{summary.caloriesIn}}</text>
+        <text class="coach-summary-unit">/ {{summary.targetCalories}} kcal</text>
+      </view>
+      <text class="coach-summary-caption">今天完成度 {{summary.completion}}%</text>
+      <view class="coach-summary-metrics">
+        <view class="coach-summary-metric">
+          <text class="coach-summary-metric-value">{{summary.caloriesIn}}</text>
+          <text class="coach-summary-metric-label">摄入 kcal</text>
+        </view>
+        <view class="coach-summary-metric">
+          <text class="coach-summary-metric-value">{{summary.caloriesOut}}</text>
+          <text class="coach-summary-metric-label">消耗 kcal</text>
+        </view>
+        <view class="coach-summary-metric">
+          <text class="coach-summary-metric-value">{{summary.remainingCalories}}</text>
+          <text class="coach-summary-metric-label">剩余 kcal</text>
+        </view>
+      </view>
+      <text class="coach-summary-text">{{summary.text}}</text>
+    </view>
+
+    <view class="nutrition-coach-card">
+      <text class="coach-section-title">营养分析</text>
+      <view class="coach-macro-list">
+        <view class="coach-macro-item" wx:for="{{macros}}" wx:key="key">
+          <view class="coach-macro-heading">
+            <text class="coach-macro-name">{{item.name}}</text>
+            <text class="coach-macro-value">{{item.valueText}}</text>
+          </view>
+          <view class="coach-progress-track">
+            <view class="coach-progress-fill {{item.tone}}" style="width: {{item.percent}}%;"></view>
+          </view>
+          <text class="coach-macro-status">{{item.status}}</text>
+        </view>
+      </view>
+      <text wx:if="{{nutritionAnalysis}}" class="coach-analysis-copy">{{nutritionAnalysis}}</text>
+    </view>
+
+    <view class="nutrition-coach-card">
+      <text class="coach-section-title">AI建议</text>
+      <view class="coach-suggestion-list">
+        <view class="coach-suggestion-item" wx:for="{{suggestions}}" wx:key="*this">
+          <view class="coach-suggestion-dot"></view>
+          <text>{{item}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="nutrition-coach-card coach-dinner-card">
+      <text class="coach-section-title">今晚推荐</text>
+      <text class="coach-dinner-copy">{{dinnerRecommendation}}</text>
+    </view>
+
+    <view class="nutrition-coach-card">
+      <view class="coach-section-heading">
+        <text class="coach-section-title">今日推荐</text>
+        <text class="coach-section-note">估算值</text>
+      </view>
+      <text wx:if="{{recommendationError}}" class="coach-recommendation-error">{{recommendationError}}</text>
+      <view class="coach-recommendation-list">
+        <view class="coach-recommendation-item" wx:for="{{recommendations}}" wx:key="name">
+          <view class="coach-recommendation-heading">
+            <view>
+              <text class="coach-recommendation-name">{{item.name}}</text>
+              <text class="coach-recommendation-amount">{{item.amount}}</text>
+            </view>
+            <text class="coach-recommendation-calories">{{item.calories}} kcal</text>
+          </view>
+          <text wx:if="{{item.description}}" class="coach-recommendation-description">{{item.description}}</text>
+          <view class="coach-recommendation-macros">
+            <text>蛋白质 {{item.protein}}g</text>
+            <text>碳水 {{item.carbs}}g</text>
+            <text>脂肪 {{item.fat}}g</text>
+          </view>
+          <button class="coach-add-button button-press" data-index="{{index}}" loading="{{savingRecommendationIndex == index}}" disabled="{{savingRecommendationIndex >= 0}}" bindtap="addRecommendation">加入今日记录</button>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <button class="coach-chat-entry button-press" bindtap="goNutritionChat">
+    <text>问问营养师</text>
+    <text class="coach-chat-entry-arrow">›</text>
+  </button>
+</view>

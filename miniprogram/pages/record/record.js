@@ -57,7 +57,6 @@ Page({
       if (requestId !== recordRequestSequence) return
       this.applyRecord(result.records && result.records[0])
     } catch (error) {
-      console.error('load history record failed', error)
       if (requestId !== recordRequestSequence) return
       this.applyRecord(null)
       this.setData({ recordError: '无法读取这一天的记录，请检查网络后重试。' })
@@ -105,7 +104,6 @@ Page({
           this.applyRecord(result.record)
           wx.showToast({ title: '已删除', icon: 'success' })
         } catch (error) {
-          console.error('delete history item failed', error)
           wx.showToast({ title: '删除失败，请稍后重试', icon: 'none' })
         } finally {
           this.setData({ deletingId: '' })

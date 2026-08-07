@@ -85,7 +85,6 @@ async function run() {
     (error) => error.code === 'AI_HTTP_ERROR'
   )
 
-  console.log('deepseek provider tests passed')
 }
 
 run().catch((error) => {

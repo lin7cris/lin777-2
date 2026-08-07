@@ -17,5 +17,3 @@ assert.strictEqual(profile.height, 175.5)
 assert.strictEqual(profile.weight, 88.2)
 assert.strictEqual(profile.targetWeight, 78)
 assert.strictEqual(profile.gender, 'male')
-
-console.log('profile form tests passed')

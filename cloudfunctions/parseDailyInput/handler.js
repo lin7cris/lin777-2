@@ -42,9 +42,11 @@ function createParseDailyInputHandler(options) {
         ...normalized
       }
     } catch (error) {
+      const safeError = friendlyError(error)
       logger.error('parseDailyInput failed', {
-        code: error && error.code,
-        statusCode: error && error.statusCode
+        code: safeError.code,
+        message: safeError.message,
+        requestId: String(error && (error.requestId || error.RequestId) || '')
       })
 
       return {
@@ -53,7 +55,7 @@ function createParseDailyInputHandler(options) {
         foods: [],
         exercises: [],
         summary: emptySummary(),
-        error: friendlyError(error)
+        error: safeError
       }
     }
   }

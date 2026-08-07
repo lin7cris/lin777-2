@@ -72,5 +72,3 @@ assert.deepStrictEqual(withSummary.summary, {
   carbs: 1,
   estimated: true
 })
-
-console.log('daily input utils tests passed')

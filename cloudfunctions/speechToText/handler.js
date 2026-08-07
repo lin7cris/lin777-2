@@ -53,9 +53,10 @@ function createSpeechToTextHandler(options) {
         durationMs: actualDurationMs
       }
     } catch (error) {
-      const friendly = friendlyError(error)
-      logger.error('speechToText failed', { code: friendly.code })
-      return { success: false, error: friendly }
+      const details = friendlyError(error)
+      const requestId = String(error && (error.requestId || error.RequestId) || '')
+      logger.error('speechToText failed', { ...details, requestId })
+      return { success: false, ...details, requestId }
     }
   }
 }

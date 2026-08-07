@@ -1,0 +1,9 @@
+{
+  "name": "nutrition-coach",
+  "version": "1.0.0",
+  "description": "Personalized daily nutrition advice using the current user's calorie records",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "latest"
+  }
+}

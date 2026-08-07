@@ -36,7 +36,8 @@ function createTencentAsrProvider(options) {
         throw new SpeechToTextError('ASR_KEY_MISSING', 'Tencent Cloud ASR credentials are not configured')
       }
 
-      const client = createClient({ secretId, secretKey, token, region })
+      const credentialConfig = { secretId, secretKey, token, region }
+      const client = createClient(credentialConfig)
       const request = {
         ProjectId: 0,
         SubServiceType: 2,
@@ -65,6 +66,9 @@ function createTencentAsrProvider(options) {
         if (error && (error.code === 'EMPTY_TRANSCRIPT' || error.code === 'ASR_KEY_MISSING')) throw error
         if (error && (error.code === 'ETIMEDOUT' || error.code === 'ESOCKETTIMEDOUT' || error.code === 'ECONNABORTED')) {
           throw new SpeechToTextError('TRANSCRIPTION_TIMEOUT', 'Tencent ASR request timed out')
+        }
+        if (error && (error.code || error.message)) {
+          throw error
         }
         throw new SpeechToTextError('TRANSCRIPTION_FAILED', 'Tencent ASR request failed')
       }

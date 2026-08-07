@@ -226,6 +226,57 @@
   border-radius: 48rpx;
 }
 
+.nutrition-coach-entry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24rpx;
+  min-height: 136rpx;
+  margin-top: 28rpx;
+  padding: 30rpx 32rpx;
+}
+
+.nutrition-coach-entry-copy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.nutrition-coach-entry-title {
+  color: var(--text-primary);
+  font-size: 34rpx;
+  line-height: 1.25;
+  font-weight: 840;
+}
+
+.nutrition-coach-entry-subtitle {
+  margin-top: 8rpx;
+  color: var(--text-secondary);
+  font-size: 25rpx;
+  line-height: 1.35;
+  font-weight: 650;
+}
+
+.nutrition-coach-entry-action {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 8rpx;
+  padding: 16rpx 20rpx;
+  border-radius: 999rpx;
+  background: rgba(52, 199, 89, 0.12);
+  color: var(--green-strong);
+  font-size: 24rpx;
+  line-height: 1;
+  font-weight: 800;
+}
+
+.nutrition-coach-entry-arrow {
+  margin-top: -2rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+}
+
 .metric-item {
   display: flex;
   min-width: 0;

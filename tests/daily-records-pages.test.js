@@ -44,5 +44,3 @@ assert.match(todayWxml, /Floating|input-dock/)
 assert.match(todayWxml, /净摄入/)
 assert.doesNotMatch(todayWxml, /净摄入 kcal/)
 assert.doesNotMatch(todayWxml, /剩余/)
-
-console.log('daily records page tests passed')

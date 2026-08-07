@@ -1,5 +1,31 @@
 # Changelog
 
+## v1.3.0 - AI Nutrition Coach
+
+发布日期：2026-08-07
+
+本版本完成 AI 营养教练三阶段能力，并以用户确认后的饮食记录为唯一数据来源。
+
+### 新增
+
+- 新增今日营养分析：结合身体档案、当天摄入、运动、热量缺口和三大营养素生成个性化评价。
+- 新增智能饮食推荐：根据剩余热量和蛋白质缺口提供晚餐方案，可确认后加入今日记录。
+- 新增私人营养顾问：支持饮食咨询、食物调整、运动建议和明日计划的连续对话。
+- 新增 `nutritionCoach` 与 `nutritionChat` 云函数，复用现有 DeepSeek Provider 配置。
+- 新增 `nutrition_chat_records` 集合，按用户隔离保存用户和助手消息上下文。
+
+### 安全与稳定性
+
+- `nutrition_chat_records` 设置为 `ADMINONLY`，小程序端不能直接读写聊天记录。
+- 移除前端原始错误对象、语音转写身份诊断和凭证状态日志。
+- 云函数错误日志统一保留错误代码、友好说明和请求 ID；不返回堆栈、密钥或完整请求参数。
+- 营养教练、聊天、语音输入和日常记录完成自动化安全回归。
+
+### 兼容性
+
+- 未改变 `dailyRecords`、`parseDailyInput`、`parseRecord`、`speechToText`、`userProfile` 的成功调用接口与数据归属；语音失败响应已收敛为安全的友好错误。
+- 营养推荐继续通过既有 `dailyRecords` 合并保存逻辑写入当天记录。
+
 ## v1.2.0 - Voice Input (In Development)
 
 发布日期：待定

@@ -50,20 +50,14 @@ Page({
       startDate: range.startDate,
       endDate: range.endDate
     }
-    let response
     this.setData({ loading: true, statisticsError: '', selectedTrend: null })
     try {
-      response = await wx.cloud.callFunction({
+      const response = await wx.cloud.callFunction({
         name: 'dailyRecords',
         data: request
       })
       const result = response.result || {}
       if (result.success !== true || !Array.isArray(result.records)) {
-        console.error('dailyRecords range returned failure', {
-          request,
-          response,
-          result
-        })
         const failure = new Error(result.error && result.error.message || '云函数返回格式不正确')
         failure.code = result.error && result.error.code
         failure.details = result.error
@@ -76,18 +70,6 @@ Page({
         selectedTrend: null
       })
     } catch (error) {
-      console.error('load statistics failed', {
-        rangeDays,
-        request,
-        response,
-        error,
-        message: error && error.message,
-        stack: error && error.stack,
-        code: error && error.code,
-        errCode: error && error.errCode,
-        errMsg: error && error.errMsg,
-        details: error && error.details
-      })
       if (requestId !== requestSequence) return
       const emptyStats = buildTrendStats([], rangeDays, new Date())
       this.setData({

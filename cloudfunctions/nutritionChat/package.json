@@ -1,0 +1,9 @@
+{
+  "name": "nutrition-chat",
+  "version": "1.0.0",
+  "description": "Personalized nutrition consultation for the current user",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "latest"
+  }
+}

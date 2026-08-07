@@ -136,5 +136,3 @@ assert.deepStrictEqual(dateRangeForDays(7, now), {
   startDate: '2026-06-03',
   endDate: '2026-06-09'
 })
-
-console.log('records utils tests passed')

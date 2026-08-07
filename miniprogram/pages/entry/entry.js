@@ -58,7 +58,6 @@ Page({
         url: '/pages/confirm/confirm'
       })
     } catch (error) {
-      console.error('parse entry input failed', error)
       this.setData({ aiError: '智能识别失败，请检查网络后重试。' })
       wx.showToast({
         title: '识别失败',

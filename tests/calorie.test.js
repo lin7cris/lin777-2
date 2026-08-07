@@ -25,5 +25,3 @@ assert.deepStrictEqual(plan, {
     fat: '37-54g'
   }
 })
-
-console.log('calorie utils tests passed')

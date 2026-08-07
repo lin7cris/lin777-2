@@ -49,7 +49,6 @@ async function run() {
   assert.strictEqual(requestedQueries.length, 3)
   assert.ok(requestedQueries.every((query) => query._openid === 'openid-1'))
   assert.strictEqual(dailyRecordId('openid-1', '2026-06-12'), 'openid-1_2026-06-12')
-  console.log('daily records repository tests passed')
 }
 
 run().catch((error) => {

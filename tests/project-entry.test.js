@@ -60,5 +60,3 @@ assert.match(speechReadme, /TENCENTCLOUD_SESSIONTOKEN/)
 assert.doesNotMatch(speechReadme, /TENCENTCLOUD_SECRET_ID/)
 assert.match(speechReadme, /45 秒/)
 assert.match(speechReadme, /不保存原始语音/)
-
-console.log('project entry tests passed')

@@ -43,7 +43,10 @@ async function run() {
   for (const [event, code] of cases) {
     const result = await handler(event)
     assert.strictEqual(result.success, false)
-    assert.strictEqual(result.error.code, code)
+    assert.strictEqual(result.code, code)
+    assert.strictEqual(typeof result.message, 'string')
+    assert.strictEqual(typeof result.requestId, 'string')
+    assert.strictEqual(result.stack, undefined)
   }
 
   const unauthorized = createSpeechToTextHandler({
@@ -52,7 +55,7 @@ async function run() {
     provider: { async transcribe() { throw new Error('must not run') } }
   })
   const unauthorizedResult = await unauthorized(validEvent)
-  assert.strictEqual(unauthorizedResult.error.code, 'UNAUTHORIZED')
+  assert.strictEqual(unauthorizedResult.code, 'UNAUTHORIZED')
 
   const emptyResultHandler = createSpeechToTextHandler({
     getOpenId: () => 'openid-1',
@@ -60,8 +63,8 @@ async function run() {
     provider: { async transcribe() { return { text: '  ' } } }
   })
   const emptyResult = await emptyResultHandler(validEvent)
-  assert.strictEqual(emptyResult.error.code, 'EMPTY_TRANSCRIPT')
-  assert.strictEqual(emptyResult.error.message, '没有识别到清晰语音，请再说一次')
+  assert.strictEqual(emptyResult.code, 'EMPTY_TRANSCRIPT')
+  assert.strictEqual(emptyResult.message, '没有识别到清晰语音，请再说一次')
 
   const realDurationTooLongHandler = createSpeechToTextHandler({
     getOpenId: () => 'openid-1',
@@ -69,7 +72,7 @@ async function run() {
     provider: { async transcribe() { return { text: '很长的录音', durationMs: 46000 } } }
   })
   const realDurationTooLong = await realDurationTooLongHandler(validEvent)
-  assert.strictEqual(realDurationTooLong.error.code, 'RECORDING_TOO_LONG')
+  assert.strictEqual(realDurationTooLong.code, 'RECORDING_TOO_LONG')
 
   let failureLog
   const failedHandler = createSpeechToTextHandler({
@@ -79,26 +82,25 @@ async function run() {
       async transcribe() {
         const error = new Error('SecretKey private-value audio-data')
         error.code = 'TRANSCRIPTION_TIMEOUT'
+        error.requestId = 'asr-request-1'
         throw error
       }
     }
   })
   const failed = await failedHandler(validEvent)
-  assert.deepStrictEqual(failed, {
-    success: false,
-    error: {
-      code: 'TRANSCRIPTION_TIMEOUT',
-      message: '语音转写超时，请稍后重试'
-    }
-  })
-  assert.deepStrictEqual(failureLog, {
-    message: 'speechToText failed',
-    details: { code: 'TRANSCRIPTION_TIMEOUT' }
-  })
+  assert.strictEqual(failed.success, false)
+  assert.strictEqual(failed.code, 'TRANSCRIPTION_TIMEOUT')
+  assert.strictEqual(failed.message, '语音转写超时，请稍后重试')
+  assert.strictEqual(failed.requestId, 'asr-request-1')
   assert.ok(!JSON.stringify(failed).includes('private-value'))
-  assert.ok(!JSON.stringify(failureLog).includes('audio-data'))
+  assert.strictEqual(failed.stack, undefined)
+  assert.strictEqual(failureLog.message, 'speechToText failed')
+  assert.deepStrictEqual(failureLog.details, {
+    code: 'TRANSCRIPTION_TIMEOUT',
+    message: '语音转写超时，请稍后重试',
+    requestId: 'asr-request-1'
+  })
 
-  console.log('speech to text handler tests passed')
 }
 
 run().catch((error) => {

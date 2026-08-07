@@ -37,7 +37,7 @@ async function run() {
       parseDailyInput: async () => {
         const error = new Error('Authorization Bearer private-key')
         error.code = 'AI_HTTP_ERROR'
-        error.statusCode = 401
+        error.requestId = 'deepseek-request-1'
         throw error
       }
     })
@@ -49,7 +49,11 @@ async function run() {
   assert.ok(!JSON.stringify(failed).includes('private-key'))
   assert.deepStrictEqual(loggedError, {
     message: 'parseDailyInput failed',
-    details: { code: 'AI_HTTP_ERROR', statusCode: 401 }
+    details: {
+      code: 'AI_HTTP_ERROR',
+      message: 'AI 服务暂时不可用，请稍后重试',
+      requestId: 'deepseek-request-1'
+    }
   })
   assert.ok(!JSON.stringify(loggedError).includes('private-key'))
 
@@ -57,7 +61,6 @@ async function run() {
   assert.strictEqual(empty.success, false)
   assert.strictEqual(empty.error.code, 'INVALID_INPUT')
 
-  console.log('parse daily function tests passed')
 }
 
 run().catch((error) => {

@@ -136,7 +136,6 @@ Page({
         })
       }
     } catch (error) {
-      console.warn('save onboarding profile to cloud failed', error)
       wx.showToast({ title: '已保存到本机', icon: 'none' })
     } finally {
       this.setData({ saving: false })

@@ -2,6 +2,8 @@
   "pages": [
     "pages/onboarding/onboarding",
     "pages/today/today",
+    "pages/nutritionCoach/nutritionCoach",
+    "pages/nutritionChat/nutritionChat",
     "pages/entry/entry",
     "pages/confirm/confirm",
     "pages/record/record",

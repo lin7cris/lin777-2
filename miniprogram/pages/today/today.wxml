@@ -42,6 +42,17 @@
     </view>
   </view>
 
+  <view class="nutrition-coach-entry apple-card card-fade button-press" bindtap="goNutritionCoach">
+    <view class="nutrition-coach-entry-copy">
+      <text class="nutrition-coach-entry-title">AI营养教练</text>
+      <text class="nutrition-coach-entry-subtitle">查看今日饮食分析</text>
+    </view>
+    <view class="nutrition-coach-entry-action">
+      <text>立即查看</text>
+      <text class="nutrition-coach-entry-arrow">›</text>
+    </view>
+  </view>
+
   <view class="nutrition-card apple-card card-fade">
     <view class="section-heading">
       <view>

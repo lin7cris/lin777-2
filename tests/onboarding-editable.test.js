@@ -21,5 +21,3 @@ assert.match(wxml, /bindinput="onNumberInput"/)
 assert.match(wxml, /bindchange="onPickerChange"/)
 assert.match(script, /buildProfileForSave\(this\.data\.form\)/)
 assert.match(script, /name: 'userProfile'/)
-
-console.log('onboarding editable tests passed')

@@ -101,5 +101,3 @@ assert.deepStrictEqual(emptyDailyRecord('2026-06-13'), {
   totalCarbs: 0,
   totalFat: 0
 })
-
-console.log('daily records logic tests passed')

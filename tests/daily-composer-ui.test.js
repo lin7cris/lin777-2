@@ -39,5 +39,3 @@ assert.match(wxss, /backdrop-filter:\s*blur/)
 assert.match(wxss, /\.wave-bar/)
 assert.match(wxss, /@keyframes voice-wave/)
 assert.match(wxss, /\.composer-button:active/)
-
-console.log('daily composer UI tests passed')

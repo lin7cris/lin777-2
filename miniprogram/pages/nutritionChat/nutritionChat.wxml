@@ -1,0 +1,26 @@
+<view class="nutrition-chat-page">
+  <view class="chat-header">
+    <text class="chat-kicker">NUTRITION GUIDE</text>
+    <text class="chat-title">问问营养师</text>
+    <text class="chat-subtitle">结合今天的饮食和近期记录给出建议</text>
+  </view>
+
+  <scroll-view class="chat-scroll" scroll-y scroll-with-animation scroll-into-view="{{scrollIntoView}}">
+    <view wx:if="{{loadingHistory}}" class="chat-state">正在准备你的饮食概览...</view>
+    <view wx:elif="{{!messages.length}}" class="chat-empty">
+      <text class="chat-empty-title">今天想问点什么？</text>
+      <text class="chat-empty-copy">可以问减脂饮食、晚餐调整、运动安排或明日计划。</text>
+    </view>
+    <view wx:for="{{messages}}" wx:key="id" id="{{item.id}}" class="chat-row {{item.role === 'user' ? 'chat-row-user' : 'chat-row-assistant'}}">
+      <view class="chat-bubble {{item.role === 'user' ? 'chat-bubble-user' : 'chat-bubble-assistant'}}">
+        <text>{{item.message}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <text wx:if="{{error}}" class="chat-error">{{error}}</text>
+  <view class="chat-composer">
+    <textarea class="chat-input" value="{{draft}}" maxlength="500" auto-height placeholder="问问今天怎么吃、怎么调整..." bindinput="onDraftInput" confirm-type="send" bindconfirm="sendMessage" />
+    <button class="chat-send button-press" disabled="{{sending || !draft}}" loading="{{sending}}" bindtap="sendMessage">发送</button>
+  </view>
+</view>

@@ -64,7 +64,6 @@ async function verifyReservedProviders() {
     )
   }
 
-  console.log('ai provider tests passed')
 }
 
 verifyReservedProviders().catch((error) => {
