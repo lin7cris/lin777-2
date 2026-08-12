@@ -424,13 +424,18 @@
   width: 190rpx;
   height: 68rpx;
   margin: 28rpx 0 0;
-  border: 0;
+  border: 1rpx solid #34c759;
   border-radius: 999rpx;
+  box-sizing: border-box;
   background: rgba(52, 199, 89, 0.12);
   color: #248a3d;
   font-size: 25rpx;
   font-weight: 800;
   line-height: 68rpx;
+}
+
+.coach-retry::after {
+  border: 0;
 }
 
 .coach-skeleton {

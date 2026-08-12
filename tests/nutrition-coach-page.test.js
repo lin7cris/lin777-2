@@ -54,6 +54,9 @@ const styleBraceBalance = [...style].reduce((balance, character) => (
 assert.strictEqual(styleBraceBalance, 0)
 assert.match(style, /\.coach-chat-entry\s*\{[\s\S]*?height:\s*176rpx;/)
 assert.match(style, /\.coach-chat-entry-action\s*\{[\s\S]*?border-radius:\s*50%;/)
+assert.match(style, /\.coach-retry\s*\{[\s\S]*?border:\s*1rpx solid #34c759;/)
+assert.match(style, /\.coach-retry\s*\{[\s\S]*?box-sizing:\s*border-box;/)
+assert.match(style, /\.coach-retry::after\s*\{[\s\S]*?border:\s*0;/)
 
 const script = fs.readFileSync(path.resolve(__dirname, '../miniprogram/pages/nutritionCoach/nutritionCoach.js'), 'utf8')
 assert.match(script, /name:\s*'nutritionCoach'/)
