@@ -109,7 +109,17 @@
   </block>
 
   <button class="coach-chat-entry button-press" bindtap="goNutritionChat">
-    <text>问问营养师</text>
-    <text class="coach-chat-entry-arrow">›</text>
+    <view class="coach-chat-entry-leading">
+      <view class="coach-chat-entry-icon">
+        <text>✦</text>
+      </view>
+      <view class="coach-chat-entry-copy">
+        <text class="coach-chat-entry-title">问问营养师</text>
+        <text class="coach-chat-entry-subtitle">根据今天的饮食记录，获得个性化建议</text>
+      </view>
+    </view>
+    <view class="coach-chat-entry-action">
+      <text class="coach-chat-entry-arrow">›</text>
+    </view>
   </button>
 </view>
