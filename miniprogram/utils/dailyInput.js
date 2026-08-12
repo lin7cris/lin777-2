@@ -16,6 +16,7 @@ function normalizeFood(food) {
   return {
     name: toText(food && food.name, '未命名食物'),
     amount: toText(food && food.amount, '适量'),
+    unit: toText(food && food.unit, ''),
     meal: toText(food && food.meal, '未知餐次'),
     calories: toNumber(food && food.calories),
     protein: toNumber(food && food.protein),

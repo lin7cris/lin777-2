@@ -102,6 +102,11 @@ Page({
     this.updateParsedItem('exercises', event)
   },
 
+  onRemoveItem(event) {
+    const { list, index } = event.currentTarget.dataset
+    this.removeParsedItem(list, Number(index))
+  },
+
   updateParsedItem(listName, event) {
     const { index, field } = event.currentTarget.dataset
     const numericFields = ['calories', 'protein', 'carbs', 'fat', 'duration']
@@ -110,6 +115,26 @@ Page({
 
     this.setData({
       [`${listName}[${index}].${field}`]: value
+    })
+  },
+
+  removeParsedItem(listName, index) {
+    const item = this.data[listName][index]
+    if (!item) return
+    wx.showModal({
+      title: '删除此条记录？',
+      content: `将移除${item.name || '这条记录'}，确认后才会保存剩余内容。`,
+      confirmText: '删除',
+      confirmColor: '#FF453A',
+      success: (result) => {
+        if (!result.confirm) return
+        const items = this.data[listName].slice()
+        items.splice(index, 1)
+        this.setData({
+          [listName]: items,
+          hasParsedItems: items.length + this.data[listName === 'foods' ? 'exercises' : 'foods'].length > 0
+        })
+      }
     })
   }
 })

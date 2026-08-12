@@ -22,6 +22,7 @@ assert.strictEqual(parsed.confidence, 0.91)
 assert.deepStrictEqual(parsed.foods[0], {
   name: '鸡蛋',
   amount: '1 个',
+  unit: '',
   meal: '早餐',
   calories: 70,
   protein: 6,

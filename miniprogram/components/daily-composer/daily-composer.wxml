@@ -25,7 +25,7 @@
       bindtouchcancel="onMicTouchCancel"
     ><view class="mic-icon"><view class="mic-head"></view><view class="mic-stem"></view></view></button>
 
-    <button class="composer-button camera-button" aria-label="拍照识别食物" bindtap="onCameraTap">
+    <button class="composer-button camera-button" aria-label="拍照识别食物" loading="{{imageParsing}}" disabled="{{imageParsing}}" bindtap="onCameraTap">
       <view class="camera-icon"><view class="camera-lens"></view></view>
     </button>
 

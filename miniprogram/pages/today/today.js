@@ -39,6 +39,8 @@ Page({
     dailyInput: '',
     parsing: false,
     aiError: '',
+    cameraParsing: false,
+    cameraError: '',
     voiceStatus: 'idle',
     voiceDurationText: '0:00',
     voiceCanceling: false,
@@ -165,7 +167,148 @@ Page({
   },
 
   onCameraTap() {
-    wx.showToast({ title: '拍照识别将在下一阶段开放', icon: 'none' })
+    const app = getApp()
+    if (!app.globalData.cloudReady) {
+      this.setData({ cameraError: '图片识别服务尚未连接，请检查云环境配置。' })
+      wx.showToast({ title: '云开发未初始化', icon: 'none' })
+      return
+    }
+
+    wx.showActionSheet({
+      itemList: ['拍照', '从相册选择'],
+      success: ({ tapIndex }) => {
+        this.chooseFoodImage(tapIndex === 0 ? ['camera'] : ['album'])
+      }
+    })
+  },
+
+  chooseFoodImage(sourceType) {
+    if (this.data.cameraParsing) return
+    wx.chooseImage({
+      count: 1,
+      sizeType: ['compressed'],
+      sourceType,
+      success: (result) => {
+        const filePath = result.tempFilePaths && result.tempFilePaths[0]
+        if (!filePath) return
+        this.recognizeFoodImage(filePath)
+      },
+      fail: (error) => {
+        if (error && error.errMsg && /cancel/i.test(error.errMsg)) return
+        this.setData({ cameraError: '没有获取到图片，请重新选择。' })
+        wx.showToast({ title: '没有获取到图片', icon: 'none' })
+      }
+    })
+  },
+
+  async recognizeFoodImage(filePath) {
+    this.setData({ cameraParsing: true, cameraError: '' })
+    let uploadedFileID = ''
+    try {
+      const compressedPath = await this.compressFoodImage(filePath)
+      const mimeType = this.getImageMimeType(compressedPath)
+      const uploadResult = await wx.cloud.uploadFile({
+        cloudPath: this.buildFoodCloudPath(mimeType),
+        filePath: compressedPath
+      })
+      uploadedFileID = uploadResult && uploadResult.fileID ? uploadResult.fileID : ''
+      if (!uploadedFileID) {
+        throw { userMessage: '图片处理失败，请重新选择一张照片。' }
+      }
+      const response = await wx.cloud.callFunction({
+        name: 'recognizeFoodImage',
+        data: {
+          fileID: uploadedFileID,
+          mimeType
+        }
+      })
+      const result = response.result || {}
+      if (result.success === false) {
+        const errorCode = result.error && result.error.code
+        throw {
+          userMessage: errorCode === 'NO_FOOD_RECOGNIZED'
+            ? '没有识别到明显的食物，请换一张照片。'
+            : '暂时无法识别这张图片，请重新拍摄或手动记录。'
+        }
+      }
+
+      const payload = normalizeParsedDailyInput({
+        ...result,
+        sourceText: '图片识别'
+      })
+      if (!payload.foods.length) {
+        throw { userMessage: '没有识别到明显的食物，请换一张照片。' }
+      }
+
+      wx.setStorageSync(STORAGE_KEYS.pendingParse, payload)
+      wx.navigateTo({ url: '/pages/confirm/confirm' })
+    } catch (error) {
+      const message = error && error.userMessage
+        ? error.userMessage
+        : '图片处理失败，请重新选择一张照片。'
+      this.setData({ cameraError: message })
+      wx.showToast({ title: message, icon: 'none' })
+    } finally {
+      if (uploadedFileID && wx.cloud && typeof wx.cloud.deleteFile === 'function') {
+        wx.cloud.deleteFile({ fileList: [uploadedFileID] }).catch(() => {})
+      }
+      this.setData({ cameraParsing: false })
+    }
+  },
+
+  compressFoodImage(filePath) {
+    return new Promise((resolve, reject) => {
+      const compress = (width, height) => {
+        if (typeof wx.compressImage !== 'function') {
+          resolve(filePath)
+          return
+        }
+        const options = {
+          src: filePath,
+          quality: 70,
+          success: (result) => resolve(result.tempFilePath || filePath),
+          fail: reject
+        }
+        if (width && height) {
+          options.compressedWidth = width
+          options.compressedHeight = height
+        }
+        wx.compressImage(options)
+      }
+
+      if (typeof wx.getImageInfo !== 'function') {
+        compress(1280, 1280)
+        return
+      }
+      wx.getImageInfo({
+        src: filePath,
+        success: (info) => {
+          const width = Number(info.width) || 0
+          const height = Number(info.height) || 0
+          const longestSide = Math.max(width, height)
+          if (!longestSide || longestSide <= 1280) {
+            compress()
+            return
+          }
+          const scale = 1280 / longestSide
+          compress(Math.round(width * scale), Math.round(height * scale))
+        },
+        fail: () => compress(1280, 1280)
+      })
+    })
+  },
+
+  buildFoodCloudPath(mimeType) {
+    const extension = mimeType === 'image/png' ? 'png' : mimeType === 'image/webp' ? 'webp' : 'jpg'
+    const random = Math.random().toString(36).slice(2, 10)
+    return `food-recognition/${Date.now()}-${random}.${extension}`
+  },
+
+  getImageMimeType(filePath) {
+    const extension = String(filePath || '').split('.').pop().toLowerCase()
+    if (extension === 'png') return 'image/png'
+    if (extension === 'webp') return 'image/webp'
+    return 'image/jpeg'
   },
 
   async loadDailyRecord(date, profile) {

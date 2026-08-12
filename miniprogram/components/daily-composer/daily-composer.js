@@ -8,7 +8,8 @@ Component({
     voiceStatus: { type: String, value: 'idle' },
     voiceDurationText: { type: String, value: '0:00' },
     voiceCanceling: { type: Boolean, value: false },
-    voiceError: { type: String, value: '' }
+    voiceError: { type: String, value: '' },
+    imageParsing: { type: Boolean, value: false }
   },
 
   lifetimes: {
@@ -28,7 +29,7 @@ Component({
     },
 
     onCameraTap() {
-      if (this.data.voiceStatus === 'recording' || this.data.voiceStatus === 'transcribing') return
+      if (this.data.imageParsing || this.data.voiceStatus === 'recording' || this.data.voiceStatus === 'transcribing') return
       this.triggerEvent('cameratap')
     },
 

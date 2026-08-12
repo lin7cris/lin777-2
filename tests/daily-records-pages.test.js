@@ -19,6 +19,8 @@ assert.match(confirmScript, /formatDateKey\(new Date\(\)\)/)
 assert.match(confirmScript, /foods:\s*this\.data\.foods/)
 assert.match(confirmScript, /exercises:\s*this\.data\.exercises/)
 assert.match(confirmWxml, /loading="{{saving}}"/)
+assert.match(confirmWxml, /删除此条食物/)
+assert.match(confirmScript, /removeParsedItem/)
 assert.doesNotMatch(confirmScript, /STORAGE_KEYS\.records/)
 
 assert.match(todayScript, /name:\s*'dailyRecords'/)

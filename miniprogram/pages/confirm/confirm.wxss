@@ -197,6 +197,29 @@
   gap: 20rpx;
 }
 
+.item-heading-actions {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 10rpx;
+}
+
+.delete-item-button {
+  height: 48rpx;
+  margin: 0;
+  padding: 0 14rpx;
+  border: 0;
+  border-radius: 999rpx;
+  background: rgba(255, 69, 58, 0.1);
+  color: #d93025;
+  font-size: 20rpx;
+  line-height: 48rpx;
+}
+
+.delete-item-button::after {
+  border: 0;
+}
+
 .item-title-wrap {
   min-width: 0;
   gap: 16rpx;

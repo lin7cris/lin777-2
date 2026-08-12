@@ -1,0 +1,9 @@
+{
+  "name": "recognize-food-image",
+  "version": "1.0.0",
+  "description": "Recognize visible foods from a temporary image using Tencent VITA",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "latest"
+  }
+}

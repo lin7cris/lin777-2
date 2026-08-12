@@ -43,7 +43,10 @@
             <text class="item-subtitle">Food item</text>
           </view>
         </view>
-        <text wx:if="{{item.estimated}}" class="estimated-tag">估算</text>
+        <view class="item-heading-actions">
+          <text wx:if="{{item.estimated}}" class="estimated-tag">估算</text>
+          <button class="delete-item-button" data-list="foods" data-index="{{index}}" aria-label="删除此条食物" bindtap="onRemoveItem">删除</button>
+        </view>
       </view>
 
       <view class="edit-grid two">
@@ -58,7 +61,7 @@
         <view class="edit-field"><text class="edit-label">蛋白质</text><input class="edit-input" type="digit" value="{{item.protein}}" data-index="{{index}}" data-field="protein" bindinput="onFoodInput" /></view>
         <view class="edit-field"><text class="edit-label">碳水</text><input class="edit-input" type="digit" value="{{item.carbs}}" data-index="{{index}}" data-field="carbs" bindinput="onFoodInput" /></view>
         <view class="edit-field"><text class="edit-label">脂肪</text><input class="edit-input" type="digit" value="{{item.fat}}" data-index="{{index}}" data-field="fat" bindinput="onFoodInput" /></view>
-        <view class="edit-field"><text class="edit-label">单位</text><view class="unit-field">g</view></view>
+        <view class="edit-field"><text class="edit-label">单位</text><view class="unit-field">{{item.unit || 'g'}}</view></view>
       </view>
     </view>
   </view>
@@ -85,7 +88,10 @@
             <text class="item-subtitle">Movement</text>
           </view>
         </view>
-        <text wx:if="{{item.estimated}}" class="estimated-tag">估算</text>
+        <view class="item-heading-actions">
+          <text wx:if="{{item.estimated}}" class="estimated-tag">估算</text>
+          <button class="delete-item-button" data-list="exercises" data-index="{{index}}" aria-label="删除此条运动" bindtap="onRemoveItem">删除</button>
+        </view>
       </view>
       <view class="edit-grid two">
         <view class="edit-field"><text class="edit-label">名称</text><input class="edit-input" value="{{item.name}}" data-index="{{index}}" data-field="name" bindinput="onExerciseInput" /></view>

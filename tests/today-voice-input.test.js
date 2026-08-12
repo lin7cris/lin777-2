@@ -34,7 +34,7 @@ assert.match(todayJs, /stopVoiceInput\(\)/)
 assert.match(todayJs, /cancelVoiceInput\(\)/)
 assert.match(todayJs, /onHide\(\)/)
 assert.match(todayJs, /onUnload\(\)/)
-assert.match(todayJs, /拍照识别将在下一阶段开放/)
+assert.match(todayJs, /recognizeFoodImage/)
 
 const transcriptMethod = todayJs.slice(
   todayJs.indexOf('onVoiceTranscript(text)'),

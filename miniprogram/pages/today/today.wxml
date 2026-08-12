@@ -159,9 +159,9 @@
   </scroll-view>
 
   <view class="input-dock" style="{{inputDockStyle}}">
-    <view wx:if="{{aiError}}" class="error-banner ai-error">
-      <text class="error-title">智能识别失败</text>
-      <text>{{aiError}}</text>
+    <view wx:if="{{aiError || cameraError}}" class="error-banner ai-error">
+      <text class="error-title">{{cameraError ? '图片识别失败' : '智能识别失败'}}</text>
+      <text>{{cameraError || aiError}}</text>
     </view>
     <daily-composer
       value="{{dailyInput}}"
@@ -170,6 +170,7 @@
       voice-duration-text="{{voiceDurationText}}"
       voice-canceling="{{voiceCanceling}}"
       voice-error="{{voiceError}}"
+      image-parsing="{{cameraParsing}}"
       bindinput="onDailyInput"
       bindsubmit="parseDailyInput"
       bindvoicestart="startVoiceInput"
