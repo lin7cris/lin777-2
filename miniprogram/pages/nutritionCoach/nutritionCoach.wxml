@@ -77,13 +77,18 @@
     </view>
 
     <view class="nutrition-coach-card coach-dinner-card">
-      <text class="coach-section-title">今晚推荐</text>
+      <text class="coach-section-title">{{mealContext.title}}</text>
       <text class="coach-dinner-copy">{{dinnerRecommendation}}</text>
     </view>
 
-    <view class="nutrition-coach-card">
+    <view wx:if="{{mealContext.secondaryTitle && secondaryRecommendation}}" class="nutrition-coach-card coach-dinner-card">
+      <text class="coach-section-title">{{mealContext.secondaryTitle}}</text>
+      <text class="coach-dinner-copy">{{secondaryRecommendation}}</text>
+    </view>
+
+    <view wx:if="{{mealContext.mode != 'summary'}}" class="nutrition-coach-card">
       <view class="coach-section-heading">
-        <text class="coach-section-title">今日推荐</text>
+        <text class="coach-section-title">{{mealContext.title}}</text>
         <text class="coach-section-note">估算值</text>
       </view>
       <text wx:if="{{recommendationError}}" class="coach-recommendation-error">{{recommendationError}}</text>

@@ -2,6 +2,7 @@ const {
   buildTrendStats,
   dateRangeForDays
 } = require('../../utils/records')
+const { buildStatisticsOverview } = require('../../utils/statisticsOverview')
 
 let requestSequence = 0
 
@@ -11,6 +12,7 @@ Page({
     loading: false,
     statisticsError: '',
     hasData: false,
+    overview: buildStatisticsOverview([], null, new Date()),
     selectedTrend: null,
     intake: { points: [], hasData: false },
     exercise: { points: [], hasData: false },
@@ -20,23 +22,25 @@ Page({
   },
 
   onShow() {
-    this.loadStatistics(this.data.rangeDays)
+    this.loadStatistics()
   },
 
   selectRange(event) {
     const rangeDays = Number(event.currentTarget.dataset.days) === 30 ? 30 : 7
     if (rangeDays === this.data.rangeDays && this.data.hasData) return
     this.setData({ rangeDays, selectedTrend: null })
-    this.loadStatistics(rangeDays)
+    this.applyStatistics(rangeDays, new Date())
   },
 
-  async loadStatistics(rangeDays) {
+  async loadStatistics() {
     const requestId = ++requestSequence
+    const rangeDays = this.data.rangeDays
     const app = getApp()
     if (!app.globalData.cloudReady) {
       const emptyStats = buildTrendStats([], rangeDays, new Date())
       this.setData({
         ...emptyStats,
+        overview: buildStatisticsOverview([], null, new Date()),
         selectedTrend: null,
         loading: false,
         statisticsError: '云开发尚未连接，请检查环境配置后重试。'
@@ -44,7 +48,7 @@ Page({
       return
     }
 
-    const range = dateRangeForDays(rangeDays, new Date())
+    const range = dateRangeForDays(30, new Date())
     const request = {
       action: 'range',
       startDate: range.startDate,
@@ -52,10 +56,16 @@ Page({
     }
     this.setData({ loading: true, statisticsError: '', selectedTrend: null })
     try {
-      const response = await wx.cloud.callFunction({
-        name: 'dailyRecords',
-        data: request
-      })
+      const [response, profileResponse] = await Promise.all([
+        wx.cloud.callFunction({
+          name: 'dailyRecords',
+          data: request
+        }),
+        wx.cloud.callFunction({
+          name: 'userProfile',
+          data: { action: 'get' }
+        }).catch(() => ({ result: { profile: null } }))
+      ])
       const result = response.result || {}
       if (result.success !== true || !Array.isArray(result.records)) {
         const failure = new Error(result.error && result.error.message || '云函数返回格式不正确')
@@ -64,16 +74,15 @@ Page({
         throw failure
       }
       if (requestId !== requestSequence) return
-      const stats = buildTrendStats(result.records, rangeDays, new Date())
-      this.setData({
-        ...stats,
-        selectedTrend: null
-      })
+      this.records30 = result.records
+      this.profile = profileResponse.result && profileResponse.result.profile || null
+      this.applyStatistics(this.data.rangeDays, new Date())
     } catch (error) {
       if (requestId !== requestSequence) return
       const emptyStats = buildTrendStats([], rangeDays, new Date())
       this.setData({
         ...emptyStats,
+        overview: buildStatisticsOverview([], null, new Date()),
         selectedTrend: null,
         statisticsError: '无法读取统计数据，请检查网络后重试。'
       })
@@ -83,8 +92,20 @@ Page({
     }
   },
 
+  applyStatistics(rangeDays, now) {
+    const records = Array.isArray(this.records30) ? this.records30 : []
+    const stats = buildTrendStats(records, rangeDays, now)
+    const overview = buildStatisticsOverview(records, this.profile, now)
+    this.setData({
+      ...stats,
+      hasData: stats.hasData || overview.hasData,
+      overview,
+      selectedTrend: null
+    })
+  },
+
   retryStatistics() {
-    this.loadStatistics(this.data.rangeDays)
+    this.loadStatistics()
   },
 
   selectTrendPoint(event) {
@@ -111,5 +132,7 @@ Page({
 
   onUnload() {
     requestSequence += 1
+    this.records30 = null
+    this.profile = null
   }
 })

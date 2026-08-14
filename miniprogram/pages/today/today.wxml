@@ -1,5 +1,5 @@
 <view class="today-root">
-  <scroll-view class="page-content today-page" scroll-y enhanced show-scrollbar="{{false}}">
+  <scroll-view class="page-content today-page" scroll-y enhanced show-scrollbar="{{false}}" style="{{recentFoods.length && !keyboardOpen ? '--composer-reserve: 254rpx;' : ''}}">
   <view class="today-hero">
     <view>
       <text class="today-kicker">Today</text>
@@ -44,11 +44,10 @@
 
   <view class="nutrition-coach-entry apple-card card-fade button-press" bindtap="goNutritionCoach">
     <view class="nutrition-coach-entry-copy">
-      <text class="nutrition-coach-entry-title">AI营养教练</text>
-      <text class="nutrition-coach-entry-subtitle">查看今日饮食分析</text>
+      <text class="nutrition-coach-entry-title">今天还能吃什么</text>
+      <text class="nutrition-coach-entry-subtitle">{{foodAdviceText}}</text>
     </view>
     <view class="nutrition-coach-entry-action">
-      <text>立即查看</text>
       <text class="nutrition-coach-entry-arrow">›</text>
     </view>
   </view>
@@ -159,6 +158,20 @@
   </scroll-view>
 
   <view class="input-dock" style="{{inputDockStyle}}">
+    <view wx:if="{{recentFoods.length && !keyboardOpen}}" class="recent-foods-panel">
+      <text class="recent-foods-title">最近吃过</text>
+      <scroll-view class="recent-foods-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+        <view class="recent-foods-row">
+          <button
+            class="recent-food-chip button-press"
+            wx:for="{{recentFoods}}"
+            wx:key="name"
+            data-index="{{index}}"
+            bindtap="selectRecentFood"
+          >{{item.name}}</button>
+        </view>
+      </scroll-view>
+    </view>
     <view wx:if="{{aiError || cameraError}}" class="error-banner ai-error">
       <text class="error-title">{{cameraError ? '图片识别失败' : '智能识别失败'}}</text>
       <text>{{cameraError || aiError}}</text>

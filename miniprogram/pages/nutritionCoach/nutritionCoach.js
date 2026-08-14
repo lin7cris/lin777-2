@@ -16,6 +16,13 @@ Page({
       text: ''
     },
     nutritionAnalysis: '',
+    secondaryRecommendation: '',
+    mealContext: {
+      mode: 'plan',
+      nextMeal: '',
+      title: '今日饮食规划',
+      secondaryTitle: ''
+    },
     macros: [],
     suggestions: [],
     dinnerRecommendation: '',
@@ -25,12 +32,24 @@ Page({
   },
 
   onShow() {
-    this.loadNutritionCoach()
+    this.loadNutritionCoach({ refreshContext: true })
   },
 
-  async loadNutritionCoach() {
+  async loadNutritionCoach(options) {
     const app = getApp()
     const date = formatDateKey(new Date())
+    const config = options || {}
+    const now = new Date()
+    const currentLocalTime = `${date} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`
+    const localTime = config.refreshContext || !this.mealContextLocalTime
+      ? currentLocalTime
+      : this.mealContextLocalTime
+    const fallbackMealContext = {
+      mode: 'plan',
+      nextMeal: '',
+      title: '今日饮食规划',
+      secondaryTitle: ''
+    }
 
     if (!app.globalData.cloudReady) {
       this.setData({
@@ -70,15 +89,6 @@ Page({
       if (dailyResult.success === false) {
         throw new Error(dailyResult.error && dailyResult.error.message || '读取今日记录失败')
       }
-      if (!Array.isArray(record.foods) || !record.foods.length) {
-        this.setData({
-          loading: false,
-          hasContent: false,
-          emptyReason: '记录今天的饮食后，即可生成个性化分析。'
-        })
-        return
-      }
-
       const summary = buildCoachSummary(record, profile)
       const nutritionData = {
         caloriesIn: summary.caloriesIn,
@@ -93,6 +103,7 @@ Page({
         name: 'nutritionCoach',
         data: {
           date,
+          localTime,
           userInfo: profile,
           todayRecords: record,
           nutritionData,
@@ -103,6 +114,10 @@ Page({
       if (coachResult.success === false) {
         throw new Error(coachResult.error && coachResult.error.message || '生成营养建议失败')
       }
+      const mealContext = coachResult.mealContext || {
+        ...fallbackMealContext,
+        title: coachResult.recommendationTitle || fallbackMealContext.title
+      }
 
       this.setData({
         loading: false,
@@ -112,12 +127,15 @@ Page({
           text: coachResult.summary || '你的饮食记录已更新。'
         },
         nutritionAnalysis: coachResult.nutritionAnalysis || '',
+        secondaryRecommendation: coachResult.secondaryRecommendation || '',
+        mealContext,
         macros: buildCoachMacros(record, profile),
         suggestions: Array.isArray(coachResult.suggestions) ? coachResult.suggestions.slice(0, 4) : [],
         dinnerRecommendation: coachResult.dinnerRecommendation || '暂时没有生成今晚推荐。',
         recommendations: Array.isArray(coachResult.recommendations) ? coachResult.recommendations.slice(0, 2) : [],
         recommendationError: ''
       })
+      this.mealContextLocalTime = localTime
     } catch (error) {
       this.setData({
         loading: false,
@@ -129,7 +147,7 @@ Page({
   },
 
   retryNutritionCoach() {
-    this.loadNutritionCoach()
+    this.loadNutritionCoach({ reuseContext: true })
   },
 
   goNutritionChat() {

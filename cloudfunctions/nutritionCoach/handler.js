@@ -13,10 +13,6 @@ function dateKeyFromNow(now) {
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
 }
 
-function hasFoodRecord(record) {
-  return Boolean(record && Array.isArray(record.foods) && record.foods.length)
-}
-
 function createNutritionCoachHandler(options) {
   const config = options || {}
   const repository = config.repository
@@ -44,16 +40,15 @@ function createNutritionCoachHandler(options) {
       if (!hasCompleteProfile(profile)) {
         throw new NutritionCoachError('PROFILE_INCOMPLETE', 'profile is incomplete')
       }
-      if (!hasFoodRecord(todayRecord)) {
-        throw new NutritionCoachError('NO_FOOD_RECORD', 'food record is missing')
-      }
-
-      const context = buildNutritionContext({ profile, todayRecord, historyRecords })
+      const localTime = String(input.localTime || '')
+      const context = buildNutritionContext({ profile, todayRecord, historyRecords, localTime })
       const provider = getProvider()
       const rawResult = await provider.generate({ context })
 
       return {
         success: true,
+        mealContext: context.mealContext,
+        recommendationTitle: context.mealContext.title,
         ...normalizeCoachResult(rawResult, { context })
       }
     } catch (error) {

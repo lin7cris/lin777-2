@@ -33,6 +33,7 @@ function normalizeCoachResult(result, options) {
     nutritionAnalysis: cleanText(data.nutritionAnalysis, 300),
     suggestions: cleanList(data.suggestions, 4),
     dinnerRecommendation: normalizeDinnerRecommendation(data.dinnerRecommendation),
+    secondaryRecommendation: cleanText(data.secondaryRecommendation, 240),
     recommendations: normalizeRecommendations(data.recommendations, buildFallbackRecommendations(context)),
     tomorrowSuggestion: cleanText(data.tomorrowSuggestion, 180),
     warning: cleanList(data.warning, 3)

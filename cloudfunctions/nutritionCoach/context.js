@@ -38,13 +38,23 @@ function buildHistory(records) {
   }
 }
 
-function buildNutritionContext({ profile, todayRecord, historyRecords }) {
+function buildNutritionContext({ profile, todayRecord, historyRecords, localTime }) {
   const sourceProfile = profile || {}
   const record = todayRecord || {}
   const targetCalories = toNumber(record.targetCalories) || toNumber(sourceProfile.targetCalories)
   const caloriesIn = toNumber(record.totalCaloriesIn)
   const caloriesOut = toNumber(record.totalCaloriesOut)
   const macros = sourceProfile.macros || {}
+  const foods = (Array.isArray(record.foods) ? record.foods : []).map((food) => ({
+    name: String(food.name || ''),
+    meal: String(food.meal || ''),
+    calories: Math.round(toNumber(food.calories)),
+    protein: Math.round(toNumber(food.protein)),
+    carbs: Math.round(toNumber(food.carbs)),
+    fat: Math.round(toNumber(food.fat))
+  }))
+
+  const mealContext = require('./meal-context').buildMealContext({ foods, localTime })
 
   return {
     profile: {
@@ -63,14 +73,9 @@ function buildNutritionContext({ profile, todayRecord, historyRecords }) {
       protein: buildMacro(record.totalProtein, macros.protein, 100),
       carbs: buildMacro(record.totalCarbs, macros.carbs, 180),
       fat: buildMacro(record.totalFat, macros.fat, 50),
-      foods: (Array.isArray(record.foods) ? record.foods : []).map((food) => ({
-        name: String(food.name || ''),
-        calories: Math.round(toNumber(food.calories)),
-        protein: Math.round(toNumber(food.protein)),
-        carbs: Math.round(toNumber(food.carbs)),
-        fat: Math.round(toNumber(food.fat))
-      }))
+      foods
     },
+    mealContext,
     history: buildHistory(historyRecords)
   }
 }

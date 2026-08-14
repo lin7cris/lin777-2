@@ -9,10 +9,12 @@ const todayMarkup = fs.readFileSync(path.join(root, 'miniprogram/pages/today/tod
 
 assert.ok(appConfig.pages.includes('pages/nutritionCoach/nutritionCoach'))
 assert.match(todayScript, /goNutritionCoach\s*\(\)\s*\{[\s\S]*pages\/nutritionCoach\/nutritionCoach/)
-assert.match(todayMarkup, /AI营养教练/)
-assert.match(todayMarkup, /查看今日饮食分析/)
-assert.match(todayMarkup, /立即查看/)
+assert.match(todayMarkup, /今天还能吃什么/)
+assert.match(todayMarkup, /{{foodAdviceText}}/)
 assert.match(todayMarkup, /bindtap="goNutritionCoach"/)
+assert.match(todayScript, /buildTodayFoodAdvice/)
+assert.match(todayScript, /foodAdviceText/)
+assert.doesNotMatch(todayScript, /name:\s*['"]nutritionCoach['"]/)
 
 ;['js', 'json', 'wxml', 'wxss'].forEach((extension) => {
   assert.ok(fs.existsSync(path.join(root, `miniprogram/pages/nutritionCoach/nutritionCoach.${extension}`)))

@@ -2,9 +2,12 @@ const {
   STORAGE_KEYS,
   DEFAULT_PROFILE,
   formatDateKey,
-  summarizeDailyRecord
+  summarizeDailyRecord,
+  dateRangeForDays
 } = require('../../utils/records')
 const { normalizeParsedDailyInput } = require('../../utils/dailyInput')
+const { buildRecentFoods } = require('../../utils/recentFoods')
+const { FOOD_ADVICE_MESSAGES, buildTodayFoodAdvice } = require('../../utils/todayFoodAdvice')
 const { appendTranscript } = require('../../utils/voiceInput')
 const { createVoiceRecorder } = require('../../utils/voiceRecorder')
 
@@ -25,6 +28,7 @@ Page({
     goalProgressStyle: '',
     coachSummary: '',
     coachTips: [],
+    foodAdviceText: FOOD_ADVICE_MESSAGES.empty,
     targetCalories: 0,
     foodCalories: 0,
     exerciseCalories: 0,
@@ -33,6 +37,7 @@ Page({
     remainingCalories: 0,
     macros: [],
     records: [],
+    recentFoods: [],
     loadingRecords: false,
     recordError: '',
     deletingId: '',
@@ -45,6 +50,7 @@ Page({
     voiceDurationText: '0:00',
     voiceCanceling: false,
     voiceError: '',
+    keyboardOpen: false,
     inputDockStyle: ''
   },
 
@@ -63,6 +69,7 @@ Page({
       targetCalories: profile.targetCalories
     })
     this.loadDailyRecord(todayKey, profile)
+    this.loadRecentFoods()
   },
 
   onHide() {
@@ -317,7 +324,8 @@ Page({
       this.applyDailyRecord(null, profile)
       this.setData({
         loadingRecords: false,
-        recordError: '云开发尚未连接，请检查环境配置后重试。'
+        recordError: '云开发尚未连接，请检查环境配置后重试。',
+        foodAdviceText: FOOD_ADVICE_MESSAGES.unavailable
       })
       return
     }
@@ -335,7 +343,8 @@ Page({
       wx.showToast({ title: '读取今日记录失败', icon: 'none' })
       this.applyDailyRecord(null, profile)
       this.setData({
-        recordError: '无法读取今日记录，请检查网络后重试。'
+        recordError: '无法读取今日记录，请检查网络后重试。',
+        foodAdviceText: FOOD_ADVICE_MESSAGES.unavailable
       })
     } finally {
       this.setData({ loadingRecords: false })
@@ -345,6 +354,60 @@ Page({
   retryDailyRecord() {
     const profile = wx.getStorageSync(STORAGE_KEYS.profile) || DEFAULT_PROFILE
     this.loadDailyRecord(formatDateKey(new Date()), profile)
+  },
+
+  async loadRecentFoods() {
+    const app = getApp()
+    if (!app.globalData.cloudReady) {
+      this.setData({ recentFoods: [] })
+      return
+    }
+
+    const range = dateRangeForDays(7, new Date())
+    try {
+      const response = await wx.cloud.callFunction({
+        name: 'dailyRecords',
+        data: {
+          action: 'range',
+          startDate: range.startDate,
+          endDate: range.endDate
+        }
+      })
+      const result = response.result || {}
+      if (result.success === false) throw new Error('recent foods unavailable')
+      this.setData({ recentFoods: buildRecentFoods(result.records, { limit: 6, recentReserve: 2 }) })
+    } catch (error) {
+      this.setData({ recentFoods: [] })
+    }
+  },
+
+  selectRecentFood(event) {
+    const index = Number(event.currentTarget.dataset.index)
+    const selected = this.data.recentFoods[index]
+    if (!selected) {
+      wx.showToast({ title: '这条食物暂时无法添加', icon: 'none' })
+      return
+    }
+
+    const food = {
+      name: selected.name,
+      amount: selected.amount,
+      unit: selected.unit,
+      meal: selected.meal,
+      calories: selected.calories,
+      protein: selected.protein,
+      carbs: selected.carbs,
+      fat: selected.fat,
+      estimated: selected.estimated
+    }
+    const payload = normalizeParsedDailyInput({
+      sourceText: `最近吃过：${food.name}`,
+      confidence: 1,
+      foods: [food],
+      exercises: []
+    })
+    wx.setStorageSync(STORAGE_KEYS.pendingParse, payload)
+    wx.navigateTo({ url: '/pages/confirm/confirm' })
   },
 
   applyDailyRecord(record, profile) {
@@ -363,6 +426,7 @@ Page({
       deficitMessage: summary.deficitMessage,
       deficitTone: summary.deficitTone,
       ...display,
+      foodAdviceText: buildTodayFoodAdvice(record, profile),
       macros: summary.macros,
       records: summary.records
     })
@@ -485,12 +549,13 @@ Page({
   onInputKeyboardHeightChange(event) {
     const keyboardHeight = Number(event.detail && event.detail.height) || 0
     this.setData({
+      keyboardOpen: keyboardHeight > 0,
       inputDockStyle: keyboardHeight > 0 ? `bottom: ${keyboardHeight + 8}px;` : ''
     })
   },
 
   onInputBlur() {
-    this.setData({ inputDockStyle: '' })
+    this.setData({ keyboardOpen: false, inputDockStyle: '' })
   },
 
   parseDailyInput() {

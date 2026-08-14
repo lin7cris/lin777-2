@@ -231,7 +231,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 24rpx;
-  min-height: 136rpx;
+  min-height: 132rpx;
   margin-top: 28rpx;
   padding: 30rpx 32rpx;
 }
@@ -253,16 +253,22 @@
   margin-top: 8rpx;
   color: var(--text-secondary);
   font-size: 25rpx;
-  line-height: 1.35;
-  font-weight: 650;
+  line-height: 1.4;
+  font-weight: 560;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .nutrition-coach-entry-action {
   display: flex;
   flex-shrink: 0;
   align-items: center;
-  gap: 8rpx;
-  padding: 16rpx 20rpx;
+  justify-content: center;
+  width: 60rpx;
+  height: 60rpx;
+  padding: 0;
   border-radius: 999rpx;
   background: rgba(52, 199, 89, 0.12);
   color: var(--green-strong);
@@ -272,7 +278,7 @@
 }
 
 .nutrition-coach-entry-arrow {
-  margin-top: -2rpx;
+  margin-top: -4rpx;
   font-size: 32rpx;
   font-weight: 600;
 }
@@ -665,6 +671,65 @@
   padding: 0 32rpx;
   box-sizing: border-box;
   transition: bottom 250ms ease-out, opacity 250ms ease-out, transform 250ms ease-out;
+}
+
+.recent-foods-panel {
+  margin-bottom: 12rpx;
+  padding: 16rpx 18rpx 18rpx;
+  border: 1rpx solid rgba(255, 255, 255, 0.82);
+  border-radius: 32rpx;
+  background: rgba(248, 248, 250, 0.92);
+  box-shadow: 0 10rpx 30rpx rgba(28, 28, 30, 0.07);
+  -webkit-backdrop-filter: blur(30rpx);
+  backdrop-filter: blur(30rpx);
+  box-sizing: border-box;
+}
+
+.recent-foods-title {
+  display: block;
+  margin: 0 4rpx 10rpx;
+  color: #636366;
+  font-size: 22rpx;
+  line-height: 1.2;
+  font-weight: 760;
+}
+
+.recent-foods-scroll {
+  width: 100%;
+  white-space: nowrap;
+}
+
+.recent-foods-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 10rpx;
+  padding-right: 4rpx;
+}
+
+.recent-food-chip {
+  display: inline-flex;
+  max-width: 210rpx;
+  height: 58rpx;
+  min-height: 58rpx;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0 22rpx;
+  overflow: hidden;
+  border: 1rpx solid rgba(60, 60, 67, 0.08);
+  border-radius: 999rpx;
+  background: rgba(255, 255, 255, 0.96);
+  color: #1c1c1e;
+  font-size: 24rpx;
+  line-height: 58rpx;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+.recent-food-chip::after {
+  border: 0;
 }
 
 .button-press {

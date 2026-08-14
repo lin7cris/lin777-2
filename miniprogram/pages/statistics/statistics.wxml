@@ -36,6 +36,49 @@
   </view>
 
   <block wx:else>
+    <view class="overview-card card-fade">
+      <view class="overview-heading">
+        <text class="overview-title">近期概览</text>
+        <text class="overview-caption">最近 7 天与 30 天</text>
+      </view>
+      <view class="overview-grid">
+        <view class="overview-metric">
+          <text class="overview-label">7天平均摄入</text>
+          <view class="overview-value-row">
+            <text class="overview-value">{{overview.averageIntake7Text}}</text>
+            <text wx:if="{{overview.averageIntake7Text !== '--'}}" class="overview-unit">kcal/天</text>
+          </view>
+        </view>
+        <view class="overview-metric">
+          <text class="overview-label">30天平均摄入</text>
+          <view class="overview-value-row">
+            <text class="overview-value">{{overview.averageIntake30Text}}</text>
+            <text wx:if="{{overview.averageIntake30Text !== '--'}}" class="overview-unit">kcal/天</text>
+          </view>
+        </view>
+        <view class="overview-metric">
+          <text class="overview-label">{{overview.calorieBalanceTitle}}</text>
+          <view class="overview-value-row">
+            <text class="overview-value {{overview.calorieBalanceTitle === '平均热量盈余' ? 'overview-value-danger' : ''}}">{{overview.averageCalorieBalanceText}}</text>
+            <text wx:if="{{overview.averageCalorieBalanceText !== '--'}}" class="overview-unit">kcal/天</text>
+          </view>
+        </view>
+        <view class="overview-metric">
+          <text class="overview-label">蛋白质达标率</text>
+          <view class="overview-value-row">
+            <text class="overview-value">{{overview.proteinAchievementText}}</text>
+          </view>
+        </view>
+        <view class="overview-metric overview-metric-wide">
+          <view>
+            <text class="overview-label">连续记录</text>
+            <text class="overview-note">从今天开始计算有效饮食记录</text>
+          </view>
+          <text class="overview-value overview-streak">{{overview.streakText}}</text>
+        </view>
+      </view>
+    </view>
+
     <view class="trend-card primary-trend card-fade">
       <view class="trend-heading">
         <view>

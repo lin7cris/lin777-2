@@ -77,6 +77,7 @@ async function run() {
   })
 
   assert.strictEqual(result.success, true)
+  assert.strictEqual(result.recommendationTitle, result.mealContext.title)
   assert.strictEqual(requestedOpenid, 'openid-current-user')
   assert.strictEqual(providerInput.context.today.caloriesIn, 1560)
   assert.strictEqual(providerInput.context.today.remainingCalories, 266)
@@ -96,14 +97,18 @@ async function run() {
       getDailyRecord: async () => ({ ...todayRecord, foods: [] }),
       getRecentRecords: async () => []
     },
-    getProvider: () => ({ generate: async () => { throw new Error('must not run') } }),
+    getProvider: () => ({ generate: async ({ context }) => ({
+      summary: '今天可以从三餐规划开始。',
+      nutritionAnalysis: '暂无今日摄入数据。',
+      dinnerRecommendation: '先安排均衡的早餐、午餐和晚餐。',
+      recommendations: [],
+      mealContext: context.mealContext
+    }) }),
     logger: { error() {} }
   })
   const noFood = await noFoodHandler({ date: '2026-08-06' })
-  assert.deepStrictEqual(noFood, {
-    success: false,
-    error: { code: 'NO_FOOD_RECORD', message: '请先记录今天的饮食，再生成营养建议' }
-  })
+  assert.equal(noFood.success, true)
+  assert.equal(noFood.mealContext.title, '今日饮食规划')
 
   const failedHandler = createNutritionCoachHandler({
     getOpenId: () => 'openid-current-user',
