@@ -1,6 +1,6 @@
 .today-root {
-  --native-tabbar-height: 112rpx;
-  --composer-gap: 20rpx;
+  /* 页面 fixed 视口止于原生 TabBar 顶部，只保留 dock 与 TabBar 的间距。 */
+  --composer-gap: 16px;
   --composer-reserve: 128rpx;
   min-height: 100vh;
   height: 100vh;
@@ -20,7 +20,9 @@
   --blue: #0a84ff;
   --red: #ff453a;
   height: 100vh;
-  padding: calc(32rpx + env(safe-area-inset-top)) 32rpx calc(var(--native-tabbar-height) + var(--composer-gap) + var(--composer-reserve) + env(safe-area-inset-bottom));
+  /* 仅用于正文滚动避让，不参与 fixed dock 的定位。 */
+  /* 仅为正文内容避让 bottom dock，不重复计算 TabBar 或安全区。 */
+  padding: calc(32rpx + env(safe-area-inset-top)) 32rpx calc(var(--composer-reserve) + var(--composer-gap));
   background: var(--today-bg);
   box-sizing: border-box;
   animation: page-fade-in 250ms ease-out both;
@@ -665,7 +667,8 @@
 .input-dock {
   position: fixed;
   right: 0;
-  bottom: calc(var(--native-tabbar-height) + var(--composer-gap) + env(safe-area-inset-bottom));
+  /* fixed 视口底部就是原生 TabBar 顶部。 */
+  bottom: var(--composer-gap);
   left: 0;
   z-index: 999;
   padding: 0 32rpx;
@@ -674,7 +677,7 @@
 }
 
 .recent-foods-panel {
-  margin-bottom: 12rpx;
+  margin-bottom: 16rpx;
   padding: 16rpx 18rpx 18rpx;
   border: 1rpx solid rgba(255, 255, 255, 0.82);
   border-radius: 32rpx;

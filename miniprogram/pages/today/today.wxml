@@ -157,7 +157,7 @@
 
   </scroll-view>
 
-  <view class="input-dock" style="{{inputDockStyle}}">
+  <view class="input-dock">
     <view wx:if="{{recentFoods.length && !keyboardOpen}}" class="recent-foods-panel">
       <text class="recent-foods-title">最近吃过</text>
       <scroll-view class="recent-foods-scroll" scroll-x enhanced show-scrollbar="{{false}}">

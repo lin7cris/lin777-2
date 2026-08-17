@@ -50,8 +50,7 @@ Page({
     voiceDurationText: '0:00',
     voiceCanceling: false,
     voiceError: '',
-    keyboardOpen: false,
-    inputDockStyle: ''
+    keyboardOpen: false
   },
 
   onLoad() {
@@ -549,13 +548,12 @@ Page({
   onInputKeyboardHeightChange(event) {
     const keyboardHeight = Number(event.detail && event.detail.height) || 0
     this.setData({
-      keyboardOpen: keyboardHeight > 0,
-      inputDockStyle: keyboardHeight > 0 ? `bottom: ${keyboardHeight + 8}px;` : ''
+      keyboardOpen: keyboardHeight > 0
     })
   },
 
   onInputBlur() {
-    this.setData({ keyboardOpen: false, inputDockStyle: '' })
+    this.setData({ keyboardOpen: false })
   },
 
   parseDailyInput() {
